@@ -1,0 +1,11 @@
+{
+  "name": "backend-shifts",
+  "version": "1.0.0",
+  "description": "Backend Node App for Shifts, CS554 Final Project",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Max Shi, Eric Altenburg, Hamzah Nizami, Daniel Kimball",
+  "license": "ISC"
+}
