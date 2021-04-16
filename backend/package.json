@@ -4,8 +4,14 @@
   "description": "Backend Node App for Shifts, CS554 Final Project",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js"
   },
   "author": "Max Shi, Eric Altenburg, Hamzah Nizami, Daniel Kimball",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "apollo-server": "^2.23.0",
+    "apollo-server-express": "^2.23.0",
+    "express": "^4.17.1",
+    "graphql": "^15.5.0"
+  }
 }
