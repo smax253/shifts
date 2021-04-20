@@ -1,7 +1,31 @@
 const express = require("express");
 const { ApolloServer, gql } = require('apollo-server-express');
+const admin = require('firebase-admin');
 
 const app = express();
+
+function initializeAppSA() {
+
+  let serviceAccount = require('./config/serviceAccountKey.json');
+
+  admin.initializeApp({
+    //credential: admin.credential.applicationDefault(),
+    credential: admin.credential.cert(serviceAccount),
+    // databaseURL: "https://xxxxx.firebaseio.com"
+  });
+
+  let db = admin.firestore();
+
+  return db;
+}
+const db = initializeAppSA();
+let docRef = db.collection('users').doc('alovelace');
+
+let setAda = docRef.set({
+  first: 'Ada',
+  last: 'Lovelace',
+  born: 1815
+});
 
 const typeDefs = gql`
     type Query {
