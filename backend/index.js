@@ -1,6 +1,5 @@
 const express = require("express");
 const { ApolloServer, gql } = require('apollo-server-express');
-const admin = require('firebase-admin');
 const { typeDefs, resolvers} = require("./data/queries");
 
 async function startApolloServer() {

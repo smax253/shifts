@@ -1,4 +1,10 @@
 const { gql } = require("apollo-server-express");
+const passwordHash = require("password-hash");
+
+/* Firebase Data Module Imports*/
+const data = require("../data");
+const userData = data.users;
+const stockData = data.stocks;
 
 const typeDefs = gql`
   type User {
@@ -10,9 +16,10 @@ const typeDefs = gql`
 
   type Company {
     _id: String
-    email: String
-    username: String
-    hashedPassword: String
+    ticker: String
+    companyName: String
+    banner: String
+    recent_price: Float
   }
 
   type Query {
@@ -36,7 +43,7 @@ const typeDefs = gql`
 
 const resolvers = {
   Query: {
-    // users: async () => await userData.getAllUsers(),
+    users: async () => await userData.getAllUsers(),
     // companies: async () => await companyData.getAllCompanies(),
 
     // userByID: async (_, args) => await userData.getUserByID(args.id),
@@ -50,11 +57,11 @@ const resolvers = {
   },
 
   Mutation: {
-    // /* User */
-    // addUser: async (_, args) => {
-    //   const hashedPassword = passwordHash.generate(args.password);
-    //   return await userData.addUser(args.email, args.username, hashedPassword);
-    // },
+    /* User */
+    addUser: async (_, args) => {
+      const hashedPassword = passwordHash.generate(args.password);
+      return await userData.addUser(args.email, args.username, hashedPassword);
+    },
     // deleteUser: async (_, args) => {
     //   return await userData.deleteUser(args.id);
     // },
