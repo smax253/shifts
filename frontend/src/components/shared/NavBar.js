@@ -32,6 +32,8 @@ const NavBar = ({isAuthenticated, setIsAuthenticated}) => {
 
   return (<nav>
     <Link to="/">Home</Link>
+    {isAuthenticated && <Link to="/dashboard">Dashboard</Link>}
+
     <form onSubmit={navigateRoom}>
       <input onChange={handleInput} type="text"/>
       <Link to={`/stock/${searchInput}`}>Search</Link>

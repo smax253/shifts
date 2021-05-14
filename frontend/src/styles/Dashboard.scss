@@ -1,0 +1,29 @@
+#dashboard{
+    height: 100%;
+}
+#top-stocks{
+    height: 20%;
+    background-color: #3C3B3B;
+    color: white;
+    margin: 16px;
+    border-radius: 8px;
+}
+.top-stock-item{
+    font-size: 70px;
+    text-align: center;
+    div{
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}
+.full-height{
+    height: 100%;
+}
+.positive{
+    color: green;
+}
+.negative{
+    color: red;
+}

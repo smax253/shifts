@@ -1,5 +1,5 @@
 import React from 'react';
-import './App.css';
+import './styles/App.scss';
 import {BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import Home from './components/home_page/Home';
 import Profile from './components/profile/Profile';
@@ -8,9 +8,9 @@ import PrivateRoute from './components/auth/PrivateRoute';
 import auth from './auth/fakeAuth'
 import Login from './components/auth/Login';
 import NavBar from './components/shared/NavBar';
+import Dashboard from './components/dashboard/Dashboard';
 
 import {ApolloClient, HttpLink, InMemoryCache, ApolloProvider} from '@apollo/client';
-import Dashboard from './components/dashboard/Dashboard';
 
 const client = new ApolloClient({
   cache: new InMemoryCache(),
@@ -60,7 +60,7 @@ function App() {
               <PrivateRoute path="/stock/:id">
                 <Room/>
               </PrivateRoute>
-              <PrivateRoute>
+              <PrivateRoute path="/dashboard">
                 <Dashboard/>
               </PrivateRoute>
               <Route path='/login'>

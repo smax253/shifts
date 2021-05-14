@@ -1,21 +1,22 @@
+html, body, #root, .App{
+  height: 100%;
+  font-family: "Sen";
+  background-color: #7196F6;
+  overflow: hidden;
+}
 .App {
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.App-body{
+  height:85%;
+  margin-top: 16px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
 
 .App-header {
-  background-color: #282c34;
-  min-height: 20vh;
+  background-color: #4777BF;
+  min-height: 10%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -43,3 +44,4 @@ nav{
     transform: rotate(360deg);
   }
 }
+
