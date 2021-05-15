@@ -12,7 +12,6 @@ const getPostHtml = async (hrefArr) => {
 
 			htmlToParse += postHTML;
 
-			console.log('Loading HTML...');
 		} catch (error) {
 			if (error) console.log(ERROR_MESSAGE);
 		}
