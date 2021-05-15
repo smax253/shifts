@@ -49,19 +49,19 @@ const Dashboard = () => {
           <TopStockTickers/>
         </Grid>
         <Grid container>
-          <Grid item xs={12} sm={4}>
+          <Grid item xs={12} sm={4} className='list-container'>
             <RoomList title="Top Movers" tickerList={topMovers} showPrices/>
           </Grid>
-          <Grid item xs={12} sm={4}>
+          <Grid item xs={12} sm={4} className='list-container'>
             <RoomList title="Popular" tickerList={popular} showPrices/>
           </Grid>
-          <Grid item xs={12} sm={4}>
+          <Grid item xs={12} sm={4} className='list-container'>
             <RoomList title="My List" tickerList={myList} showPrices/>   
           </Grid>
         </Grid>
       </Grid>
       <Grid item xs={12} sm={3} id="active-rooms">
-        <RoomList title="Active Rooms" tickerList={active}/>    
+        <RoomList title="Active Rooms" tickerList={active} />    
       </Grid>
     </Grid>
   )

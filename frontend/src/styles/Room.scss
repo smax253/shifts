@@ -1,0 +1,127 @@
+.room-half{
+    height:50%;
+    margin-bottom: 8px;
+    .chat-room-list{
+        box-sizing: border-box;
+        height: 45vh;
+    }
+}
+
+.stock-chart{
+    background-color: white;
+    border-radius: 8px;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 16px;
+    //padding: 16px 0;
+}
+.stock-data-summary{
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-color: #3B3B3B;
+    border-radius: 8px;
+    margin: 0 16px;
+    color: white;
+    &>div{
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        width: 100%;
+        
+    }
+    padding: 16px 32px;
+    font-size: 24px;
+    box-sizing: inherit;
+}
+#company-name{
+    font-size: 40px;
+}
+#price{
+    font-size: 32px;
+}
+.user-list{
+    #user-list-label{
+        font-size: 40px;
+        font-weight: 700;
+        margin-top: 24px;
+    }
+    background-color: white;
+    height: 45vh;
+
+    margin-top: 32px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: column;
+    box-sizing: border-box;
+
+    align-items: center;
+    ul{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        list-style: none;
+        padding: 0 16px;
+        box-sizing: border-box;
+        width: 100%;
+    }
+    li{
+        box-sizing: border-box;
+        margin: 8px 16px;
+        width: 100%;
+    }
+    a{
+        text-decoration: none;
+    }
+    .user{
+        width: 100%;
+        height: 60px;
+        box-sizing: border-box;
+        border: 5px blue solid;
+        color:black;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 40px;
+    }
+}
+
+.chat-box{
+    box-sizing: border-box;
+    height: 45vh;
+    background-color: white;
+    margin: 32px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    flex-direction: column;
+    padding: 16px 16px;
+    .message-list {
+        width: 100%;
+    }
+    .message{
+        padding: 8px;
+        border: 3px blue solid;
+        text-align: start;
+    }
+    form{
+        margin-top: 4px;
+        width: 100%;
+        display: flex;
+        height: 30px;
+        input{
+            flex-grow: 5;
+        }
+        button{
+            flex-grow: 1;
+        }
+    }
+
+}

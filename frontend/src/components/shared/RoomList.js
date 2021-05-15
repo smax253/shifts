@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import '../../styles/RoomList.scss';
 import people from '../../img/people.png';
 
-const RoomList = ({title, tickerList, showPrices}) => {
+const RoomList = ({title, tickerList, showPrices, className}) => {
 
   const generateActiveLinks = useCallback(()=>{
 
@@ -56,7 +56,7 @@ const RoomList = ({title, tickerList, showPrices}) => {
   
   }, tickerList)
   return (
-    <div className="room-list">
+    <div className={`room-list ${showPrices ? 'prices' : 'active'} ${className ? className : ''}`}>
       <span className="room-list-title">{title}</span>
       {showPrices ? generateLinks() : generateActiveLinks()}
     </div>
@@ -67,7 +67,8 @@ const RoomList = ({title, tickerList, showPrices}) => {
 RoomList.propTypes = {
   title: PropTypes.string.isRequired,
   tickerList: PropTypes.array.isRequired,
-  showPrices: PropTypes.bool
+  showPrices: PropTypes.bool,
+  className: PropTypes.string
 }
 
 export default RoomList
