@@ -63,7 +63,10 @@ const invalidTickers = [
 	'YOLO'
 ];
 
-export default invalidTickers;
+// export default invalidTickers;
+module.exports = {
+    invalidTickers
+}
 
 // ----- SINGLE LETTER STOCKS -----
 // A - N/A

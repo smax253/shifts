@@ -1,9 +1,11 @@
 //connect to firebase
-// const firebaseConnections = require("../config/firebaseConnections");
-// const db = firebaseConnections.initializeCloudFirebase();
+const firebaseConnections = require("../config/firebaseConnections");
+const db = firebaseConnections.initializeCloudFirebase();
+
 
 function subscribe(symbol) {
 //check if already subscribed
+
 
 axios.get('https://localhost:5000/?symbols=GME,TSLA,AAPL')
   .then((response) => {

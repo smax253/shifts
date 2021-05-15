@@ -4,18 +4,18 @@
 // All credit goes to original implementer
 
 // packages
-import cheerio from 'cheerio';
-import fetch from 'node-fetch';
+const cheerio = require('cheerio');
+const fetch =require('node-fetch');
 
 // api
-import BASE_URL from './api/api';
+const BASE_URL = require('./api/api');
 
 // data
-import ERROR_MESSAGE from './data/errorMessage';
-import invalidTickers from './data/invalidTickers';
+const ERROR_MESSAGE = require('./data/errorMessage');
+const invalidTickers = require('./data/invalidTickers');
 
 // functions
-import getPostHtml from './functions/getPostHtml';
+const getPostHtml = require('./functions/getPostHtml');
 
 const normalizeMentionsCount = (denoms, allSubTickers) => {
 	let minimum = Math.min.apply(Math, denoms) / 100000; //calculate the minimum and scale it down by a factor of 100,000 (lets work with smaller numbers)
@@ -62,7 +62,8 @@ const scrapeReddit = async (allSubreddits, topXTickers) => {
 		
 		for (let i = 0; i < allSubreddits.length; i++) {
 			// fetch subreddit page html
-			const response = await fetch(`${BASE_URL}/r/${allSubreddits[i]}/`);
+			const response = await fetch(`${BASE_URL.BASE_URL}/r/${allSubreddits[i]}/`);
+            
 			const html = await response.text();
 
 			// initialize cheerio
@@ -92,7 +93,7 @@ const scrapeReddit = async (allSubreddits, topXTickers) => {
 			// filter the hrefs - only get hrefs that include the subreddit name (avoids links for ads)
 			const filteredHrefs = hrefs.filter((href) => href.includes(`/r/${allSubreddits[i]}`));
 			// call the getPostHtml fn
-			const parsedHtml = await getPostHtml(filteredHrefs);
+			const parsedHtml = await getPostHtml.getPostHtml(filteredHrefs);
 
 			// ticker regex
 			const regex = /\$?\b[A-Z]{1,4}\b/g;
@@ -103,7 +104,7 @@ const scrapeReddit = async (allSubreddits, topXTickers) => {
 				.match(regex)
 				.sort()
 				.map((ticker) => ticker.replace('$', ''))
-				.filter((ticker) => invalidTickers.indexOf(ticker) < 0);
+				.filter((ticker) => invalidTickers.invalidTickers.indexOf(ticker) < 0);
 
 			// object structure {stock: 'TICKER_NAME_HERE', timesCounted: 1'}
 			const countedTickers = [];
@@ -131,7 +132,7 @@ const scrapeReddit = async (allSubreddits, topXTickers) => {
 		return combineResults(updatedCounts)
 
 	} catch (error) {
-		if (error) console.log(ERROR_MESSAGE);
+		if (error) console.log(ERROR_MESSAGE.ERROR_MESSAGE);
 	}
 };
 
