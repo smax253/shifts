@@ -6,23 +6,21 @@ const db = firebaseConnections.initializeCloudFirebase();
 module.exports = {
         async getAllUsers() {
         const snapshot = await db.collection('users').get();
-        snapshot.forEach((doc) => {
-            console.log(doc.id, '=>', doc.data());
-        });
+        return snapshot;
     },
 
-    async addUser(email, username, hashedPassword) {
-        const usersCollection = await users();
-        let newUser = {
-          email: email,
-          username: username,
-          hashedPassword: hashedPassword,
-          friends: [],
-        };
-        const insertInfo = await usersCollection.insertOne(newUser);
-        if (insertInfo.insertedCount === 0) throw "Could not add user";
-        const newId = insertInfo.insertedId;
-        return await this.getUserByID(newId);
+    async addUser(username, hashedPassword) {
+      let newUser = {
+        username: username,
+        hashedPassword: hashedPassword,
+      };
+
+      console.log(newUser);
+      
+      // Add a new document in collection "users" with ID 'username'
+      const res = await db.collection('users').doc(username).set(newUser);
+      console.log(res);
+      return res;
       },
 };
     
