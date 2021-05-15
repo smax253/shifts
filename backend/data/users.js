@@ -5,50 +5,57 @@ const firebaseConnections = require("../config/firebaseConnections");
 const db = firebaseConnections.initializeCloudFirebase();
  
 module.exports = {
+    /* gets all documents in users */
     async getAllUsers() {
       const snapshot = await db.collection('users').get();
       let arr = [];
       snapshot.forEach(doc => {
         arr.push(doc.data());
       });
-      console.log(arr);
       return arr;
     },
-
+    
+  /*  gets individual user */
     async getUser(username) {
-        const cityRef = db.collection('users').doc(username);
-        const doc = await cityRef.get();
+        const userRef = db.collection('users').doc(username);
+        const doc = await userRef.get();
         if (!doc.exists) {
-          console.log('No such user!');
+          throw "User does not exist";
         } else {
-          console.log(doc.data());
           return doc.data();
         }
-        return null;
     },
     
-    async addUser(username, hashedPassword) {
+    /* adds user */
+  async addUser(username, hashedPassword) {
+      //check if user exists
+      const userRef = db.collection('users').doc(username);
+      const doc = await userRef.get();
+      if (doc.exists) {
+        throw "User already exists";
+      }
+
       let newUser = {
         username: username,
         hashedPassword: hashedPassword,
       };
-      // Add a new document in collection "users" with ID 'username'
+
       const res = await db.collection('users').doc(username).set(newUser);
-      return getUser(username);
+      return this.getUser(username);
     },
 
     async login(username, password) {
-        if (!username) throw "You must provide a username";
-        if (!password) throw "You must provide a password";
-        let user = this.getUser(username);
+      if (!username) throw "You must provide a username";
+      if (!password) throw "You must provide a password";
 
-        if (passwordHash.verify(password, user.hashedPassword)) {
-          console.log("Login Successful!");
-          return user;
-        } else {
-          console.log("Login Failed");
-          return null;
-        }
+      //checks if user exists
+      const userRef = db.collection('users').doc(username);
+      const doc = await userRef.get();
+      if (!doc.exists || !passwordHash.verify(password, doc.data().hashedPassword)) {
+        throw "Incorrect username or password";
       }
+      
+      return doc.data();
+    }
 };
     
