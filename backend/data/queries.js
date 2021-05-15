@@ -5,6 +5,7 @@ const passwordHash = require("password-hash");
 const data = require("../data");
 const userData = data.users;
 const stockData = data.stocks;
+const roomData = data.room;
 
 const typeDefs = gql`
   type User {
@@ -14,7 +15,7 @@ const typeDefs = gql`
 
   type Company {
     symbol: String
-    price: Int
+    prices: [Int]
   }
 
   type Room {
@@ -23,19 +24,25 @@ const typeDefs = gql`
   }
 
   type Query {
-    users: [User]
+    users: User
+    getUser(username: String!): User
+    stocks: Company
     login: String
   }
 
   type Mutation {
     addUser(username: String!, password: String!): User
+    clearStocks: String
+    generateStocks: String
   }
 `;
 
 const resolvers = {
   Query: {
     users: async () => await userData.getAllUsers(),
-    login: async (_, args, context) => console.log('TODO')
+    getUser: async (_, args) => await userData.getUser(args.username),
+    stocks: async (_, args) => console.log('TODO'),
+    login: async (_, args) => console.log('TODO')
   },
 
   Mutation: {
@@ -44,10 +51,8 @@ const resolvers = {
       const hashedPassword = passwordHash.generate(args.password);
       return await userData.addUser(args.username, hashedPassword);
     },
-
-    // fetchCompany: async (_, args) => {
-    //   console.log('TODO');
-    // }
+    clearStocks: async (_, args) => console.log('TODO'),
+    generateStocks: async (_, args) => console.log('TODO')
   },
 };
 
