@@ -57,7 +57,7 @@ module.exports = {
           current = parseFloat(current);
 
           if (counter <= 30) {
-            newStock.chart.shift({ date: key, value: current });
+            newStock.chart.unshift({ date: key, value: current });
           }
          
           if (counter == 1) {
