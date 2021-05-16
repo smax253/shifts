@@ -4,8 +4,8 @@ import { Link } from 'react-router-dom';
 import '../../styles/RoomList.scss';
 import people from '../../img/people.png';
 
-const RoomList = ({title, tickerList, showPrices, className}) => {
-
+const RoomList = ({ title, tickerList, showPrices, className, id }) => {
+  
   const generateActiveLinks = useCallback(()=>{
 
     const links = tickerList.map((stock)=>{
@@ -16,7 +16,7 @@ const RoomList = ({title, tickerList, showPrices, className}) => {
             
           <Link to={`/stock/${stock.ticker}`} >
             <div className='activity'>
-              <div className="list-ticker">{stock.ticker}</div>
+              <div className="list-ticker">{stock.stockSymbol}</div>
               <div className={'active'}>
 
                 {value}
@@ -56,7 +56,7 @@ const RoomList = ({title, tickerList, showPrices, className}) => {
   
   }, tickerList)
   return (
-    <div className={`room-list ${showPrices ? 'prices' : 'active'} ${className ? className : ''}`}>
+    <div id={id ? id : ''} className={`room-list ${showPrices ? 'prices' : 'active'} ${className ? className : ''}`}>
       <span className="room-list-title">{title}</span>
       {showPrices ? generateLinks() : generateActiveLinks()}
     </div>
@@ -68,7 +68,8 @@ RoomList.propTypes = {
   title: PropTypes.string.isRequired,
   tickerList: PropTypes.array.isRequired,
   showPrices: PropTypes.bool,
-  className: PropTypes.string
+  className: PropTypes.string,
+  id: PropTypes.string,
 }
 
 export default RoomList

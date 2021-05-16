@@ -10,7 +10,7 @@ const Chart = ({data}) => {
     <div className="stock-chart">
       <ResponsiveContainer width="90%" height="90%">
         <LineChart data={data}>
-          <Line type="monotone" dataKey="price" stroke="#000"/>
+          <Line type="monotone" dataKey="value" stroke="#000"/>
           <CartesianGrid stroke="#ccc" strokeDasharray="5 5"/>
           <XAxis dataKey="date"/>
           <YAxis />

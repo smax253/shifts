@@ -34,12 +34,13 @@ const REMOVE_USER = gql`
     }
 `
 
-const GET_POPULAR_COMPANIES = gql`
-    query getPopular($queryNum: Int){
-        popularCompanies(num: $queryNum){
-            ticker
-            companyName
-            _id
+const GET_ALL_ROOMS = gql`
+    query { 
+        rooms {
+            stockSymbol
+            activeUsers {
+                username
+            }
         }
     }
 `
@@ -73,8 +74,24 @@ const GET_LOGGED_IN_USERS = gql`
     }
 `
 
+const GET_STOCK_DATA = gql`
+    query ($ticker: String!){
+        getStock(symbol: $ticker){
+            symbol
+            prices{
+                date
+                value
+            }
+            chart{
+                date
+                value
+            }
+        }
+    }
+`
+
 
 
 export default {
-  CHECK_USERNAME, LOGIN_USER, ADD_USER, REMOVE_USER, GET_LOGGED_IN_USERS, GET_GAINING_COMPANIES, GET_LOSING_COMPANIES, GET_POPULAR_COMPANIES
+  GET_STOCK_DATA, CHECK_USERNAME, LOGIN_USER, ADD_USER, REMOVE_USER, GET_LOGGED_IN_USERS, GET_GAINING_COMPANIES, GET_LOSING_COMPANIES, GET_ALL_ROOMS
 }
