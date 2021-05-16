@@ -72,8 +72,8 @@ const resolvers = {
     getStock: async (_, args) => await stockData.getStock(args.symbol),
     
     /* Rooms */
-    rooms: async (_, args) => console.log('TODO'),
-    getRoom: async (_, args) => console.log('TODO'),
+    rooms: async (_, args) => await roomData.getAllRooms(),
+    getRoom: async (_, args) => await roomData.getRoom(),
   },
 
   Mutation: {
