@@ -15,7 +15,13 @@ const typeDefs = gql`
 
   type Stock {
     symbol: String
-    prices: [Int]
+    prices: [Price]
+    chart: [Price]
+  }
+
+  type Price {
+    date: String
+    value: Float
   }
 
   type Room {
@@ -61,8 +67,8 @@ const resolvers = {
     login: async (_, args) => await userData.login(args.username, args.password),
 
     /* Stocks */
-    stocks: async (_, args) => console.log('TODO'),
-    getStock: async (_, args) => console.log('TODO'),
+    stocks: async (_, args) => await stockData.getAllStocks(),
+    getStock: async (_, args) => await stockData.getStock(args.symbol),
     
     /* Rooms */
     rooms: async (_, args) => console.log('TODO'),
@@ -86,7 +92,9 @@ const resolvers = {
     },
 
     clearStocks: async (_, args) => console.log('TODO'),
-    generateStocks: async (_, args) => console.log('TODO')
+    generateStocks: async (_, args) => {
+      return await stockData.generateStocks();
+    }
   },
 };
 
