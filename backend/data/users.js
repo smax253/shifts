@@ -24,6 +24,20 @@ module.exports = {
         } else {
           return doc.data();
         }
+  },
+    
+    async getUserById(id) {
+      const userRef = db.collection('users');
+      const snapshot = await userRef.where('userID', "==", id).get();
+        if (snapshot.empty) {
+        throw "UserId does not exist";
+      }  
+
+      let output = {};
+      snapshot.forEach(doc => {
+        output = doc.data();
+      });
+      return output;
     },
     
     /* adds user */
