@@ -8,6 +8,8 @@
     "@testing-library/jest-dom": "^5.11.10",
     "@testing-library/react": "^11.2.6",
     "@testing-library/user-event": "^12.8.3",
+    "email-validator": "^2.0.4",
+    "firebase": "^8.6.1",
     "graphql": "^15.5.0",
     "node-sass": "^5.0.0",
     "prop-types": "^15.7.2",

@@ -11,32 +11,36 @@ import ChatBox from './ChatBox';
 
 const StockDataSummary = ({data}) => {
 
-  const renderClassname = (value) => {
+  const { name, ticker, price, change } = data;
 
-    return value > 0 ? 'positive' : 'negative';
-  
+  const calcPercentage = (difference) => {
+
+    const percent = `${(difference / price * 100).toFixed(2)}%`;
+    return ` (${difference > 0 ? '+' + percent : percent})`;
+
   }
 
   const renderNumber = (value) => {
 
-    return value > 0 ? '+'+(value.toFixed(2)) : value.toFixed(2);
+    return <div className={value > 0 ? 'positive' : 'negative'}>
+      <span className="price-value">{value > 0 ? '+' + (value.toFixed(2)) : value.toFixed(2)}</span>
+      <span className="price-change">{calcPercentage(value)}</span>
+    </div>
   
   }
-  const {name, ticker, price, change} = data;
-  const dailyChange = renderNumber(change.day);
   return (
     <div className="stock-data-summary">
       <div><div id="company-name">{name}</div><div>{ticker}</div></div>
       
-      <div><div id="price">{price}<span className={renderClassname(change.day)}>{dailyChange}</span></div></div>
-      <div><div>1 Week</div><div className={renderClassname(change.week)}>{renderNumber(change.week)}</div></div>
-      <div><div>1 Month</div><div className={renderClassname(change.month)}>{renderNumber(change.month)}</div></div>
+      <div id="current-price"><div id="price">{price}</div>{renderNumber(change.day)}</div>
+      <div><div>1 Week</div>{renderNumber(change.week)}</div>
+      <div><div>1 Month</div>{renderNumber(change.month)}</div>
 
-      <div><div>3 Months</div><div className={renderClassname(change.threeMonth)}>{renderNumber(change.threeMonth)}</div></div>
+      <div><div>3 Months</div>{renderNumber(change.threeMonth)}</div>
 
-      <div><div>1 Year</div><div className={renderClassname(change.year)}>{renderNumber(change.year)}</div></div>
+      <div><div>1 Year</div>{renderNumber(change.year)}</div>
 
-      <div><div>5 Years</div><div className={renderClassname(change.fiveYear)}>{renderNumber(change.fiveYear)}</div></div>
+      <div><div>5 Years</div>{renderNumber(change.fiveYear)}</div>
 
     </div>
   );

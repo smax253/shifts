@@ -1,26 +1,91 @@
 import React from 'react';
 import { Redirect } from 'react-router';
-import auth from '../../auth/fakeAuth'
 import PropTypes from 'prop-types';
+import { AuthContext } from '../../auth/AuthContext';
+import email from 'email-validator';
+import auth from '../../config/auth';
+import { useApolloClient, useMutation } from '@apollo/client';
+import queries from '../../queries';
 
-const Login = ({onLogin}) => {
+const Login = () => {
 
-  const [redirectToReferrer, setRedirectToReferrer] = React.useState(auth.is);
+  // eslint-disable-next-line no-unused-vars
+  const [authUser, setAuthUser] = React.useContext(AuthContext);
+  const [redirectToReferrer, setRedirectToReferrer] = React.useState(!!authUser);
+  const [isRegistering, setIsRegistering] = React.useState(false);
+  const [passwordInput, setPasswordInput] = React.useState('');
+  const [emailInput, setEmailInput] = React.useState('');
+  const [usernameInput, setUsernameInput] = React.useState('');
+  const [confirmPasswordInput, setConfirmPasswordInput] = React.useState('');
+  const [addUser] = useMutation(queries.ADD_USER);
+  const client = useApolloClient();
 
-  const login = async() =>{
+  const login = async(event) => {
+    
+    event.preventDefault();
+    const valid = email.validate(emailInput);
+    if (!valid) {
 
-    await auth.authenticate();
-    onLogin();
+      return;
+    
+    }
+    const user = await auth.signInWithEmailAndPassword(emailInput, passwordInput);
+    setAuthUser(user);
+    // eslint-disable-next-line no-console
+    console.log(user);
+
     setRedirectToReferrer(true);
   
+  }
+
+  const register = async(event) => {
+    
+    event.preventDefault();
+    const valid = email.validate(emailInput);
+    const takenQuery = await client.query({ query: queries.CHECK_USERNAME, variables: { username: usernameInput } });
+    const taken = takenQuery.data.checkUsername;
+    if (!valid || taken || !usernameInput || passwordInput != confirmPasswordInput) {
+
+      console.warn('invalid form data');
+      return;
+    
+    }
+
+    const user = await auth.createUserWithEmailAndPassword(emailInput, passwordInput);
+    
+    addUser({ variables: { username: usernameInput, userID: user.user.uid } })
+    setAuthUser(user);
+    setRedirectToReferrer(true);
+
   }
 
   return (
     <div>
       {
         redirectToReferrer 
-          ?<Redirect to='/'/>
-          :<button onClick={login}>Login!</button>
+          ? <Redirect to='/' />
+          : (
+            isRegistering ?
+              (<form onSubmit={register}>
+                <label htmlFor="email-input">Email</label>
+                <input id="email-input" type="text" onChange={(event) => setEmailInput(event.target.value)} />
+                <label htmlFor="username-input">Username</label>
+                <input id="username-input" type="text" onChange={(event) => setUsernameInput(event.target.value)} />
+                <label htmlFor="password-input">Password</label>
+                <input id="password-input" type="password" onChange={(event)=>setPasswordInput(event.target.value)}/>
+                <label htmlFor="confirm-password-input">Confirm Password</label>
+                <input id="confirm-password-input" type="password" onChange={(event)=>setConfirmPasswordInput(event.target.value)}/>
+                <button type="submit">Register!</button>
+              </form>)
+              : (<form onSubmit={login}>
+                <label htmlFor="email-input">Email</label>
+                <input id="email-input" type="text" onChange={(event)=>setEmailInput(event.target.value)}/>
+                <label htmlFor="password-input">Password</label>
+                <input id="password-input" type="password" onChange={(event)=>setPasswordInput(event.target.value)}/>
+                <button type="submit">Login!</button>
+                <button onClick={()=>setIsRegistering(true)}>Register an account!</button>
+              </form>)
+          )
       }  
     </div>
   )

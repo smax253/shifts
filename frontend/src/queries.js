@@ -9,11 +9,20 @@ const LOGIN_USER = gql`
 `
 
 const ADD_USER = gql`
-    mutation registerUser($email: String!, $username: String!, $password: String!){
-        addUser(email:$email, username: $username, password: $password){
-            _id
+    mutation registerUser($username: String!, $userID: ID!){
+        addUser(username: $username, userID: $userID){
+            userID
             username
+            favorites{
+              symbol
+            }
         }
+    }
+`
+
+const CHECK_USERNAME = gql`
+    query ($username: String!){
+        checkUsername(username: $username)
     }
 `
 
@@ -67,5 +76,5 @@ const GET_LOGGED_IN_USERS = gql`
 
 
 export default {
-  LOGIN_USER, ADD_USER, REMOVE_USER, GET_LOGGED_IN_USERS, GET_GAINING_COMPANIES, GET_LOSING_COMPANIES, GET_POPULAR_COMPANIES
+  CHECK_USERNAME, LOGIN_USER, ADD_USER, REMOVE_USER, GET_LOGGED_IN_USERS, GET_GAINING_COMPANIES, GET_LOSING_COMPANIES, GET_POPULAR_COMPANIES
 }

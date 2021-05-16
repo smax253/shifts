@@ -42,7 +42,7 @@ const stockData = {
     {date: '5/15/2021', price:5.80},
     {date: '5/16/2021', price:6.40},
     {date: '5/17/2021', price:4.20},
-    {date: '5/17/2021', price:7.20},
+    {date: '5/18/2021', price:7.20},
   ],
   summary: {
     name: 'Tesla Inc.',

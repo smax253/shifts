@@ -27,7 +27,7 @@ module.exports = {
     },
     
     /* adds user */
-  async addUser(username, hashedPassword) {
+  async addUser(username, userID) {
       //check if user exists
       const userRef = db.collection('users').doc(username);
       const doc = await userRef.get();
@@ -37,25 +37,21 @@ module.exports = {
 
       let newUser = {
         username: username,
-        hashedPassword: hashedPassword,
+        userID: userID,
+        favorites: []
       };
 
       const res = await db.collection('users').doc(username).set(newUser);
       return this.getUser(username);
     },
 
-    async login(username, password) {
-      if (!username) throw "You must provide a username";
-      if (!password) throw "You must provide a password";
-
-      //checks if user exists
+  checkUsername: async (username) => {
       const userRef = db.collection('users').doc(username);
       const doc = await userRef.get();
-      if (!doc.exists || !passwordHash.verify(password, doc.data().hashedPassword)) {
-        throw "Incorrect username or password";
+      if (doc.exists) {
+        return true;
       }
-      
-      return doc.data();
+      return false;
     }
 };
     

@@ -1,4 +1,4 @@
-serviceAccountKey.json
+*/**/serviceAccountKey.json
 
 *.DS_Store
 

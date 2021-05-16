@@ -10,7 +10,8 @@ const roomData = data.rooms;
 const typeDefs = gql`
   type User {
     username: String
-    hashedPassword: String
+    favorites: [Stock]
+    userID: ID!
   }
 
   type Stock {
@@ -44,12 +45,12 @@ const typeDefs = gql`
     getUser(username: String!): User
     getStock(symbol: String!): Stock
     getRoom(stockSymbol: String!): Room
-
-    login(username: String!, password: String!): User
+    
+    checkUsername(username: String!): Boolean
   }
 
   type Mutation {
-    addUser(username: String!, password: String!): User
+    addUser(username: String!, userID: ID!): User
     addStock(symbol: String!, prices: [Int]): Stock
     addRoom(stockSymbol: String!): Room
     addMessage(stockSymbol: String!, author: String!, text: String): Room
@@ -64,7 +65,7 @@ const resolvers = {
     /* Users */
     users: async () => await userData.getAllUsers(),
     getUser: async (_, args) => await userData.getUser(args.username),
-    login: async (_, args) => await userData.login(args.username, args.password),
+    checkUsername: async (_, args) => await userData.checkUsername(args.username),
 
     /* Stocks */
     stocks: async (_, args) => await stockData.getAllStocks(),
@@ -78,8 +79,7 @@ const resolvers = {
   Mutation: {
     /* User */
     addUser: async (_, args) => {
-      const hashedPassword = passwordHash.generate(args.password);
-      return await userData.addUser(args.username, hashedPassword);
+      return await userData.addUser(args.username, args.userID);
     },
     addStock: async (_, args) => {
       return await stockData.addStock(args.symbol);
