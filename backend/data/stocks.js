@@ -57,7 +57,7 @@ module.exports = {
           current = parseFloat(current);
 
           if (counter <= 30) {
-            newStock.chart.push({ date: key, value: current });
+            newStock.chart.shift({ date: key, value: current });
           }
          
           if (counter == 1) {
@@ -85,7 +85,7 @@ module.exports = {
       return;
     }
 
-    console.log(newStock);
+    // console.log(newStock);
     // Add a new document in collection "users" with ID 'username'
     const res = await db.collection('stocks').doc(symbol).set(newStock);
     return await this.getStock(symbol);
