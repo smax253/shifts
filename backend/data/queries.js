@@ -43,6 +43,7 @@ const typeDefs = gql`
     rooms: [Room]
 
     getUser(username: String!): User
+    getUserById(id: String!): User
     getStock(symbol: String!): Stock
     getRoom(stockSymbol: String!): Room
     
@@ -65,6 +66,7 @@ const resolvers = {
     /* Users */
     users: async () => await userData.getAllUsers(),
     getUser: async (_, args) => await userData.getUser(args.username),
+    getUserById: async (_, args) => await userData.getUserById(args.id),
     checkUsername: async (_, args) => await userData.checkUsername(args.username),
 
     /* Stocks */
