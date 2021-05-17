@@ -161,6 +161,7 @@ module.exports = {
     allStocks.forEach((stock) => {
       db.collection('stocks').doc(stock.symbol).delete().then(() => {
         console.log('successfully deleted ' + stock.symbol)
+        await roomData.deleteRoom(stock.symbol);
       }).catch((error) => {
         console.log('error deleting ' + stock.symbol)
         console.log(error)

@@ -23,6 +23,16 @@ module.exports = {
         }
     },
 
+    async deleteRoom(stockSymbol) {
+        db.collection('rooms').doc(stockSymbol).delete().then(() => {
+            console.log('successfully deleted room ' + stockSymbol)
+        }).catch((error) => {
+            console.log('unable to delete room ' + stockSymbol);
+            console.log(error)
+        });
+        return this.getAllRooms();
+    },
+
     async addRoom(stockSymbol) {
         let newRoom = {
             stockSymbol: stockSymbol,
