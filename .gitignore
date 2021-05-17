@@ -1,5 +1,5 @@
 */**/serviceAccountKey.json
-
+*/**/package-lock.json
 *.DS_Store
 
 # Logs
