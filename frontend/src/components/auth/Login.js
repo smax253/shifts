@@ -5,9 +5,12 @@ import { AuthContext } from '../../auth/AuthContext';
 import email from 'email-validator';
 import auth from '../../config/auth';
 import { useApolloClient, useMutation } from '@apollo/client';
+import { useAlert } from 'react-alert';
 import queries from '../../queries';
 
 const Login = () => {
+
+  const alert = useAlert();
 
   // eslint-disable-next-line no-unused-vars
   const [authUser, setAuthUser] = React.useContext(AuthContext);
@@ -25,16 +28,33 @@ const Login = () => {
     event.preventDefault();
     const valid = email.validate(emailInput);
     if (!valid) {
+      
+      alert.show('Invalid email. Please try again.', {
+        title: 'Login failed!'
+      });
 
       return;
     
     }
-    const user = await auth.signInWithEmailAndPassword(emailInput, passwordInput);
-    setAuthUser(user);
-    // eslint-disable-next-line no-console
-    console.log(user);
+    try {
 
-    setRedirectToReferrer(true);
+      const user = await auth.signInWithEmailAndPassword(emailInput, passwordInput);
+      setAuthUser(user);
+      // eslint-disable-next-line no-console
+      console.log(user);
+
+      setRedirectToReferrer(true);
+
+    } catch (e) {
+
+      alert.show('That username and password combination does not exist. Please try again', {
+        title: 'Login failed.'
+      });
+
+      return;
+
+    }
+   
   
   }
 
@@ -44,18 +64,42 @@ const Login = () => {
     const valid = email.validate(emailInput);
     const takenQuery = await client.query({ query: queries.CHECK_USERNAME, variables: { username: usernameInput } });
     const taken = takenQuery.data.checkUsername;
-    if (!valid || taken || !usernameInput || passwordInput != confirmPasswordInput) {
+    if (!valid || !usernameInput || passwordInput != confirmPasswordInput) {
 
-      console.warn('invalid form data');
+      alert.show('Invalid form data. Please make sure you have completed the entire form and the passwords match', {
+        title: 'Registration failed'
+      })
       return;
     
     }
 
-    const user = await auth.createUserWithEmailAndPassword(emailInput, passwordInput);
-    
-    addUser({ variables: { username: usernameInput, userID: user.user.uid } })
-    setAuthUser(user);
-    setRedirectToReferrer(true);
+    if (taken) {
+      
+      alert.show('Please try again with another username.', {
+        title: 'Username taken.'
+      })
+      return;
+
+    }
+
+    try {
+
+      const user = await auth.createUserWithEmailAndPassword(emailInput, passwordInput);
+      
+      addUser({ variables: { username: usernameInput, userID: user.user.uid } })
+      setAuthUser(user);
+      setRedirectToReferrer(true);
+
+    } catch (e) {
+      
+      alert.show('Oh no! We were not able to register you. Please try again with a valid email and password.', {
+        title: 'Registration failed',
+      });
+
+      return;
+
+    }
+
 
   }
 

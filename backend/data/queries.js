@@ -9,7 +9,7 @@ const roomData = data.rooms;
 
 const typeDefs = gql`
   type User {
-    username: String
+    username: String!
     favorites: [Stock]
     userID: ID!
   }
@@ -75,7 +75,7 @@ const resolvers = {
     
     /* Rooms */
     rooms: async (_, args) => await roomData.getAllRooms(),
-    getRoom: async (_, args) => await roomData.getRoom(),
+    getRoom: async (_, args) => await roomData.getRoom(args.stockSymbol),
   },
 
   Mutation: {
@@ -93,7 +93,10 @@ const resolvers = {
       return await roomData.addMessage(args.stockSymbol, args.author, args.text);
     },
 
-    clearStocks: async (_, args) => console.log('TODO'),
+    clearStocks: async (_, args) => {
+      return await stockData.wipeStocks();
+    },
+    
     generateStocks: async (_, args) => {
       return await stockData.generateStocks();
     }
