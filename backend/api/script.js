@@ -50,16 +50,13 @@ const runScript = async () => {
             socket.send(JSON.stringify({ 'type': 'subscribe', 'symbol': `${stock}` }));
         });
 
-        console.log(topTickers)
-
         await wipeStocks();
         let topTickerStocks = topTickers.map((value) => {
             return value.stock
         });
-
-        console.log(topTickerStocks)
         
-        await generateStocks(topTickerStocks); 
+        await generateStocks(topTickerStocks);
+        
         socket.addEventListener('message', (event) => {
             let data = JSON.parse(event.data);
             if (data.type === 'trade') {
@@ -107,5 +104,5 @@ socket.addEventListener('open', async () => {
         });
 
         runScript();
-    }, 1800000); // change this to 24 hours
+    }, 43200000); // change this to 24 hours
 });

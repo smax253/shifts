@@ -95,7 +95,7 @@ module.exports = {
       })
       .then(async function (data) {
         //Parsing Data
-        newStock.name = data["Name"];
+        newStock.name = "Name" in data ? data["Name"] : symbol;
       });
     
     const API_Call2 =
@@ -136,7 +136,6 @@ module.exports = {
       return;
     }
 
-    // console.log(newStock);
     // Add a new document in collection "users" with ID 'username'
     const res = await db.collection('stocks').doc(symbol).set(newStock);
     return await this.getStock(symbol);
@@ -144,11 +143,8 @@ module.exports = {
 
   async generateStocks(tickers) {
     //web scrapper do this part
-    console.log(tickers);
-    //let presets = ["COIN", "MSFT", "AAPL", "DASH", "SNAP", "TSLA", "NFLX", "GOOG", "FB", "DIS"];
-    let presets = ["COIN"];
+    let presets = ["COIN", "MSFT", "AAPL", "DASH", "SNAP", "TSLA", "NFLX", "GOOG", "FB", "DIS"];
     let arr = [...presets, ...tickers];
-    console.log(arr)
 
     for (let i = 0; i < arr.length; i++) {
       const delay = ms => new Promise(res => setTimeout(res, ms));
@@ -161,7 +157,6 @@ module.exports = {
   },
 
   async wipeStocks() {
-    console.log("firing")
     let allStocks = await module.exports.getAllStocks();
     let allSymbols = [];
     for (let stock of allStocks) {
