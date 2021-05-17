@@ -158,15 +158,23 @@ module.exports = {
   async wipeStocks() {
     console.log("firing")
     let allStocks = await this.getAllStocks();
-    allStocks.forEach((stock) => {
-      db.collection('stocks').doc(stock.symbol).delete().then(() => {
-        console.log('successfully deleted ' + stock.symbol)
-        await roomData.deleteRoom(stock.symbol);
-      }).catch((error) => {
-        console.log('error deleting ' + stock.symbol)
-        console.log(error)
-      })
-    })
+    let allSymbols = [];
+    for (let stock of allStocks) {
+        allSymbols.push(stock.symbol)
+        db.collection('stocks').doc(stock.symbol).delete().then(() => {
+          console.log('successfully deleted ' + stock.symbol)
+          
+            //await roomData.deleteRoom(stock.symbol);
+        }).catch((error) => {
+          console.log('error deleting ' + stock.symbol)
+          console.log(error)
+        }) 
+    }
+
+    for (let i = 0; i < allSymbols.length; i++) {
+        await roomData.deleteRoom(allSymbols[i])
+    }
+
     return await this.getAllStocks();
   }
 }
