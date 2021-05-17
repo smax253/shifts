@@ -142,9 +142,12 @@ module.exports = {
     return await this.getStock(symbol);
   },
 
-  async generateStocks() {
+  async generateStocks(tickers) {
     //web scrapper do this part
-    let arr = ["COIN", "MSFT", "AAPL", "GME", "T", "VZ", "NFLX", "GOOG"];
+    let presets = ["COIN", "MSFT", "AAPL", "DASH", "SNAP", "TSLA", "NFLX", "GOOG", "FB", "DIS"];
+    
+    let arr = [...presets, ...tickers];
+
     for (let i = 0; i < arr.length; i++) {
       const delay = ms => new Promise(res => setTimeout(res, ms));
       await this.addStock(arr[i]);
