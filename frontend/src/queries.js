@@ -45,6 +45,21 @@ const GET_ALL_ROOMS = gql`
     }
 `
 
+const GET_ROOM_DATA = gql`
+    query ($ticker: String!){
+        getRoom(stockSymbol: $ticker){
+            activeUsers{
+                username
+            }
+            messages{
+                author
+                time
+                text
+            }
+        }
+    }
+`
+
 const GET_GAINING_COMPANIES = gql`
     query getGainers($queryNum: Int){
         gainingCompanies(num: $queryNum){
@@ -93,5 +108,5 @@ const GET_STOCK_DATA = gql`
 
 
 export default {
-  GET_STOCK_DATA, CHECK_USERNAME, LOGIN_USER, ADD_USER, REMOVE_USER, GET_LOGGED_IN_USERS, GET_GAINING_COMPANIES, GET_LOSING_COMPANIES, GET_ALL_ROOMS
+  GET_ROOM_DATA,GET_STOCK_DATA, CHECK_USERNAME, LOGIN_USER, ADD_USER, REMOVE_USER, GET_LOGGED_IN_USERS, GET_GAINING_COMPANIES, GET_LOSING_COMPANIES, GET_ALL_ROOMS
 }

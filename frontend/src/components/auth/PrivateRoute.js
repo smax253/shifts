@@ -6,9 +6,12 @@ import { AuthContext } from '../../auth/AuthContext';
 const PrivateRoute = ({children, ...rest}) => {
 
   const [auth] = useContext(AuthContext);
-  return (
-    <Route {...rest} render={()=>{
+  
 
+  return (
+    <Route {...rest} render={() => {
+      
+      if(auth === undefined) return <div>Loading...</div>
       return auth ? children : <Redirect to="/login" />
     
     }} />

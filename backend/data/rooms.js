@@ -19,7 +19,14 @@ module.exports = {
         if (!doc.exists) {
           throw "Room does not exist";
         } else {
-          return doc.data();
+          const data = doc.data();
+          data.messages = data.messages.map((item) => {
+            return {
+              ...item,
+              time: item.time.toDate().getTime()
+            }
+          })
+          return data;
         }
     },
 

@@ -40,8 +40,6 @@ const Login = () => {
 
       const user = await auth.signInWithEmailAndPassword(emailInput, passwordInput);
       setAuthUser(user);
-      // eslint-disable-next-line no-console
-      console.log(user);
 
       setRedirectToReferrer(true);
 

@@ -11,7 +11,8 @@ if (!firebase.apps.length) {
   firebase.app(); // if already initialized, use that one
 
 }
-    
 const auth = firebase.auth();
+console.log(auth)
+
 export default auth;
 

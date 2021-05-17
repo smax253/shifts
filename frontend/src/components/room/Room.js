@@ -1,7 +1,5 @@
 import { Grid } from '@material-ui/core';
 import React, { useEffect, useMemo, useState } from 'react';
-import { useParams } from 'react-router';
-import fakeQueryData from '../../fakeQueryData';
 import '../../styles/Room.scss'
 import RoomList from '../shared/RoomList';
 import Chart from './Chart';
@@ -36,7 +34,7 @@ const StockDataSummary = ({name, symbol, data}) => {
     </div>
   
   }
-  console.warn(change);
+
   return (
     <div className="stock-data-summary">
       <div><div id="company-name">{name}</div><div>{symbol}</div></div>
@@ -65,10 +63,12 @@ StockDataSummary.propTypes = {
   symbol: PropTypes.string.isRequired
 }
 
-const Room = () => {
+const Room = ({ id, messages, setMessages }) => {
 
-  // eslint-disable-next-line no-unused-vars
-  const {id} = useParams();
+  const [chartMode, setChartMode] = React.useState('1m');
+  //const [, setCurrentPrice] = React.useState(0);
+  const [chartData, setChartData] = React.useState(undefined);
+  const [users, setUsers] = React.useState(undefined);
 
   // eslint-disable-next-line no-unused-vars
   const getStockQuery = useQuery(queries.GET_STOCK_DATA,
@@ -78,6 +78,7 @@ const Room = () => {
       }
     }
   )
+  const getRoomQuery = useQuery(queries.GET_ROOM_DATA, { variables: { ticker: id.toUpperCase() } });
   const allRoomsQuery = useQuery(queries.GET_ALL_ROOMS);
 
   const [activeRooms, setActiveRooms] = useState(null);
@@ -90,29 +91,51 @@ const Room = () => {
 
         return { ...item, active: item.activeUsers.length };
       
-      }).filter((item)=>item.stockSymbol !== id.toUpperCase())
-
+      }).filter((item) => item.stockSymbol !== id.toUpperCase());
       active.sort((a, b) => a.active - b.active);
-      
       setActiveRooms(active);
     
     }
   
   }, [allRoomsQuery, id])
-  const users = fakeQueryData.users;
-  const messages = fakeQueryData.messages;
-  const [messageText, setMessageText] = React.useState('');
 
+  useEffect(() => {
+
+    if (getRoomQuery.data && getRoomQuery.data.getRoom) {
+
+      setUsers(getRoomQuery.data.getRoom.activeUsers);
+      setMessages(getRoomQuery.data.getRoom.messages);
+    
+    }
+  
+  }, [getRoomQuery.data]);
+
+  useEffect(() => {
+
+    if (getStockQuery.data && getStockQuery.data.getStock) {
+
+      const rawData = getStockQuery.data.getStock.chart;
+      switch (chartMode) {
+
+      case '1m':
+        setChartData(rawData);
+        break;
+      case '5d':
+        setChartData(rawData.slice(Math.max(rawData.length - 5, 0)));
+        break;
+      default:
+        break;
+      
+      }
+    
+    }
+  
+  }, [chartMode, getStockQuery.data])
+  
   // eslint-disable-next-line no-unused-vars
   const loading = useMemo(() => allRoomsQuery.loading || getStockQuery.loading, [allRoomsQuery, getStockQuery]);
 
-  const sendMessage = React.useCallback((event)=>{
-
-    event.preventDefault();
-    // eslint-disable-next-line no-console
-    console.log('message sent: ', messageText);
   
-  })
   return (
      
     (<Grid container className="full-height">
@@ -124,10 +147,11 @@ const Room = () => {
           }
         </Grid>
         <Grid item xs={12} sm={8}>
-          {getStockQuery.data && getStockQuery.data.getStock
-            ? <Chart data={getStockQuery.data.getStock.chart}/>
+          {chartData
+            ? (<Chart data={chartData} setChartMode={setChartMode}/>)
             : <div>Loading...</div>
           }
+          
         </Grid>
       </Grid>
       <Grid container className="room-half">
@@ -138,16 +162,29 @@ const Room = () => {
           }
         </Grid>
         <Grid item xs={12} sm={2}>
-          <UserList userList={users}/>
+          {users
+            ? <UserList userList={users} />
+            : <div>Loading...</div>
+          }
         </Grid>
         <Grid item xs={12} sm={5}>
-          <ChatBox chatLog={messages} sendMessage={sendMessage} setMessageText={setMessageText}/>
+          {
+            messages
+              ? <ChatBox chatLog={messages} />
+              : <div>Loading...</div>
+          }
         </Grid>
       </Grid>
     </Grid>)
       
   )
 
+}
+
+Room.propTypes = {
+  id: PropTypes.string.isRequired,
+  messages: PropTypes.array,
+  setMessages:PropTypes.func,
 }
 
 export default Room

@@ -15,7 +15,13 @@
     justify-content: center;
     align-items: center;
     margin: 0 16px;
+    flex-direction: column;
+    box-sizing: border-box;
+    padding: 8px;
     //padding: 16px 0;
+    .stock-chart-controls{
+        display: flex;
+    }
 }
 .stock-data-summary{
     height: 100%;

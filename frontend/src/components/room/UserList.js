@@ -12,7 +12,7 @@ const UserList = ({userList}) => {
         <li key={item.id}>
           <Link to={`/profile/${item.id}`}>
             <div className="user">
-              {item.name}
+              {item.username}
             </div>
           </Link>
         </li>

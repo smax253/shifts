@@ -3,7 +3,6 @@ import './styles/App.scss';
 import {BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import Home from './components/home_page/Home';
 import Profile from './components/profile/Profile';
-import Room from './components/room/Room';
 import PrivateRoute from './components/auth/PrivateRoute';
 import Login from './components/auth/Login';
 import NavBar from './components/shared/NavBar';
@@ -14,6 +13,7 @@ import AlertTemplate from 'react-alert-template-mui';
 
 import {ApolloClient, HttpLink, InMemoryCache, ApolloProvider} from '@apollo/client';
 import auth from './config/auth';
+import RoomWrapper from './components/room/RoomWrapper';
 
 const client = new ApolloClient({
   cache: new InMemoryCache(),
@@ -26,10 +26,15 @@ function App() {
 
   
   const [authUser, setAuthUser] = React.useState(undefined);
-  auth.onAuthStateChanged(user => {
+  auth.onAuthStateChanged((user) => {
 
-    if (user) setAuthUser(user);
-  
+    if (user) {
+      
+      setAuthUser(user);
+    
+    }
+    else setAuthUser(null);
+
   })
 
   return (
@@ -50,7 +55,7 @@ function App() {
                     <Profile/>
                   </PrivateRoute>
                   <PrivateRoute path="/stock/:id">
-                    <Room/>
+                    <RoomWrapper/>
                   </PrivateRoute>
                   <PrivateRoute path="/dashboard">
                     <Dashboard/>

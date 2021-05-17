@@ -27,38 +27,30 @@ const queries = {
                 stockSymbol
             }
         }
+    `,
+    GET_USERNAME: gql`
+        query($id: String!){
+            getUserById(id: $id){
+                username
+            }
+        }
     `
 }
 
-io.use(async (socket, next) => {
-    
-    /*try {
-        const { uid } = await admin.auth().verifyIdToken(userToken);
-        socket.uid = uid;
-        return next();
-    } catch (err) {
-        return next(err);
-    }*/
-    next();
-
-})
-
-io.on("connection", (socket) => {
+io.on("connection", async (socket) => {
     const userToken = socket.handshake.query.userToken;
-    /*try {
-        const { uid } = await admin.auth().verifyIdToken(userToken);
-        socket.uid = uid;
+    let uid;
+    try {
+        uid = (await admin.auth().verifyIdToken(userToken)).uid;
     } catch (err) {
         return socket.disconnect(true);
-    }*/
+    }
+    const { data } = await client.query({ query: queries.GET_USERNAME, variables: { id: uid } });
+    const username = data.getUserById.username;
     const symbol = socket.handshake.query.symbol;
-    console.log('symbol', symbol);
-    console.log('uid', socket.uid);
     if (!symbol) return socket.disconnect(true);
     socket.join(symbol);
     socket.on('message', async (message) => {
-        console.log(message);
-        const username = 'username';
         await client.mutate({
             mutation: queries.ADD_MESSAGE,
             variables: {
@@ -69,10 +61,10 @@ io.on("connection", (socket) => {
         });
         const newMessage = {
             text: message,
-            time: new Date(),
+            time: new Date().toString(),
             author: username,
         }
-        io.emit('message', newMessage);
+        io.sockets.to(symbol).emit('chat', newMessage);
     })
 })
 

@@ -1,17 +1,19 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Tooltip } from '@material-ui/core';
+import socket from '../../socket/socket';
 
-const ChatBox = ({chatLog, sendMessage, setMessageText}) => {
+const ChatBox = ({chatLog}) => {
 
+  const [messageText, setMessageText] = useState('');
   const renderMessages = useCallback(()=>{
 
     const messageDivs = chatLog.map((item, index)=>{
 
       return (
         <div key={index} className="message">
-          <Tooltip title={item.time}>
-            <span className="message-username">{item.author.username}: </span>
+          <Tooltip title={new Date(Number(item.time)).toString()}>
+            <span className="message-username">{item.author}: </span>
           </Tooltip>
           <span>{item.text}</span>
         </div>
@@ -21,13 +23,20 @@ const ChatBox = ({chatLog, sendMessage, setMessageText}) => {
 
     return <div className="message-list">{messageDivs}</div>
   
-  }, chatLog)
+  }, [chatLog])
 
   return (
     <div className="chat-box">
       {renderMessages()}
-      <form onSubmit={() => sendMessage()}>
-        <input type="text" placeholder="Type something here..." onChange={(event) => setMessageText(event.target.value)}/>
+      <form onSubmit={(event) => {
+
+        event.preventDefault()
+        setMessageText('');
+        socket.sendMessageSocket({ message: messageText });
+        
+      }
+      }>
+        <input type="text" placeholder="Type something here..." value={messageText} onChange={(event) => setMessageText(event.target.value)}/>
         <button type="submit">Send</button>
       </form>
     </div>
