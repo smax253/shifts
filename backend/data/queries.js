@@ -98,7 +98,7 @@ const resolvers = {
     },
     
     generateStocks: async (_, args) => {
-      return await stockData.generateStocks();
+      return await stockData.generateStocks(args.topTickerSymbols = []);
     }
   },
 };

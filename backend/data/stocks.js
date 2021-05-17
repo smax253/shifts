@@ -144,23 +144,25 @@ module.exports = {
 
   async generateStocks(tickers) {
     //web scrapper do this part
-    let presets = ["COIN", "MSFT", "AAPL", "DASH", "SNAP", "TSLA", "NFLX", "GOOG", "FB", "DIS"];
-    
+    console.log(tickers);
+    //let presets = ["COIN", "MSFT", "AAPL", "DASH", "SNAP", "TSLA", "NFLX", "GOOG", "FB", "DIS"];
+    let presets = ["COIN"];
     let arr = [...presets, ...tickers];
+    console.log(arr)
 
     for (let i = 0; i < arr.length; i++) {
       const delay = ms => new Promise(res => setTimeout(res, ms));
-      await this.addStock(arr[i]);
+      await module.exports.addStock(arr[i]);
       await roomData.addRoom(arr[i]);
       await delay(60000);
     }
     console.log("Done!");
-    return await this.getAllStocks();
+    return await module.exports.getAllStocks();
   },
 
   async wipeStocks() {
     console.log("firing")
-    let allStocks = await this.getAllStocks();
+    let allStocks = await module.exports.getAllStocks();
     let allSymbols = [];
     for (let stock of allStocks) {
         allSymbols.push(stock.symbol)
@@ -178,6 +180,6 @@ module.exports = {
         await roomData.deleteRoom(allSymbols[i])
     }
 
-    return await this.getAllStocks();
+    return await module.exports.getAllStocks();
   }
 }
