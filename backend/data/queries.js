@@ -15,6 +15,7 @@ const typeDefs = gql`
   }
 
   type Stock {
+    name: String
     symbol: String
     prices: [Price]
     chart: [Price]

@@ -46,6 +46,11 @@
 }
 #company-name{
     font-size: 40px;
+    text-align: start;
+}
+#company-title{
+    display: flex;
+    align-items: flex-end;
 }
 #price{
     font-size: 32px;

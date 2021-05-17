@@ -93,6 +93,7 @@ const GET_STOCK_DATA = gql`
     query ($ticker: String!){
         getStock(symbol: $ticker){
             symbol
+            name
             prices{
                 date
                 value

@@ -61,7 +61,7 @@ io.on("connection", async (socket) => {
         });
         const newMessage = {
             text: message,
-            time: new Date().toString(),
+            time: new Date().getTime(),
             author: username,
         }
         io.sockets.to(symbol).emit('chat', newMessage);

@@ -11,13 +11,14 @@ import queries from '../../queries';
 
 const StockDataSummary = ({name, symbol, data}) => {
 
-  const price = 2316.16;
+  
   const change = {};
   data.forEach((item) => {
 
     change[item.date] = item.value;
   
   })
+  const price = change['1d'];
   const calcPercentage = (difference) => {
 
     const percent = `${(difference / price * 100).toFixed(2)}%`;
@@ -26,9 +27,14 @@ const StockDataSummary = ({name, symbol, data}) => {
   }
 
   const renderNumber = (value) => {
-
+    if (Number.isNaN(+value)) {
+      return <div className={'neutral'}>
+        <span className="price-value">-- </span>
+        <span className="price-change">(--%)</span>
+      </div>
+    }
     value = price - value;
-    return <div className={value > 0 ? 'positive' : 'negative'}>
+    return <div className={value > 0 ? 'positive' : value < 0 ? 'negative' : 'neutral'}>
       <span className="price-value">{value > 0 ? '+' + (value.toFixed(2)) : value.toFixed(2)}</span>
       <span className="price-change">{calcPercentage(value)}</span>
     </div>
@@ -37,9 +43,9 @@ const StockDataSummary = ({name, symbol, data}) => {
 
   return (
     <div className="stock-data-summary">
-      <div><div id="company-name">{name}</div><div>{symbol}</div></div>
+      <div id="company-title"><div id="company-name">{name}</div><div>{symbol}</div></div>
       
-      <div id="current-price"><div id="price">{price}</div>{renderNumber(2310)}</div>
+      <div id="current-price"><div id="price">{price}</div>{renderNumber(change['1d'])}</div>
       <div><div>1 Day</div>{renderNumber(change['1d'])}</div>
       
       <div><div>1 Week</div>{renderNumber(change['1w'])}</div>
@@ -142,7 +148,7 @@ const Room = ({ id, messages, setMessages }) => {
       <Grid container className="room-half">
         <Grid item xs={12} sm={4}>
           {getStockQuery.data && getStockQuery.data.getStock
-            ? <StockDataSummary symbol={id.toUpperCase()} data={getStockQuery.data.getStock.prices} />
+            ? <StockDataSummary name={getStockQuery.data.getStock.name} symbol={id.toUpperCase()} data={getStockQuery.data.getStock.prices} />
             : <div>Loading...</div>
           }
         </Grid>

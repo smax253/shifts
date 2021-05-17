@@ -28,6 +28,9 @@
 .negative{
     color: red;
 }
+.positive,.negative,.neutral{
+    padding-left: 8px;
+}
 .list-container{
     height: 100%;
     box-sizing: border-box;

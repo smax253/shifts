@@ -23,7 +23,7 @@ module.exports = {
           data.messages = data.messages.map((item) => {
             return {
               ...item,
-              time: item.time.toDate().getTime()
+              time: item.time.toDate()
             }
           })
           return data;
