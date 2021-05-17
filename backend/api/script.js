@@ -3,7 +3,7 @@ const WebSocket = require('ws');
 const socket = new WebSocket('wss://ws.finnhub.io?token=c2feaaqad3ien4445gh0');
 const fetch = require('node-fetch');
 const sendStockData = require('../socket/');
-const { generateStocks, wipeStocks } = require('../data/stocks');
+const { generateStocks, wipeStocks, getAllStocks } = require('../data/stocks');
 
 let prices = {};
 let topTickers = [];
@@ -50,12 +50,23 @@ const runScript = async () => {
             socket.send(JSON.stringify({ 'type': 'subscribe', 'symbol': `${stock}` }));
         });
 
-        await wipeStocks();
+        let allStocks = await getAllStocks();
+
+       
         let topTickerStocks = topTickers.map((value) => {
             return value.stock
         });
+       
+        let newTickers = topTickerStocks.filter(item1 =>
+            !allStocks.some(item2 => (item2.stock === item1.stock)))
         
-        await generateStocks(topTickerStocks);
+        //should we possibly check length
+        let oldTickers = allStocks.filter(item1 => 
+            !topTickerStocks.some(item2 => (item2.stock === item1.stock)))
+       
+        await generateStocks(newTickers);
+        await wipeStocks(oldTickers);
+         
         
         socket.addEventListener('message', (event) => {
             let data = JSON.parse(event.data);

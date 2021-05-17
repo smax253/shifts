@@ -158,8 +158,7 @@ module.exports = {
     return await module.exports.getAllStocks();
   },
 
-  async wipeStocks() {
-    let allStocks = await module.exports.getAllStocks();
+  async wipeStocks(allStocks = await module.exports.getAllStocks()) {
     let allSymbols = [];
     for (let stock of allStocks) {
         allSymbols.push(stock.symbol)
