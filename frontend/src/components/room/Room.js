@@ -9,7 +9,7 @@ import ChatBox from './ChatBox';
 import { useQuery } from '@apollo/client';
 import queries from '../../queries';
 
-const StockDataSummary = ({name, symbol, data}) => {
+const StockDataSummary = ({name, symbol, data, price}) => {
 
   
   const change = {};
@@ -18,7 +18,6 @@ const StockDataSummary = ({name, symbol, data}) => {
     change[item.date] = item.value;
   
   })
-  const price = change['1d'];
   const calcPercentage = (difference) => {
 
     const percent = `${(difference / price * 100).toFixed(2)}%`;
@@ -45,7 +44,7 @@ const StockDataSummary = ({name, symbol, data}) => {
     <div className="stock-data-summary">
       <div id="company-title"><div id="company-name">{name}</div><div>{symbol}</div></div>
       
-      <div id="current-price"><div id="price">{price}</div>{renderNumber(change['1d'])}</div>
+      <div id="current-price"><div id="price">{price}</div>{renderNumber(price)}</div>
       <div><div>1 Day</div>{renderNumber(change['1d'])}</div>
       
       <div><div>1 Week</div>{renderNumber(change['1w'])}</div>
@@ -66,7 +65,8 @@ const StockDataSummary = ({name, symbol, data}) => {
 StockDataSummary.propTypes = {
   data: PropTypes.array.isRequired,
   name: PropTypes.string.isRequired,
-  symbol: PropTypes.string.isRequired
+  symbol: PropTypes.string.isRequired,
+  price: PropTypes.number.isRequired
 }
 
 const Room = ({ id, messages, setMessages }) => {
@@ -129,6 +129,9 @@ const Room = ({ id, messages, setMessages }) => {
       case '5d':
         setChartData(rawData.slice(Math.max(rawData.length - 5, 0)));
         break;
+      case '15d':
+        setChartData(rawData.slice(Math.max(rawData.length - 15, 0)));
+        break;
       default:
         break;
       
@@ -147,8 +150,13 @@ const Room = ({ id, messages, setMessages }) => {
     (<Grid container className="full-height">
       <Grid container className="room-half">
         <Grid item xs={12} sm={4}>
-          {getStockQuery.data && getStockQuery.data.getStock
-            ? <StockDataSummary name={getStockQuery.data.getStock.name} symbol={id.toUpperCase()} data={getStockQuery.data.getStock.prices} />
+          {getStockQuery.data && getStockQuery.data.getStock &&chartData
+            ? <StockDataSummary
+              name={getStockQuery.data.getStock.name}
+              symbol={id.toUpperCase()}
+              data={getStockQuery.data.getStock.prices}
+              price={chartData[chartData.length - 1].value}
+            />
             : <div>Loading...</div>
           }
         </Grid>
