@@ -3,6 +3,8 @@ const { addResolveFunctionsToSchema } = require("graphql-tools");
 const firebaseConnections = require("../config/firebaseConnections");
 const db = firebaseConnections.initializeCloudFirebase();
 
+const userData = require('./users');
+
 module.exports = {
     async getAllRooms() {
         const snapshot = await db.collection('rooms').get();
@@ -63,5 +65,45 @@ module.exports = {
         roomData.messages.push(newMessage);
         const res = await db.collection('rooms').doc(stockSymbol).set(roomData);
         return this.getRoom(stockSymbol);
+    },
+
+    async updateRoom(newRoomData) {
+        try {
+            const res = await db.collection('rooms').doc(stockSymbol).set(newRoomData);
+            return this.getRoom(newRoom.stockSymbol);
+        } catch (e) {
+            throw (e);
+        }
+    },
+
+    async addUserToRoom(userName, stockSymbol) {
+        try {
+            let user = await userData.getUser(userName)
+            let room = await module.exports.getRoom(stockSymbol);
+
+            room.activeUsers.push(user);
+
+            await this.updateRoom(room);
+        } catch (e) {
+            throw (e);
+        }
+    },
+
+    async deleteUserFromRoom(userName, stockSymbol) {
+        try {
+            let user = await userData.getUser(userName);
+            let room = await module.exports.getRoom(stockSymbol);
+
+            if (room.activeUsers.includes(userName)) {
+                let newRoom = room.filter((users) => {
+                    users != userName;
+                })
+                await this.updateRoom(newRoom);
+            } else {
+                throw "That user is not in the room " + stockSymbol;
+            }
+        } catch (e) {
+            throw e;
+        }
     }
 }
