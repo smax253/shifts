@@ -93,7 +93,10 @@ const resolvers = {
       return await roomData.addMessage(args.stockSymbol, args.author, args.text);
     },
 
-    clearStocks: async (_, args) => console.log('TODO'),
+    clearStocks: async (_, args) => {
+      return await stockData.wipeStocks();
+    },
+    
     generateStocks: async (_, args) => {
       return await stockData.generateStocks();
     }
