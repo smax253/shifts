@@ -2,6 +2,7 @@
 const firebaseConnections = require("../config/firebaseConnections");
 const db = firebaseConnections.initializeCloudFirebase();
 
+const roomData = require("./rooms.js");
 
 const fetch = require("node-fetch");
 const { database } = require("firebase-admin");
@@ -147,6 +148,7 @@ module.exports = {
     for (let i = 0; i < arr.length; i++) {
       const delay = ms => new Promise(res => setTimeout(res, ms));
       await this.addStock(arr[i]);
+      await roomData.addRoom(arr[i]);
       await delay(60000);
     }
     console.log("Done!");
