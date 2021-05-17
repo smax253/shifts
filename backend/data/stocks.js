@@ -32,7 +32,7 @@ module.exports = {
     //do alphavantage call here
     if (!symbol) throw "Stock symbol does not exist";
     
-    const API_KEY = "YAYEHCCFPUK5S4J9";
+    const API_KEY = "GLS602AYJC0P3DKO";
 
     const API_Call =
       `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=` +
@@ -145,6 +145,8 @@ module.exports = {
     //web scrapper do this part
     let presets = ["COIN", "MSFT", "AAPL", "DASH", "SNAP", "TSLA", "NFLX", "GOOG", "FB", "DIS"];
     let arr = [...presets, ...tickers];
+    
+    console.log("Adding the following tickers to the firebase \'stocks\' collection:", arr);
 
     for (let i = 0; i < arr.length; i++) {
       const delay = ms => new Promise(res => setTimeout(res, ms));
