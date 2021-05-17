@@ -41,6 +41,7 @@ module.exports = {
     
     let newStock = {
       symbol: symbol,
+      name: "NA",
       prices: [],
       chart: [],
     };
@@ -80,6 +81,22 @@ module.exports = {
 
       });
     
+    //name
+    const API_Call3 =
+      `https://www.alphavantage.co/query?function=OVERVIEW&symbol=` +
+      symbol +
+      `&apikey=` +
+      API_KEY;
+
+    await fetch(API_Call3)
+      .then(function (response) {
+        return response.json();
+      })
+      .then(async function (data) {
+        //Parsing Data
+        newStock.name = data["Name"];
+      });
+    
     const API_Call2 =
       `https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol=` +
       symbol +
@@ -111,6 +128,8 @@ module.exports = {
 
       });
     
+    
+    
     if (newStock.prices === []) {
       console.log("Did not update " + symbol)
       return;
@@ -128,7 +147,7 @@ module.exports = {
     for (let i = 0; i < arr.length; i++) {
       const delay = ms => new Promise(res => setTimeout(res, ms));
       await this.addStock(arr[i]);
-      await delay(30000);
+      await delay(60000);
     }
     console.log("Done!");
     return await this.getAllStocks();
