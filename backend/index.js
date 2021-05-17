@@ -1,7 +1,8 @@
 const express = require("express");
 const { ApolloServer, gql } = require('apollo-server-express');
 const { typeDefs, resolvers} = require("./data/queries");
-const {Worker} = require("worker_threads");
+const { Worker } = require("worker_threads");
+require('./socket')
 
 let scraperWorker = new Worker('./api/script.js');
 

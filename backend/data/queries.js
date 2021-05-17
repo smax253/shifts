@@ -9,7 +9,7 @@ const roomData = data.rooms;
 
 const typeDefs = gql`
   type User {
-    username: String
+    username: String!
     favorites: [Stock]
     userID: ID!
   }
@@ -75,7 +75,7 @@ const resolvers = {
     
     /* Rooms */
     rooms: async (_, args) => await roomData.getAllRooms(),
-    getRoom: async (_, args) => await roomData.getRoom(),
+    getRoom: async (_, args) => await roomData.getRoom(args.stockSymbol),
   },
 
   Mutation: {
