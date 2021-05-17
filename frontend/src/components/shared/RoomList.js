@@ -12,7 +12,7 @@ const RoomList = ({ title, tickerList, showPrices, className, id }) => {
 
       const value = stock.active;
       return (
-        <li key={stock.ticker}>
+        <li key={stock.stockSymbol}>
             
           <Link to={`/stock/${stock.stockSymbol}`} >
             <div className='activity'>
