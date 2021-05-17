@@ -3,6 +3,7 @@ const WebSocket = require('ws');
 const socket = new WebSocket('wss://ws.finnhub.io?token=c2feaaqad3ien4445gh0');
 const fetch = require('node-fetch');
 const sendStockData = require('../socket/');
+const { generateStocks, wipeStocks } = require('../data/stocks');
 
 let prices = {};
 let topTickers = [];
@@ -50,8 +51,8 @@ const runScript = async () => {
             socket.send(JSON.stringify({ 'type': 'subscribe', 'symbol': `${stock}` }));
         });
 
-        // drop database here?
-        // and add in the database
+        await wipeStocks();
+        await generateStocks(topTickers);
 
         socket.addEventListener('message', (event) => {
             let data = JSON.parse(event.data);
