@@ -8,7 +8,9 @@ import PrivateRoute from './components/auth/PrivateRoute';
 import Login from './components/auth/Login';
 import NavBar from './components/shared/NavBar';
 import Dashboard from './components/dashboard/Dashboard';
-import {AuthContext} from './auth/AuthContext';
+import { AuthContext } from './auth/AuthContext';
+import { Provider as AlertProvider } from 'react-alert'
+import AlertTemplate from 'react-alert-template-mui';
 
 import {ApolloClient, HttpLink, InMemoryCache, ApolloProvider} from '@apollo/client';
 import auth from './config/auth';
@@ -32,34 +34,36 @@ function App() {
 
   return (
     <AuthContext.Provider value={[authUser, setAuthUser]}>
-      <ApolloProvider client={client}>
-        <Router>
-          <div className="App">
-            <header className="App-header">
-              <NavBar />
-            </header>
-            <div className="App-body">
-              <Switch>
-                <Route exact path="/">
-                  <Home />
-                </Route>
-                <PrivateRoute path="/profile/:id">
-                  <Profile/>
-                </PrivateRoute>
-                <PrivateRoute path="/stock/:id">
-                  <Room/>
-                </PrivateRoute>
-                <PrivateRoute path="/dashboard">
-                  <Dashboard/>
-                </PrivateRoute>
-                <Route path='/login'>
-                  <Login />
-                </Route>
-              </Switch>
-            </div>
-          </div> 
-        </Router>
-      </ApolloProvider>
+      <AlertProvider template={AlertTemplate}>
+        <ApolloProvider client={client}>
+          <Router>
+            <div className="App">
+              <header className="App-header">
+                <NavBar />
+              </header>
+              <div className="App-body">
+                <Switch>
+                  <Route exact path="/">
+                    <Home />
+                  </Route>
+                  <PrivateRoute path="/profile/:id">
+                    <Profile/>
+                  </PrivateRoute>
+                  <PrivateRoute path="/stock/:id">
+                    <Room/>
+                  </PrivateRoute>
+                  <PrivateRoute path="/dashboard">
+                    <Dashboard/>
+                  </PrivateRoute>
+                  <Route path='/login'>
+                    <Login />
+                  </Route>
+                </Switch>
+              </div>
+            </div> 
+          </Router>
+        </ApolloProvider>
+      </AlertProvider>
     </AuthContext.Provider>
   );
 
