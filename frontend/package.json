@@ -57,6 +57,14 @@
     "eslint-plugin-react": "^7.23.2"
   },
   "react-dotenv": {
-    "whitelist": ["apiKey", "authDomain", "projectId", "storageBucket", "messagingSenderId", "appId", "measurementId"]
+    "whitelist": [
+      "apiKey",
+      "authDomain",
+      "projectId",
+      "storageBucket",
+      "messagingSenderId",
+      "appId",
+      "measurementId"
+    ]
   }
 }

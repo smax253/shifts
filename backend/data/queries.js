@@ -58,7 +58,7 @@ const typeDefs = gql`
     getRoom(stockSymbol: String!): Room
     topMovers: [Room]
     
-    getUserFavorites(userToken: String!): [String]
+    getUserFavorites(userToken: String!): [Room]
     checkUsername(username: String!): Boolean
   }
 

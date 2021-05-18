@@ -49,7 +49,7 @@ io.on("connection", async (socket) => {
         return socket.disconnect(true);
     }
 //    console.log('user token')
- //   console.log(userToken);
+    console.log(userToken);
     const { data } = await client.query({ query: queries.GET_USERNAME, variables: { id: uid } });
     const username = data.getUserById.username;
     const symbol = socket.handshake.query.symbol;

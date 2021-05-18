@@ -7,6 +7,8 @@ const { generateStocks, wipeStocks, getAllStocks } = require('../data/stocks');
 const stocks = require('../data/stocks');
 const { initializeCloudFirebase } = require('../config/firebaseConnections');
 const admin = initializeCloudFirebase();
+
+
 let prices = {};
 let topTickers = [];
 
@@ -40,13 +42,15 @@ const fetchTopTickers = async () => {
  */
 const runScript = async () => {
     try {
-        //topTickers = await fetchTopTickers();
-        topTickers = [{
-            stock:'T'
-        }, {
-                stock:'AMC'
-        }]
-        //topTickers.push({ stock: 'BINANCE:BTCUSDT', timesCounted: 0 }); // remove this as this is just test data
+        topTickers = await fetchTopTickers();
+
+        //await stocks.updateStockMentions(topTickers);
+        // topTickers = [{
+        //     stock:'T'
+        // }, {
+        //         stock:'AMC'
+        // }]
+        // //topTickers.push({ stock: 'BINANCE:BTCUSDT', timesCounted: 0 }); // remove this as this is just test data
 
         topTickers.forEach(({ stock }) => {
             prices[stock] = [];

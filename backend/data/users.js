@@ -4,6 +4,7 @@ const passwordHash = require("password-hash");
 const firebaseConnections = require("../config/firebaseConnections");
 const db = firebaseConnections.initializeCloudFirebase();
 const admin = require('firebase-admin');
+const roomData = require('./rooms')
  
 module.exports = {
     /* gets all documents in users */
@@ -148,7 +149,10 @@ module.exports = {
 
     try {
       let getUserData = await module.exports.getUserById(user.uid);
-      return getUserData.favorites;
+      let rooms = await Promise.all(getUserData.favorites.map(async (stock) => {
+        return await roomData.getRoom(stock);
+      }));
+      return rooms;
     } catch (e) {
       throw e;
     }

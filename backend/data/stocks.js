@@ -281,5 +281,16 @@ module.exports = {
       ]
     }
     return indexes;
+  },
+/*
+  async updateMentions(tickerMentions) {
+    try {
+      for (let { stock, timesCounted } of tickerMentions) {
+        const res = await db.collection('stockMentions').doc(stock).set(timesCounted);
+      }
+    } catch (e) {
+      throw e
+   } 
   }
+  */
 }

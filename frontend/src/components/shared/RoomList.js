@@ -25,6 +25,7 @@ const RoomList = ({ title, tickerList, showPrices, className, id, sortActive }) 
       const stockData = stockDataList.find((item) => item.symbol === stock.stockSymbol);
       console.log('data', stockData)
       const value = stock.active;
+      console.log()
       const current = stockData.daily.find((item) => item.date === 'c').value;
       const prev = stockData.daily.find((item) => item.date === 'pc').value;
       const change = Math.round((current - prev)*100)/100;
@@ -59,7 +60,7 @@ const RoomList = ({ title, tickerList, showPrices, className, id, sortActive }) 
   return (
     <div id={id ? id : ''} className={`room-list ${showPrices ? 'prices' : 'active'} ${className ? className : ''}`}>
       <span className="room-list-title">{title}</span>
-      {!loading && data && generateActiveLinks(data.getStocks)}
+      {!loading && data && data.getStocks && generateActiveLinks(data.getStocks)}
     </div>
   )
 
