@@ -286,15 +286,39 @@ module.exports = {
     }
     return indexes;
   },
-/*
+
   async updateMentions(tickerMentions) {
+    console.log("tickerMentions here")
     try {
       for (let { stock, timesCounted } of tickerMentions) {
-        const res = await db.collection('stockMentions').doc(stock).set(timesCounted);
+        console.log("iterating...")
+        const res = await db.collection('stockMentions').doc(stock).set({ "symbol": stock, "timesCounted": timesCounted });
       }
     } catch (e) {
       throw e
    } 
+  },
+
+  async getTopMentions() {
+    console.log("here get")
+    try {
+      console.log("made it here")
+      const allStockMentions = await db.collection('stockMentions').get();
+      let arr = [];
+      allStockMentions.forEach((item) => {
+        arr.push(item.data())
+      })
+      console.log(arr)
+      let getRooms = await Promise.all(arr.map(async ({ symbol, timesCounted}) => {
+        return await roomData.getRoom(symbol)
+      }))
+      getRooms = getRooms.length > 10 ? getRooms.slice(0, 10) : getRooms;
+      return getRooms;
+      
+
+    } catch (e) {
+      throw e
+    }
   }
-  */
+
 }

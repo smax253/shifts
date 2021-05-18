@@ -62,6 +62,8 @@ const typeDefs = gql`
     getStocks(symbols: [String]!): [Stock]
     getRoom(stockSymbol: String!): Room
     topMovers: [Room]
+
+    getTopMentions: [Room]
     
     getUserFavorites(userToken: String!): [Room]
     checkUsername(username: String!): Boolean
@@ -104,6 +106,7 @@ const resolvers = {
     topMovers: async (_, args) => await stockData.topMovers(),
     getStocks: async (_, args) => await stockData.getStocks(args.symbols),
     indexes: async (_, args) => await stockData.indexes(),
+    getTopMentions: async(_, args) => await stockData.getTopMentions(),
     
     /* Rooms */
     rooms: async (_, args) => await roomData.getAllRooms(),

@@ -43,8 +43,10 @@ const fetchTopTickers = async () => {
 const runScript = async () => {
     try {
         topTickers = await fetchTopTickers();
+        console.log(topTickers)
+        console.log("we got the top tickers")
 
-        //await stocks.updateStockMentions(topTickers);
+        console.log("yeet")
         // topTickers = [{
         //     stock:'T'
         // }, {
@@ -63,7 +65,6 @@ const runScript = async () => {
 
         let allStocks = await getAllStocks();
 
-        console.log(allStocks)
 
         let allStockSymbols = []
 
@@ -71,13 +72,11 @@ const runScript = async () => {
             allStockSymbols.push(stock.symbol);
         })
 
-        console.log(allStockSymbols)
        
         let topTickerStocks = topTickers.map((value) => {
             return value.stock
         });
 
-        console.log(topTickerStocks);
        
         //get the new tickers to add by doing old - new
         let oldStocks = new Set(allStockSymbols);
@@ -95,7 +94,8 @@ const runScript = async () => {
 
         await generateStocks(differences);
         await wipeStocks(stocksToDelete);
-        updateTickers();
+        console.log("here")
+        await stocks.updateMentions(topTickers);
          
         
         socket.addEventListener('message', (event) => {
