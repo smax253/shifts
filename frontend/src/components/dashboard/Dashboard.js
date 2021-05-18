@@ -6,6 +6,7 @@ import '../../styles/Dashboard.scss';
 import PropTypes from 'prop-types';
 import { useQuery } from '@apollo/client';
 import queries from '../../queries';
+import MyList from './MyList';
 
 const StockItem = ({name, prices}) => {
   const current = prices.find((item) => item.date === 'c').value;
@@ -118,12 +119,7 @@ const Dashboard = () => {
                 }
               </Grid>
               <Grid item xs={12} sm={4} className='list-container'>
-                
-                {
-                  activeRooms
-                    ? <RoomList title="My List" showPrices tickerList={activeRooms} />
-                    : <div>Loading...</div>
-                }
+                <MyList/>
               </Grid>
             </Grid>
           </Grid>

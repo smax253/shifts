@@ -43,13 +43,17 @@ const RoomWrapper = () => {
     }
   }, [userToken, id])
     
-  return <Room
-    id={id}
-    messages={messages}
-    setMessages={setMessages}
-    price={price}
-    setPrice={setPrice}
-  />
+  return (
+    userToken ?<Room
+      id={id}
+      messages={messages}
+      setMessages={setMessages}
+      price={price}
+      setPrice={setPrice}
+      userToken={userToken}
+    />
+      :<div>Loading...</div>
+  )
 }
 
 export default RoomWrapper;

@@ -140,8 +140,45 @@ const GET_INDEXES = gql`
         }
     }
 `
+const GET_FAVORITE_ROOMS = gql`
+    query($userToken: String!){
+        getUserFavorites(userToken: $userToken){
+            stockSymbol
+            activeUsers
+        }
+    }
+`
+
+const ADD_FAVORITE = gql`
+    mutation($userToken: String!, $ticker: String!){
+        addToFavorites(userToken: $userToken, stockSymbol: $ticker){
+            username
+        }
+    }
+`
+const REMOVE_FAVORITE = gql`
+    mutation($userToken: String!, $ticker: String!){
+        removeFromFavorites(userToken: $userToken, stockSymbol: $ticker){
+            username
+        }
+    }
+`
 
 
 export default {
-  GET_INDEXES,GET_STOCK_LIST,GET_USERNAME, GET_ROOM_DATA,GET_STOCK_DATA, CHECK_USERNAME, LOGIN_USER, ADD_USER, REMOVE_USER, GET_LOGGED_IN_USERS, GET_TOP_MOVERS, GET_ALL_ROOMS
+  ADD_FAVORITE,
+  REMOVE_FAVORITE,
+  GET_FAVORITE_ROOMS,
+  GET_INDEXES,
+  GET_STOCK_LIST,
+  GET_USERNAME,
+  GET_ROOM_DATA,
+  GET_STOCK_DATA,
+  CHECK_USERNAME,
+  LOGIN_USER,
+  ADD_USER,
+  REMOVE_USER,
+  GET_LOGGED_IN_USERS,
+  GET_TOP_MOVERS,
+  GET_ALL_ROOMS
 }

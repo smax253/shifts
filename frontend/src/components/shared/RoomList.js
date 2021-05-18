@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import '../../styles/RoomList.scss';
@@ -7,12 +7,13 @@ import { useQuery } from '@apollo/client';
 import queries from '../../queries';
 
 const RoomList = ({ title, tickerList, showPrices, className, id, sortActive }) => {
-  const tickerStrings = tickerList.map((item) => item.stockSymbol);
+  const tickerStrings = useMemo(() => tickerList.map((item) => item.stockSymbol), [tickerList]);
   const { loading, data } = useQuery(queries.GET_STOCK_LIST, {
     variables: {
       tickerList: tickerStrings
     }
   });
+
   const generateActiveLinks = useCallback((stockDataList)=>{
     
     const sortedTickers = tickerList.map((item) => {
@@ -20,12 +21,11 @@ const RoomList = ({ title, tickerList, showPrices, className, id, sortActive }) 
       return { ...item, active: item.activeUsers.length };
       
     });
+    
     sortActive && sortedTickers.sort((a, b) => b.active - a.active);
     const links = sortedTickers.map((stock) => {
       const stockData = stockDataList.find((item) => item.symbol === stock.stockSymbol);
-      console.log('data', stockData)
       const value = stock.active;
-      console.log()
       const current = stockData.daily.find((item) => item.date === 'c').value;
       const prev = stockData.daily.find((item) => item.date === 'pc').value;
       const change = Math.round((current - prev)*100)/100;

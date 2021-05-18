@@ -6,12 +6,14 @@ import Chart from './Chart';
 import PropTypes from 'prop-types';
 import UserList from './UserList';
 import ChatBox from './ChatBox';
-import { useQuery } from '@apollo/client';
+import { useApolloClient, useQuery } from '@apollo/client';
 import queries from '../../queries';
 
-const StockDataSummary = ({name, symbol, data, daily, currentPrice}) => {
+const StockDataSummary = ({name, symbol, data, daily, currentPrice, userToken, isFavorite}) => {
 
-  
+  const [favorite, setFavorite] = useState(isFavorite);
+  const client = useApolloClient();
+
   const change = {};
   data.forEach((item) => {
 
@@ -45,9 +47,32 @@ const StockDataSummary = ({name, symbol, data, daily, currentPrice}) => {
   
   }
 
+  const toggleFavorite = React.useCallback(async() => {
+    let mutation;
+    if (favorite) {
+      mutation = queries.REMOVE_FAVORITE;
+    } else {
+      mutation = queries.ADD_FAVORITE;
+    }
+    await client.mutate({
+      mutation, variables: {
+        userToken,
+        ticker: symbol
+      }
+    });
+    setFavorite(!favorite);
+    
+  }, [favorite])
+
   return (
     <div className="stock-data-summary">
-      <div id="company-title"><div id="company-name">{name}</div><div>{symbol}</div></div>
+      <div id="company-title">
+        <div id="company-name">{name}</div>
+        <div>
+          <button onClick={toggleFavorite}>Favorite! {favorite.toString()}</button>
+          {symbol}
+        </div>
+      </div>
       
       <div id="current-price"><div id="price">{price}</div>{renderNumber(change.pc)}</div>
       
@@ -71,14 +96,17 @@ StockDataSummary.propTypes = {
   price: PropTypes.number.isRequired,
   daily: PropTypes.array.isRequired,
   currentPrice: PropTypes.number,
+  isFavorite: PropTypes.bool,
+  userToken: PropTypes.string.isRequired
 }
 
-const Room = ({ id, messages, setMessages, price }) => {
+const Room = ({ id, messages, setMessages, price, userToken }) => {
 
   const [chartMode, setChartMode] = React.useState('1m');
   //const [, setCurrentPrice] = React.useState(0);
   const [chartData, setChartData] = React.useState(undefined);
   const [users, setUsers] = React.useState(undefined);
+  const [isFavorite, setIsFavorite] = React.useState(false);
   // eslint-disable-next-line no-unused-vars
   const getStockQuery = useQuery(queries.GET_STOCK_DATA,
     {
@@ -89,6 +117,18 @@ const Room = ({ id, messages, setMessages, price }) => {
   )
   const getRoomQuery = useQuery(queries.GET_ROOM_DATA, { fetchPolicy:'no-cache', variables: { ticker: id.toUpperCase() } });
   const allRoomsQuery = useQuery(queries.GET_ALL_ROOMS);
+  const favoriteRooms = useQuery(queries.GET_FAVORITE_ROOMS,
+    {
+      variables: userToken
+    }
+  )
+
+  useEffect(() => {
+    if (favoriteRooms.data && favoriteRooms.data.getUserFavorites) {
+      const exists = favoriteRooms.data.getUserFavorites.find(item => item.stockSymbol === id.toUpperCase()) > 0;
+      setIsFavorite(exists);
+    }
+  }, [favoriteRooms.data])
 
   const [activeRooms, setActiveRooms] = useState(null);
   useEffect(() => {
@@ -113,7 +153,6 @@ const Room = ({ id, messages, setMessages, price }) => {
     if (getRoomQuery.data && getRoomQuery.data.getRoom) {
 
       setUsers(getRoomQuery.data.getRoom.activeUsers);
-      console.log('query messages', getRoomQuery.data.getRoom.messages)
       setMessages(getRoomQuery.data.getRoom.messages);
     
     }
@@ -161,6 +200,8 @@ const Room = ({ id, messages, setMessages, price }) => {
               data={getStockQuery.data.getStock.prices}
               daily={getStockQuery.data.getStock.daily}
               currentPrice={price}
+              isFavorite={isFavorite}
+              userToken={userToken}
             />
             : <div>Loading...</div>
           }
@@ -205,7 +246,8 @@ Room.propTypes = {
   messages: PropTypes.array,
   setMessages: PropTypes.func,
   price: PropTypes.number,
-  setPrice: PropTypes.func
+  setPrice: PropTypes.func,
+  userToken: PropTypes.string.isRequired,
 }
 
 export default Room
