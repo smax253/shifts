@@ -109,8 +109,29 @@ module.exports = {
   async removeFromFavorites(userToken, stockSymbol) {
     let user;
     try {
-      user = 
+      user = await admin.auth().verifyIdToken(userToken);
+    } catch (e) {
+      return e;
     }
-  }
+
+    try {
+      let userDataToUpdate = await module.exports.getUserById(user.uid);
+      let removeFromFavorites = userDataToUpdate.favorites;
+      
+      if (removeFromFavorites.includes(stockSymbol)) {
+        let newFavorites = removeFromFavorites.filter((stock) => {
+          stock != stockSymbol
+        })
+        userDataToUpdate.favorites = newFavorites;
+        await this.updateUser(userDataToUpdate)
+      } else {
+        throw "The stock " + stockSymbol + " is not in the user's favorites"
+      }
+    } catch (e) {
+      throw e;
+    }
+  },
+
+  async getFromFavorit
 };
     
