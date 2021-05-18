@@ -50,12 +50,41 @@ const runScript = async () => {
             socket.send(JSON.stringify({ 'type': 'subscribe', 'symbol': `${stock}` }));
         });
 
-        await wipeStocks();
+        let allStocks = await getAllStocks();
+
+        console.log(allStocks)
+
+        let allStockSymbols = []
+
+        allStocks.forEach((stock) => {
+            allStockSymbols.push(stock.symbol);
+        })
+
+        console.log(allStockSymbols)
+       
         let topTickerStocks = topTickers.map((value) => {
             return value.stock
         });
-        
-        await generateStocks(topTickerStocks);
+
+        console.log(topTickerStocks);
+       
+        //get the new tickers to add by doing old - new
+        let oldStocks = new Set(allStockSymbols);
+        let differences = new Set(topTickerStocks.filter(element => !oldStocks.has(element)))
+        differences = [...differences];
+
+        console.log(differences) //tells us what new stocks there are
+
+        //get the old tickers to delete by doing new - old 
+        let newStocks = new Set(topTickerStocks);
+        let stocksToDelete = new Set(allStockSymbols.filter(element => !newStocks.has(element)))
+        stocksToDelete = [...stocksToDelete]
+
+        console.log(stocksToDelete);
+
+        //await generateStocks(differences);
+        await wipeStocks(stocksToDelete);
+         
         
         socket.addEventListener('message', (event) => {
             let data = JSON.parse(event.data);

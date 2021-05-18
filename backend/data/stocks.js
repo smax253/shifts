@@ -161,23 +161,26 @@ module.exports = {
     return await module.exports.getAllStocks();
   },
 
-  async wipeStocks() {
-    let allStocks = await module.exports.getAllStocks();
-    let allSymbols = [];
+  async wipeStocks(allStocks) {
+    if (!allStocks) {
+      let all = await module.exports.getAllStocks();
+      all.forEach((stock) => {
+        allStocks.push(stock.symbol)
+      })
+    }
     for (let stock of allStocks) {
-        allSymbols.push(stock.symbol)
-        db.collection('stocks').doc(stock.symbol).delete().then(() => {
-          console.log('successfully deleted ' + stock.symbol)
+        db.collection('stocks').doc(stock).delete().then(() => {
+          console.log('successfully deleted ' + stock)
           
             //await roomData.deleteRoom(stock.symbol);
         }).catch((error) => {
-          console.log('error deleting ' + stock.symbol)
+          console.log('error deleting ' + stock)
           console.log(error)
         }) 
     }
 
-    for (let i = 0; i < allSymbols.length; i++) {
-        await roomData.deleteRoom(allSymbols[i])
+    for (let i = 0; i < allStocks.length; i++) {
+      await roomData.deleteRoom(allStocks[i]);
     }
 
     return await module.exports.getAllStocks();
