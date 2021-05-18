@@ -1,7 +1,7 @@
 import firebase from 'firebase/app';
 import 'firebase/auth';
 
-import config from './serviceAccountKey.json'
+import config from './serviceAccountKey.js'
 if (!firebase.apps.length) {
 
   firebase.initializeApp(config);

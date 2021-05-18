@@ -34,7 +34,7 @@ module.exports = {
     //do alphavantage call here
     if (!symbol) throw "Stock symbol does not exist";
     
-    const API_KEY = "GLS602AYJC0P3DKO";
+    const API_KEY = process.env.alphavantage_key;
 
     const API_Call =
       `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=` +
@@ -48,6 +48,7 @@ module.exports = {
       prices: [],
       chart: [],
     };
+
 
     await fetch(API_Call)
       .then(function (response) {
@@ -99,6 +100,7 @@ module.exports = {
         //Parsing Data
         newStock.name = "Name" in data ? data["Name"] : symbol;
       });
+    
     
     const API_Call2 =
       `https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol=` +

@@ -2,13 +2,13 @@ const { ApolloClient, gql, HttpLink, InMemoryCache } = require('@apollo/client/c
 const admin = require('firebase-admin');
 const io = require('socket.io')(3001, {
     cors: {
-        origin: "http://localhost:3000",
+        origin: process.env.frontend_uri,
         methods: ["GET", "POST"],
     }
 });
 const fetch = require('cross-fetch');
 
-const serviceAccount = require('../config/serviceAccountKey.json');
+const serviceAccount = require('../config/serviceAccountKey');
 const rooms = require('../data/rooms');
 admin.initializeApp({ credential: admin.credential.cert(serviceAccount)},"socket");
 console.log("socket init firebase successful");
@@ -16,7 +16,7 @@ console.log("socket init firebase successful");
 const client = new ApolloClient({
     cache: new InMemoryCache(),
     link: new HttpLink({
-        uri: "http://localhost:4000/graphql",
+        uri: process.env.backend_uri,
         fetch
     })
 })

@@ -1,6 +1,6 @@
 const scraper = require('./app');
 const WebSocket = require('ws');
-const socket = new WebSocket('wss://ws.finnhub.io?token=c2feaaqad3ien4445gh0');
+const socket = new WebSocket(`wss://ws.finnhub.io?token=${process.env.finnhub_key}`);
 const fetch = require('node-fetch');
 const sendStockData = require('../socket/');
 const { generateStocks, wipeStocks, getAllStocks } = require('../data/stocks');
@@ -82,7 +82,7 @@ const runScript = async () => {
 
         console.log(stocksToDelete);
 
-        //await generateStocks(differences);
+        await generateStocks(differences);
         await wipeStocks(stocksToDelete);
          
         
