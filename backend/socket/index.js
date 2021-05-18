@@ -42,10 +42,14 @@ io.on("connection", async (socket) => {
     const userToken = socket.handshake.query.userToken;
     let uid;
     try {
-        uid = (await admin.auth().verifyIdToken(userToken)).uid;
+        let user = await admin.auth().verifyIdToken(userToken);
+        console.log(user);
+        uid = user.uid;
     } catch (err) {
         return socket.disconnect(true);
     }
+    console.log('user token')
+    console.log(userToken);
     const { data } = await client.query({ query: queries.GET_USERNAME, variables: { id: uid } });
     const username = data.getUserById.username;
     const symbol = socket.handshake.query.symbol;
