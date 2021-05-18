@@ -83,9 +83,16 @@ const GET_STOCK_DATA = gql`
                 value
             }
             chart{
+              days{
                 date
                 value
+              }
+              weeks{
+                date
+                value
+              }
             }
+              
             daily{
                 date
                 value

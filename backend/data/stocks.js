@@ -46,7 +46,10 @@ module.exports = {
       symbol: symbol,
       name: "NA",
       prices: [],
-      chart: [],
+      chart: {
+        days: [],
+        weeks: [],
+      },
     };
 
 
@@ -62,7 +65,7 @@ module.exports = {
           current = parseFloat(current);
 
           if (counter <= 30) {
-            newStock.chart.unshift({ date: key, value: current });
+            newStock.chart.days.unshift({ date: key, value: current });
           }
          
           if (counter == 1) {
@@ -103,7 +106,7 @@ module.exports = {
     
     
     const API_Call2 =
-      `https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol=` +
+      `https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY_ADJUSTED&symbol=` +
       symbol +
       `&apikey=` +
       API_KEY;
@@ -115,18 +118,19 @@ module.exports = {
       .then(async function (data) {
         //Parsing Data
         let counter = 0;
-        for (var key in data["Monthly Adjusted Time Series"]) {
-          let current = data["Monthly Adjusted Time Series"][key]["4. close"];
+        for (var key in data["Weekly Adjusted Time Series"]) {
+          let current = data["Weekly Adjusted Time Series"][key]["4. close"];
           current = parseFloat(current);
-         
-          if (counter == 6) {
+          newStock.chart.weeks.unshift({ date: key, value: current });
+          if (counter == 26) {
             newStock.prices.push({ date: "6m", value: current });
           }
-          if (counter == 12) {
+          if (counter == 52) {
             newStock.prices.push({ date: "1y", value: current });
           }
-          if (counter == 60) {
+          if (counter == 260) {
             newStock.prices.push({ date: "5y", value: current });
+            break;
           }
           counter++;
         }

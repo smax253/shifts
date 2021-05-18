@@ -24,8 +24,13 @@ const typeDefs = gql`
     name: String
     symbol: String
     prices: [Price]
-    chart: [Price]
+    chart: ChartData
     daily: [Price]
+  }
+
+  type ChartData{
+    days: [Price]
+    weeks: [Price]
   }
 
   type Price {

@@ -93,8 +93,8 @@ const runScript = async () => {
 
         console.log(stocksToDelete);
 
-        //await generateStocks(differences);
-        //await wipeStocks(stocksToDelete);
+        await generateStocks(differences);
+        await wipeStocks(stocksToDelete);
         updateTickers();
          
         
