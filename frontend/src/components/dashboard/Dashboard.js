@@ -49,8 +49,7 @@ const Dashboard = () => {
   const [activeRooms, setActiveRooms] = useState(null);
   useEffect(() => {
 
-    if (allRoomsQuery.loading) setActiveRooms(null);
-    else {
+    if(allRoomsQuery.data &&  allRoomsQuery.data.rooms){
 
       const active = allRoomsQuery.data.rooms.map((item) => {
 
@@ -62,6 +61,8 @@ const Dashboard = () => {
       
       setActiveRooms(active);
     
+    }else {
+      setActiveRooms(null);
     }
   
   }, [allRoomsQuery])

@@ -14,6 +14,7 @@ import AlertTemplate from 'react-alert-template-mui';
 import {ApolloClient, HttpLink, InMemoryCache, ApolloProvider} from '@apollo/client';
 import auth from './config/auth';
 import RoomWrapper from './components/room/RoomWrapper';
+import queries from './queries';
 
 const client = new ApolloClient({
   cache: new InMemoryCache(),
@@ -29,8 +30,12 @@ function App() {
   auth.onAuthStateChanged((user) => {
 
     if (user) {
+      client.query({ query: queries.GET_USERNAME, variables: { userID: user.uid } }).then(({ data }) => {
+        const username = data.getUserById.username;
+        user.username = username;
+        setAuthUser(user);
+      })
       
-      setAuthUser(user);
     
     }
     else setAuthUser(null);

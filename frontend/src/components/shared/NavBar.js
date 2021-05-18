@@ -41,7 +41,7 @@ const NavBar = () => {
 
   useEffect(() => {
 
-    if (!allRoomsQuery.loading) {
+    if (!allRoomsQuery.loading && allRoomsQuery.data) {
       const tickers = allRoomsQuery.data.rooms.map(item => item.stockSymbol);
       console.log(tickers);
       setSymbols(tickers);

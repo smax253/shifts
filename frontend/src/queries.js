@@ -38,9 +38,7 @@ const GET_ALL_ROOMS = gql`
     query { 
         rooms {
             stockSymbol
-            activeUsers {
-                username
-            }
+            activeUsers
         }
     }
 `
@@ -48,9 +46,7 @@ const GET_ALL_ROOMS = gql`
 const GET_ROOM_DATA = gql`
     query ($ticker: String!){
         getRoom(stockSymbol: $ticker){
-            activeUsers{
-                username
-            }
+            activeUsers
             messages{
                 author
                 time
@@ -106,8 +102,15 @@ const GET_STOCK_DATA = gql`
     }
 `
 
+const GET_USERNAME = gql`
+    query($userID: String!){
+        getUserById(id: $userID){
+            username
+        }
+    }
+`
 
 
 export default {
-  GET_ROOM_DATA,GET_STOCK_DATA, CHECK_USERNAME, LOGIN_USER, ADD_USER, REMOVE_USER, GET_LOGGED_IN_USERS, GET_GAINING_COMPANIES, GET_LOSING_COMPANIES, GET_ALL_ROOMS
+  GET_USERNAME, GET_ROOM_DATA,GET_STOCK_DATA, CHECK_USERNAME, LOGIN_USER, ADD_USER, REMOVE_USER, GET_LOGGED_IN_USERS, GET_GAINING_COMPANIES, GET_LOSING_COMPANIES, GET_ALL_ROOMS
 }

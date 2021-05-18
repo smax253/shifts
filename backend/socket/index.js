@@ -9,6 +9,7 @@ const io = require('socket.io')(3001, {
 const fetch = require('cross-fetch');
 
 const serviceAccount = require('../config/serviceAccountKey.json');
+const rooms = require('../data/rooms');
 admin.initializeApp({ credential: admin.credential.cert(serviceAccount)},"socket");
 console.log("socket init firebase successful");
 
@@ -50,6 +51,7 @@ io.on("connection", async (socket) => {
     const symbol = socket.handshake.query.symbol;
     if (!symbol) return socket.disconnect(true);
     socket.join(symbol);
+    await rooms.addUserToRoom(username, symbol);
     socket.on('message', async (message) => {
         await client.mutate({
             mutation: queries.ADD_MESSAGE,
@@ -65,6 +67,9 @@ io.on("connection", async (socket) => {
             author: username,
         }
         io.sockets.to(symbol).emit('chat', newMessage);
+    });
+    socket.on('disconnect', async () => {
+        await rooms.deleteUserFromRoom(username, symbol);
     })
 })
 

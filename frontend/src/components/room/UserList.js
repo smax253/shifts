@@ -1,18 +1,24 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
+import { AuthContext } from '../../auth/AuthContext';
 
 const UserList = ({userList}) => {
 
-  const generateUsers = useCallback(()=>{
+  const [auth] = useContext(AuthContext);
 
-    const links = userList.map((item)=>{
+  const generateUsers = useCallback(() => {
+    const users = [...userList];
+    if (!users.includes(auth.username)) {
+      users.push(auth.username);
+    }
+    const links = users.map((item)=>{
 
       return (
-        <li key={item.id}>
-          <Link to={`/profile/${item.id}`}>
+        <li key={item}>
+          <Link to={`/profile/${item}`}>
             <div className="user">
-              {item.username}
+              {item}
             </div>
           </Link>
         </li>

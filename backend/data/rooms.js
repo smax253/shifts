@@ -16,7 +16,6 @@ module.exports = {
     },
 
     async getRoom(stockSymbol) {
-        console.log("firing")
         const roomRef = db.collection('rooms').doc(stockSymbol);
         const doc = await roomRef.get();
         if (!doc.exists) {
