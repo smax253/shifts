@@ -95,6 +95,7 @@ const runScript = async () => {
 
         //await generateStocks(differences);
         //await wipeStocks(stocksToDelete);
+        updateTickers();
          
         
         socket.addEventListener('message', (event) => {
@@ -153,9 +154,16 @@ socket.addEventListener('open', async () => {
     }, 43200000); // change this to 24 hours
 });
 
-
-setInterval(() => {
+const updateTickers = () => {
+    console.log(topTickers)
     for (const ticker of topTickers) {
-        stocks.updateStockData(ticker);
+        stocks.updateStockData(ticker.stock);
     }
+}
+setInterval(() => {
+    const timenow = new Date();
+    if (
+        (0 < timenow.getDay() && timenow.getDay() < 6) &&
+        (9 <= timenow.getHours() && timenow.getHours() < 17)
+    ) updateTickers();
 }, 600000);

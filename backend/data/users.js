@@ -40,7 +40,6 @@ module.exports = {
     
   async updateUser(newuserData) {
     try {
-      console.log(newuserData)
       const res = await db.collection('users').doc(newuserData.username).set(newuserData);
       return this.getUserById(newuserData.userID)
     } catch (e) {
@@ -99,13 +98,11 @@ module.exports = {
     }
     try {
       let userDataToUpdate = await module.exports.getUserById(user.uid);
-      console.log(userDataToUpdate)
       let addToFavorites = userDataToUpdate.favorites;
       addToFavorites.push(stockSymbol)
       let setAddToFav = new Set(addToFavorites);
       userDataToUpdate.favorites = Array.from(setAddToFav);
       let ret = await this.updateUser(userDataToUpdate);
-      console.log(ret);
       return ret
     } catch (e) {
       throw e;

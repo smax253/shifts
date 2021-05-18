@@ -1,6 +1,3 @@
-console.log('env', process.env.private_key);
-
-
 const express = require("express");
 const { ApolloServer, gql } = require('apollo-server-express');
 const { typeDefs, resolvers} = require("./data/queries");
