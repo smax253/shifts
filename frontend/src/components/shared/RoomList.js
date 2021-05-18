@@ -3,20 +3,44 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import '../../styles/RoomList.scss';
 import people from '../../img/people.png';
+import { useQuery } from '@apollo/client';
+import queries from '../../queries';
 
-const RoomList = ({ title, tickerList, showPrices, className, id }) => {
-  
-  const generateActiveLinks = useCallback(()=>{
+const RoomList = ({ title, tickerList, showPrices, className, id, sortActive }) => {
+  const tickerStrings = tickerList.map((item) => item.stockSymbol);
+  const { loading, data } = useQuery(queries.GET_STOCK_LIST, {
+    variables: {
+      tickerList: tickerStrings
+    }
+  });
+  const generateActiveLinks = useCallback((stockDataList)=>{
+    
+    const sortedTickers = tickerList.map((item) => {
 
-    const links = tickerList.map((stock)=>{
-
+      return { ...item, active: item.activeUsers.length };
+      
+    });
+    sortActive && sortedTickers.sort((a, b) => b.active - a.active);
+    const links = sortedTickers.map((stock) => {
+      const stockData = stockDataList.find((item) => item.symbol === stock.stockSymbol);
+      console.log('data', stockData)
       const value = stock.active;
+      const current = stockData.daily.find((item) => item.date === 'c').value;
+      const prev = stockData.daily.find((item) => item.date === 'pc').value;
+      const change = Math.round((current - prev)*100)/100;
+      const changeString = change > 0 ? '+'+change : ''+change;
+      const percent = Math.round((change / prev)*10000)/100;
+      const percentString = percent > 0 ? '+'+percent : ''+percent;
       return (
         <li key={stock.stockSymbol}>
             
           <Link to={`/stock/${stock.stockSymbol}`} >
             <div className='activity'>
               <div className="list-ticker">{stock.stockSymbol}</div>
+              <div className={`change ${change > 0 ? 'positive' : change < 0 ? 'negative' : 'neutral'}`}>
+                <span className="list-change">{changeString}</span>
+                <span className="list-percent">&nbsp;{`(${percentString}%)`}</span>
+              </div>
               <div className={'active'}>
                 {value}
                 <img src={people} alt="people-icon"/>
@@ -32,32 +56,10 @@ const RoomList = ({ title, tickerList, showPrices, className, id }) => {
   
   }, tickerList)
 
-  const generateLinks = useCallback(()=>{
-
-    const links = tickerList.map((stock)=>{
-
-      const value = stock.change > 0 ? '+'+stock.change : ''+stock.change;
-      return (
-        <li key={stock.ticker}>
-            
-          <Link to={`/stock/${stock.ticker}`} >
-            <div className='prices'>
-              <span className="list-ticker">{stock.ticker}</span>
-              <span className={`change ${stock.change > 0 ? 'positive' : 'negative'}`}>{value}</span>
-            </div>
-          </Link>
-           
-        </li>
-      );
-    
-    })
-    return <ul>{links}</ul>;
-  
-  }, tickerList)
   return (
     <div id={id ? id : ''} className={`room-list ${showPrices ? 'prices' : 'active'} ${className ? className : ''}`}>
       <span className="room-list-title">{title}</span>
-      {showPrices ? generateLinks() : generateActiveLinks()}
+      {!loading && data && generateActiveLinks(data.getStocks)}
     </div>
   )
 
@@ -69,6 +71,7 @@ RoomList.propTypes = {
   showPrices: PropTypes.bool,
   className: PropTypes.string,
   id: PropTypes.string,
+  sortActive: PropTypes.bool,
 }
 
 export default RoomList

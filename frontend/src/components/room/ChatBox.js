@@ -4,7 +4,7 @@ import { Tooltip } from '@material-ui/core';
 import socket from '../../socket/socket';
 
 const ChatBox = ({chatLog}) => {
-
+  console.log('chat', chatLog);
   const [messageText, setMessageText] = useState('');
   const renderMessages = useCallback(()=>{
 

@@ -9,7 +9,7 @@ import ChatBox from './ChatBox';
 import { useQuery } from '@apollo/client';
 import queries from '../../queries';
 
-const StockDataSummary = ({name, symbol, data, price}) => {
+const StockDataSummary = ({name, symbol, data, daily}) => {
 
   
   const change = {};
@@ -18,6 +18,11 @@ const StockDataSummary = ({name, symbol, data, price}) => {
     change[item.date] = item.value;
   
   })
+  daily.forEach(item => {
+    change[item.date] = item.value;
+  })
+  const price = change.c;
+  
   const calcPercentage = (difference) => {
 
     const percent = `${(difference / price * 100).toFixed(2)}%`;
@@ -44,18 +49,15 @@ const StockDataSummary = ({name, symbol, data, price}) => {
     <div className="stock-data-summary">
       <div id="company-title"><div id="company-name">{name}</div><div>{symbol}</div></div>
       
-      <div id="current-price"><div id="price">{price}</div>{renderNumber(price)}</div>
-      <div><div>1 Day</div>{renderNumber(change['1d'])}</div>
+      <div id="current-price"><div id="price">{price}</div>{renderNumber(change.pc)}</div>
       
+      <div><div>1 Day</div>{renderNumber(change['1d'])}</div>
       <div><div>1 Week</div>{renderNumber(change['1w'])}</div>
       <div><div>1 Month</div>{renderNumber(change['1m'])}</div>
-
       <div><div>3 Months</div>{renderNumber(change['3m'])}</div>
       <div><div>6 Months</div>{renderNumber(change['6m'])}</div>
       <div><div>1 Year</div>{renderNumber(change['1y'])}</div>
       <div><div>5 Years</div>{renderNumber(change['5y'])}</div>
-
-
 
     </div>
   );
@@ -66,7 +68,8 @@ StockDataSummary.propTypes = {
   data: PropTypes.array.isRequired,
   name: PropTypes.string.isRequired,
   symbol: PropTypes.string.isRequired,
-  price: PropTypes.number.isRequired
+  price: PropTypes.number.isRequired,
+  daily: PropTypes.array.isRequired,
 }
 
 const Room = ({ id, messages, setMessages }) => {
@@ -75,7 +78,6 @@ const Room = ({ id, messages, setMessages }) => {
   //const [, setCurrentPrice] = React.useState(0);
   const [chartData, setChartData] = React.useState(undefined);
   const [users, setUsers] = React.useState(undefined);
-
   // eslint-disable-next-line no-unused-vars
   const getStockQuery = useQuery(queries.GET_STOCK_DATA,
     {
@@ -84,7 +86,7 @@ const Room = ({ id, messages, setMessages }) => {
       }
     }
   )
-  const getRoomQuery = useQuery(queries.GET_ROOM_DATA, { variables: { ticker: id.toUpperCase() } });
+  const getRoomQuery = useQuery(queries.GET_ROOM_DATA, { fetchPolicy:'no-cache', variables: { ticker: id.toUpperCase() } });
   const allRoomsQuery = useQuery(queries.GET_ALL_ROOMS);
 
   const [activeRooms, setActiveRooms] = useState(null);
@@ -110,6 +112,7 @@ const Room = ({ id, messages, setMessages }) => {
     if (getRoomQuery.data && getRoomQuery.data.getRoom) {
 
       setUsers(getRoomQuery.data.getRoom.activeUsers);
+      console.log('query messages', getRoomQuery.data.getRoom.messages)
       setMessages(getRoomQuery.data.getRoom.messages);
     
     }
@@ -150,12 +153,12 @@ const Room = ({ id, messages, setMessages }) => {
     (<Grid container className="full-height">
       <Grid container className="room-half">
         <Grid item xs={12} sm={4}>
-          {getStockQuery.data && getStockQuery.data.getStock &&chartData
+          {getStockQuery.data && getStockQuery.data.getStock
             ? <StockDataSummary
               name={getStockQuery.data.getStock.name}
               symbol={id.toUpperCase()}
               data={getStockQuery.data.getStock.prices}
-              price={chartData[chartData.length - 1].value}
+              daily={getStockQuery.data.getStock.daily}
             />
             : <div>Loading...</div>
           }

@@ -56,25 +56,16 @@ const GET_ROOM_DATA = gql`
     }
 `
 
-const GET_GAINING_COMPANIES = gql`
-    query getGainers($queryNum: Int){
-        gainingCompanies(num: $queryNum){
-            ticker
-            companyName
-            _id
+const GET_TOP_MOVERS = gql`
+    query{
+        topMovers{
+            stockSymbol
+            activeUsers
         }
     }
 `
 
-const GET_LOSING_COMPANIES = gql`
-    query getLosers($queryNum: Int){
-        losingCompanies(num: $queryNum){
-            ticker
-            companyName
-            _id
-        }
-    }
-`
+
 
 const GET_LOGGED_IN_USERS = gql`
     query{
@@ -98,6 +89,10 @@ const GET_STOCK_DATA = gql`
                 date
                 value
             }
+            daily{
+                date
+                value
+            }
         }
     }
 `
@@ -110,7 +105,20 @@ const GET_USERNAME = gql`
     }
 `
 
+const GET_STOCK_LIST = gql`
+    query($tickerList: [String]!){
+        getStocks(symbols:$tickerList){
+    		symbol
+    		daily{
+                date
+                value
+            }
+        }
+    }
+`
+
+
 
 export default {
-  GET_USERNAME, GET_ROOM_DATA,GET_STOCK_DATA, CHECK_USERNAME, LOGIN_USER, ADD_USER, REMOVE_USER, GET_LOGGED_IN_USERS, GET_GAINING_COMPANIES, GET_LOSING_COMPANIES, GET_ALL_ROOMS
+  GET_STOCK_LIST,GET_USERNAME, GET_ROOM_DATA,GET_STOCK_DATA, CHECK_USERNAME, LOGIN_USER, ADD_USER, REMOVE_USER, GET_LOGGED_IN_USERS, GET_TOP_MOVERS, GET_ALL_ROOMS
 }

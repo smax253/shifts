@@ -3,8 +3,8 @@ const { ApolloServer, gql } = require('apollo-server-express');
 const { typeDefs, resolvers} = require("./data/queries");
 const { Worker } = require("worker_threads");
 
-let scraperWorker = new Worker('./api/script.js');
-//require('./socket')
+//let scraperWorker = new Worker('./api/script.js');
+require('./socket')
 
 async function startApolloServer() {
 const server = new ApolloServer({ typeDefs, resolvers });

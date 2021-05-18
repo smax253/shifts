@@ -19,6 +19,7 @@ const typeDefs = gql`
     symbol: String
     prices: [Price]
     chart: [Price]
+    daily: [Price]
   }
 
   type Price {
@@ -28,7 +29,7 @@ const typeDefs = gql`
 
   type Room {
     stockSymbol: String
-    activeUsers: [User]
+    activeUsers: [String]
     messages: [Message]
   }
 
@@ -46,6 +47,7 @@ const typeDefs = gql`
     getUser(username: String!): User
     getUserById(id: String!): User
     getStock(symbol: String!): Stock
+    getStocks(symbols: [String]!): [Stock]
     getRoom(stockSymbol: String!): Room
     topMovers: [Room]
   
@@ -56,6 +58,7 @@ const typeDefs = gql`
   type Mutation {
     addUser(username: String!, userID: ID!): User
     addStock(symbol: String!, prices: [Int]): Stock
+    updateStockData(symbol: String!): Stock
     addRoom(stockSymbol: String!): Room
     addMessage(stockSymbol: String!, author: String!, text: String): Room
 
@@ -79,6 +82,8 @@ const resolvers = {
     stocks: async (_, args) => await stockData.getAllStocks(),
     getStock: async (_, args) => await stockData.getStock(args.symbol),
     topMovers: async (_, args) => await stockData.topMovers(),
+    getStocks: async (_, args) => await stockData.getStocks(args.symbols),
+    
     /* Rooms */
     rooms: async (_, args) => await roomData.getAllRooms(),
     getRoom: async (_, args) => await roomData.getRoom(args.stockSymbol),
@@ -91,6 +96,9 @@ const resolvers = {
     },
     addStock: async (_, args) => {
       return await stockData.addStock(args.symbol);
+    },
+    updateStockData: async (_, args) => {
+      return await stockData.updateStockData(args.symbol);
     },
     addRoom: async (_, args) => {
       return await roomData.addRoom(args.stockSymbol);
