@@ -7,9 +7,24 @@ import auth from '../../config/auth';
 import { useApolloClient, useMutation } from '@apollo/client';
 import { useAlert } from 'react-alert';
 import queries from '../../queries';
+import { makeStyles } from '@material-ui/core/styles';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+import { Grid } from '@material-ui/core';
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    '& > *': {
+      margin: theme.spacing(1),
+      width: '25ch',
+    },
+  },
+}));
+
 
 const Login = () => {
 
+  const classes = useStyles();
   const alert = useAlert();
 
   // eslint-disable-next-line no-unused-vars
@@ -105,33 +120,61 @@ const Login = () => {
     <div>
       {
         redirectToReferrer 
-          ? <Redirect to='/' />
+          ? <Redirect to='/dashboard' />
           : (
             isRegistering ?
-              (<form onSubmit={register}>
-                <label htmlFor="email-input">Email</label>
-                <input id="email-input" type="text" onChange={(event) => setEmailInput(event.target.value)} />
-                <label htmlFor="username-input">Username</label>
-                <input id="username-input" type="text" onChange={(event) => setUsernameInput(event.target.value)} />
-                <label htmlFor="password-input">Password</label>
-                <input id="password-input" type="password" onChange={(event)=>setPasswordInput(event.target.value)}/>
-                <label htmlFor="confirm-password-input">Confirm Password</label>
-                <input id="confirm-password-input" type="password" onChange={(event)=>setConfirmPasswordInput(event.target.value)}/>
-                <button type="submit">Register!</button>
-              </form>)
-              : (<form onSubmit={login}>
-                <label htmlFor="email-input">Email</label>
-                <input id="email-input" type="text" onChange={(event)=>setEmailInput(event.target.value)}/>
-                <label htmlFor="password-input">Password</label>
-                <input id="password-input" type="password" onChange={(event)=>setPasswordInput(event.target.value)}/>
-                <button type="submit">Login!</button>
-                <button onClick={()=>setIsRegistering(true)}>Register an account!</button>
-              </form>)
+              (
+                <Grid container spacing={0} alignItems="center" justify="center">
+                  <Grid item xs={0}>
+                    <form className={classes.root} onSubmit={register}>
+                      <Grid container spacing={4}>
+                        <Grid item xs={12}>
+                          <TextField id="email-input" type="text" label="Email" variant="filled" onChange={(event) => setEmailInput(event.target.value)} />
+                        </Grid>
+                        <Grid item xs={12}>
+                          <TextField id="username-input" type="text" label="Username" variant="filled" onChange={(event) => setUsernameInput(event.target.value)} />
+                        </Grid>
+                        <Grid item xs={12}>
+                          <TextField id="password-input" type="password" label="Password" variant="filled" onChange={(event) => setPasswordInput(event.target.value)} />
+                        </Grid>
+                        <Grid item xs={12}>
+                          <TextField id="confirm-password-input" type="password" label="Confirm Password" variant="filled" onChange={(event) => setConfirmPasswordInput(event.target.value)} />
+                        </Grid>
+                        <Grid item xs={12}>
+                          <Button variant="contained" type="submit">Register!</Button>
+                        </Grid>
+                      </Grid>
+                    </form> 
+                  </Grid>
+                </Grid>
+                                 
+              )
+              : (
+                <Grid container spacing={0} alignItems="center" justify="center">
+                  <Grid item xs={0}>      
+                    <form className={classes.root} onSubmit={login}>
+                      <Grid container spacing={4}>
+                        <Grid item xs={12}>
+                          <TextField id="email-input" label="Email" variant="filled" onChange={ (event) => setEmailInput(event.target.value)}/>
+                        </Grid>
+                        <Grid item xs={12}>
+                          <TextField id="password-input" label="Password" type="password" variant="filled" onChange={(event) => setPasswordInput(event.target.value)} />
+                        </Grid>
+                        <Grid item xs={12}>
+                          <Button variant="contained" type="submit">Login!</Button>
+                        </Grid>
+                        <Grid item xs={12}>
+                          <Button variant="contained" onClick={ () => setIsRegistering(true)}>Register!</Button> 
+                        </Grid>
+                      </Grid>
+                    </form>
+                  </Grid>
+                </Grid>
+              )
           )
       }  
     </div>
   )
-
 }
 
 Login.propTypes = {
