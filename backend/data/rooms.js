@@ -16,6 +16,7 @@ module.exports = {
     },
 
     async getRoom(stockSymbol) {
+        console.log("firing")
         const roomRef = db.collection('rooms').doc(stockSymbol);
         const doc = await roomRef.get();
         if (!doc.exists) {
@@ -67,23 +68,23 @@ module.exports = {
         return this.getRoom(stockSymbol);
     },
 
-    async updateRoom(newRoomData) {
+    async updateRoom(newRoomData, stockSymbol) {
         try {
             const res = await db.collection('rooms').doc(stockSymbol).set(newRoomData);
-            return this.getRoom(newRoom.stockSymbol);
+            return this.getRoom(stockSymbol);
         } catch (e) {
             throw (e);
         }
     },
 
     async addUserToRoom(userName, stockSymbol) {
+        console.log(stockSymbol)
         try {
             let user = await userData.getUser(userName)
             let room = await module.exports.getRoom(stockSymbol);
-
-            room.activeUsers.push(user);
-
-            await this.updateRoom(room);
+            room.activeUsers.push(userName);
+            room.activeUsers = Array.from(new Set(room.activeUsers));
+            await this.updateRoom(room, stockSymbol);
         } catch (e) {
             throw (e);
         }
@@ -91,14 +92,15 @@ module.exports = {
 
     async deleteUserFromRoom(userName, stockSymbol) {
         try {
-            let user = await userData.getUser(userName);
             let room = await module.exports.getRoom(stockSymbol);
 
             if (room.activeUsers.includes(userName)) {
-                let newRoom = room.filter((users) => {
+                let newRoom = room.activeUsers.filter((users) => {
+                    console.log("filtering") 
                     users != userName;
                 })
-                await this.updateRoom(newRoom);
+                room.activeUsers = newRoom;
+                await this.updateRoom(room, stockSymbol);
             } else {
                 throw "That user is not in the room " + stockSymbol;
             }

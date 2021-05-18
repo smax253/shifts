@@ -47,7 +47,8 @@ const typeDefs = gql`
     getUserById(id: String!): User
     getStock(symbol: String!): Stock
     getRoom(stockSymbol: String!): Room
-    
+  
+
     checkUsername(username: String!): Boolean
   }
 
@@ -59,6 +60,9 @@ const typeDefs = gql`
 
     clearStocks: [Stock]
     generateStocks: [Stock]
+
+    addUserToRoom(username: String!, stockSymbol:String!): Room
+    deleteUserFromRoom(username: String!, stockSymbol:String!): Room
   }
 `;
 
@@ -100,6 +104,14 @@ const resolvers = {
     
     generateStocks: async (_, args) => {
       return await stockData.generateStocks(args.topTickerSymbols = []);
+    },
+
+    addUserToRoom: async (_, args) => {
+      return await roomData.addUserToRoom(args.username, args.stockSymbol)
+    },
+
+    deleteUserFromRoom: async (_, args) => {
+      return await roomData.deleteUserFromRoom(args.username, args.stockSymbol)
     }
   },
 };
