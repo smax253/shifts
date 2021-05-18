@@ -155,7 +155,6 @@ socket.addEventListener('open', async () => {
 });
 
 const updateTickers = () => {
-    console.log(topTickers)
     for (const ticker of topTickers) {
         stocks.updateStockData(ticker.stock);
     }
