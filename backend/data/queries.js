@@ -47,7 +47,7 @@ const typeDefs = gql`
     getUserById(id: String!): User
     getStock(symbol: String!): Stock
     getRoom(stockSymbol: String!): Room
-    topMovers: [Stock]
+    topMovers: [Room]
   
 
     checkUsername(username: String!): Boolean

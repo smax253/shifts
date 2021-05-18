@@ -186,12 +186,18 @@ module.exports = {
       let topTenMovers = [];
 
       allStocks.sort((stock) => {
-        return Math.abs(stock.daily[0].value - stock.daily[4].value);
+        return Math.abs(stock.daily[0].value - stock.daily[4].value) / stock.daily[4];
       })
 
       topTenMovers = allStocks.length > 10 ? allStocks.slice(allStocks.length - 10, allStocks.length) : allStocks;
       topTenMovers.reverse();
-      return topTenMovers;
+      let topRooms = [];
+
+      for (let i = 0; i < topTenMovers.length; i++){
+        let topMovingRoom = await roomData.getRoom(topTenMovers[i].symbol)
+        topRooms.push(topMovingRoom);
+      }
+      return topRooms;
 
     } catch (e) {
       throw e;
