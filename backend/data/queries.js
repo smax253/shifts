@@ -14,6 +14,12 @@ const typeDefs = gql`
     userID: ID!
   }
 
+  type Indexes{
+    NASDAQ: Stock
+    DOW: Stock
+    SP: Stock
+  }
+
   type Stock {
     name: String
     symbol: String
@@ -43,6 +49,7 @@ const typeDefs = gql`
     users: [User]
     stocks: [Stock]
     rooms: [Room]
+    indexes: Indexes
 
     getUser(username: String!): User
     getUserById(id: String!): User
@@ -61,6 +68,8 @@ const typeDefs = gql`
     updateStockData(symbol: String!): Stock
     addRoom(stockSymbol: String!): Room
     addMessage(stockSymbol: String!, author: String!, text: String): Room
+
+    updateIndexes: Indexes
 
     clearStocks: [Stock]
     generateStocks: [Stock]
@@ -89,6 +98,7 @@ const resolvers = {
     getStock: async (_, args) => await stockData.getStock(args.symbol),
     topMovers: async (_, args) => await stockData.topMovers(),
     getStocks: async (_, args) => await stockData.getStocks(args.symbols),
+    indexes: async (_, args) => await stockData.indexes(),
     
     /* Rooms */
     rooms: async (_, args) => await roomData.getAllRooms(),
@@ -119,6 +129,10 @@ const resolvers = {
     
     generateStocks: async (_, args) => {
       return await stockData.generateStocks(args.topTickerSymbols = []);
+    },
+
+    updateIndexes: async () => {
+      return await stockData.updateIndexes();
     },
 
     addUserToRoom: async (_, args) => {

@@ -11,6 +11,11 @@
     margin: 16px;
     border-radius: 8px;
 }
+.top-stock-item-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 .top-stock-item{
     font-size: 3vw;
     text-align: center;
@@ -21,7 +26,9 @@
         align-items: center;
     }
 }
-
+.top-stock-price{
+    font-size: 48px;
+}
 
 .positive,.negative,.neutral{
     padding-left: 8px;

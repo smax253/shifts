@@ -13,7 +13,7 @@ const useEffectSocket = ({ symbol, addMessage, setCurrentPrice, setUsersList, us
     })
     socket.on('price', (price) => {
 
-      setCurrentPrice(price);
+      setCurrentPrice.current(price);
     
     })
     socket.on('chat', (message) => {

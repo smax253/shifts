@@ -7,14 +7,23 @@ import PropTypes from 'prop-types';
 import { useQuery } from '@apollo/client';
 import queries from '../../queries';
 
-const StockItem = ({name, change}) => {
+const StockItem = ({name, prices}) => {
+  const current = prices.find((item) => item.date === 'c').value;
+  const prev = prices.find((item) => item.date === 'pc').value;
+  const change = Math.round((current - prev)*100)/100;
+  const value = change > 0 ? '+' + change : '' + change;
+  const percent = Math.round((change / prev) * 10000) / 100;
+  const percentValue = percent > 0 ? '+' + percent : '' + percent;
 
-  const value = change > 0 ? '+'+change : ''+change;
 
   return (
-    <Grid xs={12} sm={4} className="top-stock-item">
-      <div>
-        {name} <span className={change > 0 ? 'positive' : 'negative'}>{value}</span>
+    <Grid xs={12} sm={4} className="top-stock-item-container">
+      <div className='top-stock-item'>
+        {name}
+        <div className="top-stock-price">
+          <span className={change > 0 ? 'positive' : 'negative'}>{value}</span>
+          <span className={percent > 0 ? 'positive' : 'negative'}>({percentValue})%</span>
+        </div>
       </div>
     </Grid>
   )
@@ -22,18 +31,30 @@ const StockItem = ({name, change}) => {
 }
 StockItem.propTypes = {
   name: PropTypes.string.isRequired,
-  change: PropTypes.number.isRequired,
+  prices: PropTypes.array.isRequired,
 }
 
 const TopStockTickers = () => {
 
-  const stockData = fakeQueryData.topStockData;
+  const { loading, data } = useQuery(queries.GET_INDEXES);
+  const [stockData, setStockData] = useState(null);
+
+  useEffect(() => {
+    if (data && data.indexes) {
+      console.log('index', data);
+      setStockData(data.indexes);
+    }
+  }, [data])
+  
   return (
-    <Grid container className="full-height">
-      <StockItem name="NASDAQ" change={stockData.NASDAQ}/>
-      <StockItem name="SP500" change={stockData.SP500}/>
-      <StockItem name="Dow Jones" change={stockData.DOW}/>
-    </Grid>
+    !loading && stockData
+      ? <Grid container className="full-height">
+        <StockItem name="NASDAQ" prices={stockData.NASDAQ.prices}/>
+        <StockItem name="SP500" prices={stockData.SP.prices}/>
+        <StockItem name="Dow Jones" prices={stockData.DOW.prices}/>
+      </Grid>
+      : <div>Loading...</div>
+    
   )
 
 }

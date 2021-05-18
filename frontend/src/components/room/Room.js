@@ -9,7 +9,7 @@ import ChatBox from './ChatBox';
 import { useQuery } from '@apollo/client';
 import queries from '../../queries';
 
-const StockDataSummary = ({name, symbol, data, daily}) => {
+const StockDataSummary = ({name, symbol, data, daily, currentPrice}) => {
 
   
   const change = {};
@@ -21,7 +21,7 @@ const StockDataSummary = ({name, symbol, data, daily}) => {
   daily.forEach(item => {
     change[item.date] = item.value;
   })
-  const price = change.c;
+  const price = currentPrice || change.c;
   
   const calcPercentage = (difference) => {
 
@@ -70,9 +70,10 @@ StockDataSummary.propTypes = {
   symbol: PropTypes.string.isRequired,
   price: PropTypes.number.isRequired,
   daily: PropTypes.array.isRequired,
+  currentPrice: PropTypes.number,
 }
 
-const Room = ({ id, messages, setMessages }) => {
+const Room = ({ id, messages, setMessages, price }) => {
 
   const [chartMode, setChartMode] = React.useState('1m');
   //const [, setCurrentPrice] = React.useState(0);
@@ -159,6 +160,7 @@ const Room = ({ id, messages, setMessages }) => {
               symbol={id.toUpperCase()}
               data={getStockQuery.data.getStock.prices}
               daily={getStockQuery.data.getStock.daily}
+              currentPrice={price}
             />
             : <div>Loading...</div>
           }
@@ -201,7 +203,9 @@ const Room = ({ id, messages, setMessages }) => {
 Room.propTypes = {
   id: PropTypes.string.isRequired,
   messages: PropTypes.array,
-  setMessages:PropTypes.func,
+  setMessages: PropTypes.func,
+  price: PropTypes.number,
+  setPrice: PropTypes.func
 }
 
 export default Room

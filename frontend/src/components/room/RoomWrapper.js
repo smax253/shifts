@@ -10,7 +10,9 @@ const RoomWrapper = () => {
   
   const [messages, setMessages] = useState(null);
   const [userToken, setUserToken] = useState(null);
+  const [price, setPrice] = useState(null);
   const addMessageRef = useRef();
+  const setPriceRef = useRef();
   
   useEffect(() => {
     auth.currentUser.getIdToken(true).then((idToken) => {
@@ -24,13 +26,19 @@ const RoomWrapper = () => {
     }
   }, [messages, setMessages])
   
+  useEffect(() => {
+    setPriceRef.current = (price) => {
+      setPrice(price);
+    }
+  }, [price, setPrice])
 
   useEffect(() => {
     if (userToken) { 
       return (socket.useEffectSocket({
         symbol: id.toUpperCase(),
         addMessage: addMessageRef,
-        userToken
+        userToken,
+        setCurrentPrice: setPriceRef
       })());
     }
   }, [userToken, id])
@@ -39,6 +47,8 @@ const RoomWrapper = () => {
     id={id}
     messages={messages}
     setMessages={setMessages}
+    price={price}
+    setPrice={setPrice}
   />
 }
 

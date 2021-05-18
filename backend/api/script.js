@@ -4,7 +4,9 @@ const socket = new WebSocket(`wss://ws.finnhub.io?token=${process.env.finnhub_ke
 const fetch = require('node-fetch');
 const sendStockData = require('../socket/');
 const { generateStocks, wipeStocks, getAllStocks } = require('../data/stocks');
-
+const stocks = require('../data/stocks');
+const { initializeCloudFirebase } = require('../config/firebaseConnections');
+const admin = initializeCloudFirebase();
 let prices = {};
 let topTickers = [];
 
@@ -38,8 +40,13 @@ const fetchTopTickers = async () => {
  */
 const runScript = async () => {
     try {
-        topTickers = await fetchTopTickers();
-        topTickers.push({ stock: 'BINANCE:BTCUSDT', timesCounted: 0 }); // remove this as this is just test data
+        //topTickers = await fetchTopTickers();
+        topTickers = [{
+            stock:'T'
+        }, {
+                stock:'AMC'
+        }]
+        //topTickers.push({ stock: 'BINANCE:BTCUSDT', timesCounted: 0 }); // remove this as this is just test data
 
         topTickers.forEach(({ stock }) => {
             prices[stock] = [];
@@ -82,39 +89,45 @@ const runScript = async () => {
 
         console.log(stocksToDelete);
 
-        await generateStocks(differences);
-        await wipeStocks(stocksToDelete);
+        //await generateStocks(differences);
+        //await wipeStocks(stocksToDelete);
          
         
         socket.addEventListener('message', (event) => {
             let data = JSON.parse(event.data);
+            //console.log('data', data);
             if (data.type === 'trade') {
-                data = data.data;
-                let totalPrice = 0;
-                let symbol = data[0].s;
+                let totalPrices = {};
 
-                data.forEach((value) => {
-                    totalPrice += value.p;
+                data.data.forEach((data) => {
+                    let symbol = data.s;
+                    if (!(symbol in totalPrices)) {
+                        totalPrices[symbol] = [data.p];
+                    } else {
+                        totalPrices[symbol].push(data.p);
+                    }
                 });
-                let avgPrice = totalPrice / data.length;
-                
-                prices[symbol].push({
-                    symbol,
-                    price: avgPrice
-                });
-
-                if (prices[symbol].length > 10) { // change this value to something bigger
-                    let sum = 0;
-                    prices[symbol].forEach((entry) => {
-                        sum += entry.price;
+                Object.keys(totalPrices).forEach((symbol) => {
+                    const avgPrice =  totalPrices[symbol].reduce((a,b)=>a+b, 0) / totalPrices[symbol].length;
+                    prices[symbol].push({
+                        symbol,
+                        price: avgPrice
                     });
-                    let filledAvgPrice = (sum / 10).toFixed(2);
+                    if (prices[symbol].length > 10) { // change this value to something bigger
+                        let sum = 0;
+                        prices[symbol].forEach((entry) => {
+                            sum += entry.price;
+                        });
+                        //console.log(sum, prices[symbol]);
+                        let filledAvgPrice = (sum / prices[symbol].length).toFixed(2);
 
-                    prices[symbol] = [];
+                        prices[symbol] = [];
 
-                    // console.log(filledAvgPrice); // replace with socket call
-                    sendStockData(symbol, filledAvgPrice);
-                }
+                        sendStockData(symbol, filledAvgPrice);
+                    }
+                })
+                
+                
             }
         });
     } catch (e) {
@@ -137,6 +150,8 @@ socket.addEventListener('open', async () => {
 });
 
 
-const pollData = async () => {
-    
-}
+setInterval(() => {
+    for (const ticker of topTickers) {
+        stocks.updateStockData(ticker);
+    }
+}, 600000);

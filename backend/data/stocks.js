@@ -225,7 +225,7 @@ module.exports = {
       console.log('No such stock!');
     } else {
       const stock = doc.data()
-      const { data } = await axios.get(`https://finnhub.io/api/v1/quote?symbol=${stockSymbol}&token=c2feaaqad3ien4445gh0`);
+      const { data } = await axios.get(`https://finnhub.io/api/v1/quote?symbol=${stockSymbol}&token=${process.env.finnhub_key}`);
       const daily = [];
       Object.keys(data).forEach((item) => {
         daily.push({
@@ -246,5 +246,40 @@ module.exports = {
       stockList.push(stock);
     }
     return stockList;
+  },
+  async updateIndexes() {
+    const indexes = {
+      DOW: { name: "Dow Jones", symbol: "^DJI" },
+      NASDAQ: { name: "Nasdaq", symbol: "^IXIC" },
+      SP:{ name: "S&P 500", symbol: "^GSPC" }
+    };
+    
+    for (const name of Object.keys(indexes)) {
+      const index = indexes[name];
+      const { data } = await axios.get(`https://query1.finance.yahoo.com/v7/finance/chart/${index.symbol}?interval=5m`);
+      index.prices = [
+        { date: 'c', value: data.chart.result[0].meta.regularMarketPrice },
+        {date:'pc', value: data.chart.result[0].meta.previousClose}
+      ]
+    }
+    return indexes;
+   //await db.collection('stocks').doc(stockSymbol).set(stock);
+  },
+  async indexes() {
+     const indexes = {
+      DOW: { name: "Dow Jones", symbol: "^DJI" },
+      NASDAQ: { name: "Nasdaq", symbol: "^IXIC" },
+      SP:{ name: "S&P 500", symbol: "^GSPC" }
+    };
+    
+    for (const name of Object.keys(indexes)) {
+      const index = indexes[name];
+      const { data } = await axios.get(`https://query1.finance.yahoo.com/v7/finance/chart/${index.symbol}?interval=5m`);
+      index.prices = [
+        { date: 'c', value: data.chart.result[0].meta.regularMarketPrice },
+        {date:'pc', value: data.chart.result[0].meta.previousClose}
+      ]
+    }
+    return indexes;
   }
 }

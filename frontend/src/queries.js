@@ -13,9 +13,6 @@ const ADD_USER = gql`
         addUser(username: $username, userID: $userID){
             userID
             username
-            favorites{
-              symbol
-            }
         }
     }
 `
@@ -116,9 +113,35 @@ const GET_STOCK_LIST = gql`
         }
     }
 `
-
+const GET_INDEXES = gql`
+    query{
+        indexes{
+            DOW{
+                symbol
+                    prices{
+                        date
+                        value
+                    }
+                }
+            NASDAQ{
+                symbol
+                    prices{
+                        date
+                        value
+                    }
+                }
+            SP{
+                symbol
+                    prices{
+                        date
+                        value
+                    }
+                }
+        }
+    }
+`
 
 
 export default {
-  GET_STOCK_LIST,GET_USERNAME, GET_ROOM_DATA,GET_STOCK_DATA, CHECK_USERNAME, LOGIN_USER, ADD_USER, REMOVE_USER, GET_LOGGED_IN_USERS, GET_TOP_MOVERS, GET_ALL_ROOMS
+  GET_INDEXES,GET_STOCK_LIST,GET_USERNAME, GET_ROOM_DATA,GET_STOCK_DATA, CHECK_USERNAME, LOGIN_USER, ADD_USER, REMOVE_USER, GET_LOGGED_IN_USERS, GET_TOP_MOVERS, GET_ALL_ROOMS
 }
