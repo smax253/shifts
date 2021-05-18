@@ -4,6 +4,7 @@ const socket = new WebSocket('wss://ws.finnhub.io?token=c2feaaqad3ien4445gh0');
 const fetch = require('node-fetch');
 const sendStockData = require('../socket/');
 const { generateStocks, wipeStocks, getAllStocks } = require('../data/stocks');
+const stocks = require('../data/stocks');
 
 let prices = {};
 let topTickers = [];
@@ -52,20 +53,38 @@ const runScript = async () => {
 
         let allStocks = await getAllStocks();
 
+        console.log(allStocks)
+
+        let allStockSymbols = []
+
+        allStocks.forEach((stock) => {
+            allStockSymbols.push(stock.symbol);
+        })
+
+        console.log(allStockSymbols)
        
         let topTickerStocks = topTickers.map((value) => {
             return value.stock
         });
+
+        console.log(topTickerStocks);
        
-        let newTickers = topTickerStocks.filter(item1 =>
-            !allStocks.some(item2 => (item2.stock === item1.stock)))
-        
-        //should we possibly check length
-        let oldTickers = allStocks.filter(item1 => 
-            !topTickerStocks.some(item2 => (item2.stock === item1.stock)))
-       
-        await generateStocks(newTickers);
-        await wipeStocks(oldTickers);
+        //get the new tickers to add by doing old - new
+        let oldStocks = new Set(allStockSymbols);
+        let differences = new Set(topTickerStocks.filter(element => !oldStocks.has(element)))
+        differences = [...differences];
+
+        console.log(differences) //tells us what new stocks there are
+
+        //get the old tickers to delete by doing new - old 
+        let newStocks = new Set(topTickerStocks);
+        let stocksToDelete = new Set(allStockSymbols.filter(element => !newStocks.has(element)))
+        stocksToDelete = [...stocksToDelete]
+
+        console.log(stocksToDelete);
+
+        //await generateStocks(differences);
+        await wipeStocks(stocksToDelete);
          
         
         socket.addEventListener('message', (event) => {
