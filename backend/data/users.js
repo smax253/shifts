@@ -39,8 +39,9 @@ module.exports = {
     
   async updateUser(newuserData) {
     try {
-      const res = await db.collection('users').doc(newuserData.userID).set(newuserData);
-      return this.getUserById(newuserData.username)
+      console.log(newuserData)
+      const res = await db.collection('users').doc(newuserData.username).set(newuserData);
+      return this.getUserById(newuserData.userID)
     } catch (e) {
       throw e;
       }
@@ -97,10 +98,14 @@ module.exports = {
     }
     try {
       let userDataToUpdate = await module.exports.getUserById(user.uid);
+      console.log(userDataToUpdate)
       let addToFavorites = userDataToUpdate.favorites;
-      let setAddToFav = Array.from(new Set(addToFavorites.push(stockSymbol)));
-      userDataToUpdate.favorites = setAddToFav;
-      await this.updateUser(userDataToUpdate);
+      addToFavorites.push(stockSymbol)
+      let setAddToFav = new Set(addToFavorites);
+      userDataToUpdate.favorites = Array.from(setAddToFav);
+      let ret = await this.updateUser(userDataToUpdate);
+      console.log(ret);
+      return ret
     } catch (e) {
       throw e;
     }
@@ -120,8 +125,9 @@ module.exports = {
       
       if (removeFromFavorites.includes(stockSymbol)) {
         let newFavorites = removeFromFavorites.filter((stock) => {
-          stock != stockSymbol
+          return stock !== stockSymbol
         })
+    
         userDataToUpdate.favorites = newFavorites;
         await this.updateUser(userDataToUpdate)
       } else {
@@ -132,6 +138,20 @@ module.exports = {
     }
   },
 
-  async getFromFavorit
+  async getUserFavorites(userToken) {
+    let user;
+    try {
+      user = await admin.auth().verifyIdToken(userToken);
+    } catch (e) {
+      return e;
+    }
+
+    try {
+      let getUserData = await module.exports.getUserById(user.uid);
+      return getUserData.favorites;
+    } catch (e) {
+      throw e;
+    }
+  }
 };
     

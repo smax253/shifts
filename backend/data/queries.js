@@ -10,7 +10,7 @@ const roomData = data.rooms;
 const typeDefs = gql`
   type User {
     username: String!
-    favorites: [Stock]
+    favorites: [String]
     userID: ID!
   }
 
@@ -50,8 +50,8 @@ const typeDefs = gql`
     getStocks(symbols: [String]!): [Stock]
     getRoom(stockSymbol: String!): Room
     topMovers: [Room]
-  
-
+    
+    getUserFavorites(userToken: String!): [String]
     checkUsername(username: String!): Boolean
   }
 
@@ -64,6 +64,10 @@ const typeDefs = gql`
 
     clearStocks: [Stock]
     generateStocks: [Stock]
+    
+    removeFromFavorites(userToken: String!, stockSymbol:String!): User
+    addToFavorites(userToken: String!, stockSymbol: String!): User
+
 
     addUserToRoom(username: String!, stockSymbol:String!): Room
     deleteUserFromRoom(username: String!, stockSymbol:String!): Room
@@ -77,6 +81,8 @@ const resolvers = {
     getUser: async (_, args) => await userData.getUser(args.username),
     getUserById: async (_, args) => await userData.getUserById(args.id),
     checkUsername: async (_, args) => await userData.checkUsername(args.username),
+    getUserFavorites: async (_, args) => userData.getUserFavorites(args.userToken, args.stockSymbol),
+    
 
     /* Stocks */
     stocks: async (_, args) => await stockData.getAllStocks(),
@@ -121,7 +127,16 @@ const resolvers = {
 
     deleteUserFromRoom: async (_, args) => {
       return await roomData.deleteUserFromRoom(args.username, args.stockSymbol)
+    },
+    
+    addToFavorites: async (_, args) => {
+      return await userData.addFavorites(args.userToken, args.stockSymbol)
+    },
+
+    removeFromFavorites: async (_, args) => {
+      return await userData.removeFromFavorites(args.userToken, args.stockSymbol)
     }
+    
   },
 };
 

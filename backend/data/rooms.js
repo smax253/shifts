@@ -95,8 +95,7 @@ module.exports = {
 
             if (room.activeUsers.includes(userName)) {
                 let newRoom = room.activeUsers.filter((users) => {
-                    console.log("filtering") 
-                    users != userName;
+                    return users !== userName;
                 })
                 room.activeUsers = newRoom;
                 await this.updateRoom(room, stockSymbol);
