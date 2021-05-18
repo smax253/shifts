@@ -47,6 +47,7 @@ const typeDefs = gql`
     getUserById(id: String!): User
     getStock(symbol: String!): Stock
     getRoom(stockSymbol: String!): Room
+    topMovers: [Stock]
   
 
     checkUsername(username: String!): Boolean
@@ -77,7 +78,7 @@ const resolvers = {
     /* Stocks */
     stocks: async (_, args) => await stockData.getAllStocks(),
     getStock: async (_, args) => await stockData.getStock(args.symbol),
-    
+    topMovers: async (_, args) => await stockData.topMovers(),
     /* Rooms */
     rooms: async (_, args) => await roomData.getAllRooms(),
     getRoom: async (_, args) => await roomData.getRoom(args.stockSymbol),

@@ -178,5 +178,23 @@ module.exports = {
     }
 
     return await module.exports.getAllStocks();
+  },
+
+  async topMovers() {
+    try {
+      let allStocks = await module.exports.getAllStocks();
+      let topTenMovers = [];
+
+      allStocks.sort((stock) => {
+        return Math.abs(stock.daily[0].value - stock.daily[4].value);
+      })
+
+      topTenMovers = allStocks.length > 10 ? allStocks.slice(allStocks.length - 10, allStocks.length) : allStocks;
+      topTenMovers.reverse();
+      return topTenMovers;
+
+    } catch (e) {
+      throw e;
+    }
   }
 }
