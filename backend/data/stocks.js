@@ -8,6 +8,8 @@ const fetch = require("node-fetch");
 const { database } = require("firebase-admin");
 const { generate } = require("password-hash");
 
+const axios = require('axios');
+
 module.exports = {
   async getAllStocks() {
       const snapshot = await db.collection('stocks').get();
@@ -18,7 +20,7 @@ module.exports = {
       return arr;
   },
   async getStock(symbol) {
-         const userRef = db.collection('stocks').doc(symbol);
+        const userRef = db.collection('stocks').doc(symbol);
         const doc = await userRef.get();
         if (!doc.exists) {
           console.log('No such stock!');
@@ -138,6 +140,7 @@ module.exports = {
 
     // Add a new document in collection "users" with ID 'username'
     const res = await db.collection('stocks').doc(symbol).set(newStock);
+    this.updateStockData(symbol);
     return await this.getStock(symbol);
   },
 
@@ -181,5 +184,65 @@ module.exports = {
     }
 
     return await module.exports.getAllStocks();
+  },
+
+  async topMovers() {
+    try {
+      let allStocks = await module.exports.getAllStocks();
+      let topTenMovers = [];
+      allStocks = allStocks.map((stock) => {
+        const prevA = stock.daily.find((item) => item.date === 'pc').value;
+        const currentA = stock.daily.find((item) => item.date === 'c').value;
+        return {
+          ...stock,
+          change: Math.abs((currentA - prevA) / prevA)
+        }
+      })
+      allStocks.sort((stockA, stockB) => {
+        return stockA.change - stockB.change;
+      })
+
+      topTenMovers = allStocks.length > 10 ? allStocks.slice(allStocks.length - 10, allStocks.length) : allStocks;
+      topTenMovers.reverse();
+      let topRooms = [];
+
+      for (let i = 0; i < topTenMovers.length; i++){
+        let topMovingRoom = await roomData.getRoom(topTenMovers[i].symbol)
+        topRooms.push(topMovingRoom);
+      }
+      return topRooms;
+
+    } catch (e) {
+      throw e;
+    }
+  },
+  async updateStockData(stockSymbol) {
+    const userRef = db.collection('stocks').doc(stockSymbol);
+    const doc = await userRef.get();
+    if (!doc.exists) {
+      console.log('No such stock!');
+    } else {
+      const stock = doc.data()
+      const { data } = await axios.get(`https://finnhub.io/api/v1/quote?symbol=${stockSymbol}&token=c2feaaqad3ien4445gh0`);
+      const daily = [];
+      Object.keys(data).forEach((item) => {
+        daily.push({
+          date: item,
+          value: data[item]
+        });
+      })
+      stock.daily = daily;
+      const res = await db.collection('stocks').doc(stockSymbol).set(stock);
+      return await this.getStock(stockSymbol);
+    }
+    return null;
+  },
+  async getStocks(symbols) {
+    const stockList = [];
+    for (const symbol of symbols) {
+      const stock = await this.getStock(symbol);
+      stockList.push(stock);
+    }
+    return stockList;
   }
 }

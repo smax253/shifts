@@ -9,15 +9,20 @@ import ChatBox from './ChatBox';
 import { useQuery } from '@apollo/client';
 import queries from '../../queries';
 
-const StockDataSummary = ({name, symbol, data}) => {
+const StockDataSummary = ({name, symbol, data, daily}) => {
 
-  const price = 2316.16;
+  
   const change = {};
   data.forEach((item) => {
 
     change[item.date] = item.value;
   
   })
+  daily.forEach(item => {
+    change[item.date] = item.value;
+  })
+  const price = change.c;
+  
   const calcPercentage = (difference) => {
 
     const percent = `${(difference / price * 100).toFixed(2)}%`;
@@ -26,9 +31,14 @@ const StockDataSummary = ({name, symbol, data}) => {
   }
 
   const renderNumber = (value) => {
-
+    if (Number.isNaN(+value)) {
+      return <div className={'neutral'}>
+        <span className="price-value">-- </span>
+        <span className="price-change">(--%)</span>
+      </div>
+    }
     value = price - value;
-    return <div className={value > 0 ? 'positive' : 'negative'}>
+    return <div className={value > 0 ? 'positive' : value < 0 ? 'negative' : 'neutral'}>
       <span className="price-value">{value > 0 ? '+' + (value.toFixed(2)) : value.toFixed(2)}</span>
       <span className="price-change">{calcPercentage(value)}</span>
     </div>
@@ -37,20 +47,17 @@ const StockDataSummary = ({name, symbol, data}) => {
 
   return (
     <div className="stock-data-summary">
-      <div><div id="company-name">{name}</div><div>{symbol}</div></div>
+      <div id="company-title"><div id="company-name">{name}</div><div>{symbol}</div></div>
       
-      <div id="current-price"><div id="price">{price}</div>{renderNumber(2310)}</div>
+      <div id="current-price"><div id="price">{price}</div>{renderNumber(change.pc)}</div>
+      
       <div><div>1 Day</div>{renderNumber(change['1d'])}</div>
-      
       <div><div>1 Week</div>{renderNumber(change['1w'])}</div>
       <div><div>1 Month</div>{renderNumber(change['1m'])}</div>
-
       <div><div>3 Months</div>{renderNumber(change['3m'])}</div>
       <div><div>6 Months</div>{renderNumber(change['6m'])}</div>
       <div><div>1 Year</div>{renderNumber(change['1y'])}</div>
       <div><div>5 Years</div>{renderNumber(change['5y'])}</div>
-
-
 
     </div>
   );
@@ -60,7 +67,9 @@ const StockDataSummary = ({name, symbol, data}) => {
 StockDataSummary.propTypes = {
   data: PropTypes.array.isRequired,
   name: PropTypes.string.isRequired,
-  symbol: PropTypes.string.isRequired
+  symbol: PropTypes.string.isRequired,
+  price: PropTypes.number.isRequired,
+  daily: PropTypes.array.isRequired,
 }
 
 const Room = ({ id, messages, setMessages }) => {
@@ -69,7 +78,6 @@ const Room = ({ id, messages, setMessages }) => {
   //const [, setCurrentPrice] = React.useState(0);
   const [chartData, setChartData] = React.useState(undefined);
   const [users, setUsers] = React.useState(undefined);
-
   // eslint-disable-next-line no-unused-vars
   const getStockQuery = useQuery(queries.GET_STOCK_DATA,
     {
@@ -78,7 +86,7 @@ const Room = ({ id, messages, setMessages }) => {
       }
     }
   )
-  const getRoomQuery = useQuery(queries.GET_ROOM_DATA, { variables: { ticker: id.toUpperCase() } });
+  const getRoomQuery = useQuery(queries.GET_ROOM_DATA, { fetchPolicy:'no-cache', variables: { ticker: id.toUpperCase() } });
   const allRoomsQuery = useQuery(queries.GET_ALL_ROOMS);
 
   const [activeRooms, setActiveRooms] = useState(null);
@@ -104,6 +112,7 @@ const Room = ({ id, messages, setMessages }) => {
     if (getRoomQuery.data && getRoomQuery.data.getRoom) {
 
       setUsers(getRoomQuery.data.getRoom.activeUsers);
+      console.log('query messages', getRoomQuery.data.getRoom.messages)
       setMessages(getRoomQuery.data.getRoom.messages);
     
     }
@@ -122,6 +131,9 @@ const Room = ({ id, messages, setMessages }) => {
         break;
       case '5d':
         setChartData(rawData.slice(Math.max(rawData.length - 5, 0)));
+        break;
+      case '15d':
+        setChartData(rawData.slice(Math.max(rawData.length - 15, 0)));
         break;
       default:
         break;
@@ -142,7 +154,12 @@ const Room = ({ id, messages, setMessages }) => {
       <Grid container className="room-half">
         <Grid item xs={12} sm={4}>
           {getStockQuery.data && getStockQuery.data.getStock
-            ? <StockDataSummary symbol={id.toUpperCase()} data={getStockQuery.data.getStock.prices} />
+            ? <StockDataSummary
+              name={getStockQuery.data.getStock.name}
+              symbol={id.toUpperCase()}
+              data={getStockQuery.data.getStock.prices}
+              daily={getStockQuery.data.getStock.daily}
+            />
             : <div>Loading...</div>
           }
         </Grid>

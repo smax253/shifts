@@ -3,6 +3,8 @@ const { addResolveFunctionsToSchema } = require("graphql-tools");
 const firebaseConnections = require("../config/firebaseConnections");
 const db = firebaseConnections.initializeCloudFirebase();
 
+const userData = require('./users');
+
 module.exports = {
     async getAllRooms() {
         const snapshot = await db.collection('rooms').get();
@@ -23,7 +25,7 @@ module.exports = {
           data.messages = data.messages.map((item) => {
             return {
               ...item,
-              time: item.time.toDate().getTime()
+              time: item.time.toDate()
             }
           })
           return data;
@@ -63,5 +65,46 @@ module.exports = {
         roomData.messages.push(newMessage);
         const res = await db.collection('rooms').doc(stockSymbol).set(roomData);
         return this.getRoom(stockSymbol);
+    },
+
+    async updateRoom(newRoomData, stockSymbol) {
+        try {
+            const res = await db.collection('rooms').doc(stockSymbol).set(newRoomData);
+            return this.getRoom(stockSymbol);
+        } catch (e) {
+            throw (e);
+        }
+    },
+
+    async addUserToRoom(userName, stockSymbol) {
+        console.log(stockSymbol)
+        try {
+            let user = await userData.getUser(userName)
+            let room = await module.exports.getRoom(stockSymbol);
+            room.activeUsers.push(userName);
+            room.activeUsers = Array.from(new Set(room.activeUsers));
+            await this.updateRoom(room, stockSymbol);
+        } catch (e) {
+            throw (e);
+        }
+    },
+
+    async deleteUserFromRoom(userName, stockSymbol) {
+        try {
+            let room = await module.exports.getRoom(stockSymbol);
+
+            if (room.activeUsers.includes(userName)) {
+                let newRoom = room.activeUsers.filter((users) => {
+                    console.log("filtering") 
+                    users != userName;
+                })
+                room.activeUsers = newRoom;
+                await this.updateRoom(room, stockSymbol);
+            } else {
+                throw "That user is not in the room " + stockSymbol;
+            }
+        } catch (e) {
+            throw e;
+        }
     }
 }

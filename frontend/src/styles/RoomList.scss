@@ -9,6 +9,8 @@
     padding: 32px 0;
     overflow-y: scroll;
     box-sizing: border-box;
+    width: 90%;
+
     ul{
         list-style: none;
         padding: 0;
@@ -52,5 +54,11 @@
     height: 70vh;
 }
 .room-list.active{
-    height: 100%;
+    height: 85vh;
+}
+.list-change{
+    font-size: 30px;
+}
+.list-percent{
+    font-size: 20px;
 }

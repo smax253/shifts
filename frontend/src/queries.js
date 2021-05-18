@@ -38,9 +38,7 @@ const GET_ALL_ROOMS = gql`
     query { 
         rooms {
             stockSymbol
-            activeUsers {
-                username
-            }
+            activeUsers
         }
     }
 `
@@ -48,9 +46,7 @@ const GET_ALL_ROOMS = gql`
 const GET_ROOM_DATA = gql`
     query ($ticker: String!){
         getRoom(stockSymbol: $ticker){
-            activeUsers{
-                username
-            }
+            activeUsers
             messages{
                 author
                 time
@@ -60,25 +56,16 @@ const GET_ROOM_DATA = gql`
     }
 `
 
-const GET_GAINING_COMPANIES = gql`
-    query getGainers($queryNum: Int){
-        gainingCompanies(num: $queryNum){
-            ticker
-            companyName
-            _id
+const GET_TOP_MOVERS = gql`
+    query{
+        topMovers{
+            stockSymbol
+            activeUsers
         }
     }
 `
 
-const GET_LOSING_COMPANIES = gql`
-    query getLosers($queryNum: Int){
-        losingCompanies(num: $queryNum){
-            ticker
-            companyName
-            _id
-        }
-    }
-`
+
 
 const GET_LOGGED_IN_USERS = gql`
     query{
@@ -93,11 +80,36 @@ const GET_STOCK_DATA = gql`
     query ($ticker: String!){
         getStock(symbol: $ticker){
             symbol
+            name
             prices{
                 date
                 value
             }
             chart{
+                date
+                value
+            }
+            daily{
+                date
+                value
+            }
+        }
+    }
+`
+
+const GET_USERNAME = gql`
+    query($userID: String!){
+        getUserById(id: $userID){
+            username
+        }
+    }
+`
+
+const GET_STOCK_LIST = gql`
+    query($tickerList: [String]!){
+        getStocks(symbols:$tickerList){
+    		symbol
+    		daily{
                 date
                 value
             }
@@ -108,5 +120,5 @@ const GET_STOCK_DATA = gql`
 
 
 export default {
-  GET_ROOM_DATA,GET_STOCK_DATA, CHECK_USERNAME, LOGIN_USER, ADD_USER, REMOVE_USER, GET_LOGGED_IN_USERS, GET_GAINING_COMPANIES, GET_LOSING_COMPANIES, GET_ALL_ROOMS
+  GET_STOCK_LIST,GET_USERNAME, GET_ROOM_DATA,GET_STOCK_DATA, CHECK_USERNAME, LOGIN_USER, ADD_USER, REMOVE_USER, GET_LOGGED_IN_USERS, GET_TOP_MOVERS, GET_ALL_ROOMS
 }

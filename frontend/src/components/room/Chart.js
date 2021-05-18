@@ -23,6 +23,7 @@ const Chart = ({data, setChartMode}) => {
       </ResponsiveContainer>
       <div className="stock-chart-controls">
         <button onClick={() => setChartMode('5d')}>5d</button>
+        <button onClick={() => setChartMode('15d')}>15d</button>
         <button onClick={() => setChartMode('1m')}>1m</button>
       </div>
     </div>

@@ -4,7 +4,7 @@ import { Tooltip } from '@material-ui/core';
 import socket from '../../socket/socket';
 
 const ChatBox = ({chatLog}) => {
-
+  console.log('chat', chatLog);
   const [messageText, setMessageText] = useState('');
   const renderMessages = useCallback(()=>{
 
@@ -12,7 +12,7 @@ const ChatBox = ({chatLog}) => {
 
       return (
         <div key={index} className="message">
-          <Tooltip title={new Date(Number(item.time)).toString()}>
+          <Tooltip title={new Date(item.time).toString()}>
             <span className="message-username">{item.author}: </span>
           </Tooltip>
           <span>{item.text}</span>

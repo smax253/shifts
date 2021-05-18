@@ -4,7 +4,6 @@ const socket = new WebSocket('wss://ws.finnhub.io?token=c2feaaqad3ien4445gh0');
 const fetch = require('node-fetch');
 const sendStockData = require('../socket/');
 const { generateStocks, wipeStocks, getAllStocks } = require('../data/stocks');
-const stocks = require('../data/stocks');
 
 let prices = {};
 let topTickers = [];
@@ -136,3 +135,8 @@ socket.addEventListener('open', async () => {
         runScript();
     }, 43200000); // change this to 24 hours
 });
+
+
+const pollData = async () => {
+    
+}

@@ -40,31 +40,39 @@ const TopStockTickers = () => {
 
 const Dashboard = () => {
 
-  const topMovers = fakeQueryData.topMovers;
+  // eslint-disable-next-line no-unused-vars
   const popular = fakeQueryData.topMovers;
+  // eslint-disable-next-line no-unused-vars
   const myList = fakeQueryData.topMovers;
   const allRoomsQuery = useQuery(queries.GET_ALL_ROOMS);
+  const topMoversQuery = useQuery(queries.GET_TOP_MOVERS);
 
   const loading = useMemo(() => allRoomsQuery.loading, [allRoomsQuery]);
   const [activeRooms, setActiveRooms] = useState(null);
+  const [topMovers, setTopMovers] = useState(null);
   useEffect(() => {
 
-    if (allRoomsQuery.loading) setActiveRooms(null);
-    else {
+    if(allRoomsQuery.data &&  allRoomsQuery.data.rooms){
 
-      const active = allRoomsQuery.data.rooms.map((item) => {
-
-        return { ...item, active: item.activeUsers.length };
-      
-      })
-
-      active.sort((a, b) => a.active - b.active);
-      
-      setActiveRooms(active);
+      setActiveRooms(allRoomsQuery.data.rooms);
     
+    }else {
+      setActiveRooms(null);
     }
   
   }, [allRoomsQuery])
+
+  useEffect(() => {
+
+    if(topMoversQuery.data &&  topMoversQuery.data.topMovers){
+      setTopMovers( topMoversQuery.data.topMovers );
+    
+    }else {
+      setTopMovers(null);
+    }
+  
+  }, [topMoversQuery])
+
   return (
     loading ? <div>Loading...</div>
       : (
@@ -75,20 +83,33 @@ const Dashboard = () => {
             </Grid>
             <Grid container>
               <Grid item xs={12} sm={4} className='list-container'>
-                <RoomList title="Top Movers" tickerList={topMovers} showPrices/>
+                {
+                  topMovers
+                    ? <RoomList title="Top Movers" showPrices tickerList={topMovers} />
+                    : <div>Loading...</div>
+                }
               </Grid>
               <Grid item xs={12} sm={4} className='list-container'>
-                <RoomList title="Popular" tickerList={popular} showPrices/>
+                {
+                  activeRooms
+                    ? <RoomList title="Popular" showPrices tickerList={activeRooms} />
+                    : <div>Loading...</div>
+                }
               </Grid>
               <Grid item xs={12} sm={4} className='list-container'>
-                <RoomList title="My List" tickerList={myList} showPrices/>   
+                
+                {
+                  activeRooms
+                    ? <RoomList title="My List" showPrices tickerList={activeRooms} />
+                    : <div>Loading...</div>
+                }
               </Grid>
             </Grid>
           </Grid>
           <Grid item xs={12} sm={3} id="active-rooms">
             {
               activeRooms
-                ? <RoomList title="Active Rooms" tickerList={activeRooms} />
+                ? <RoomList title="Active Rooms" sortActive tickerList={activeRooms} />
                 : <div>Loading...</div>
             }
           </Grid>
