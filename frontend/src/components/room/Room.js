@@ -224,7 +224,7 @@ const Room = ({ id, messages, setMessages, price, userToken }) => {
     (<Grid container className="full-height">
       <Grid container className="room-half">
         <Grid item xs={12} sm={4} className="stockInformation">
-          {getStockQuery.data && getStockQuery.data.getStock
+          {getStockQuery.data && getStockQuery.data.getStock && allStockInfo.data && allStockInfo.data.getStock
             ? <StockDataSummary
               name={getStockQuery.data.getStock.name}
               symbol={id.toUpperCase()}
