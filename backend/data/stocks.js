@@ -11,11 +11,11 @@ const { generate } = require("password-hash");
 const axios = require('axios');
 const redis = require('redis');
 
-// const client = redis.createClient();
-// const bluebird = require('bluebird');
+const client = redis.createClient();
+const bluebird = require('bluebird');
 
-// bluebird.promisifyAll(redis.RedisClient.prototype);
-// bluebird.promisifyAll(redis.Multi.prototype);
+bluebird.promisifyAll(redis.RedisClient.prototype);
+bluebird.promisifyAll(redis.Multi.prototype);
 
 module.exports = {
   async getAllStocks() {
@@ -36,15 +36,45 @@ module.exports = {
         } else {
           const result = doc.data();
           const desc = await client.hgetAsync('company_info', symbol);
-          if (desc === null ) {
-            result.stockInfo = {
-              assetType: null,
-              description: null,
-              exchange: null,
-              industry: null,
-              analystTargetPrice: null
+          if (desc === null) {
+
+            const API_Call4 =
+              `https://www.alphavantage.co/query?function=OVERVIEW&symbol=` +
+              symbol +
+              `&apikey=` +
+              API_KEY;
+          
+            const { data } = await axios.get(API_Call4);
+            let isDataNull = false;
+            if (Object.keys(data).length === 0) {
+              await client.hsetAsync('company_info', symbol, JSON.stringify(null));
+              isDataNull = true;
+            } else {
+              await client.hsetAsync('company_info', symbol, JSON.stringify(data));
             }
-            
+
+            if (isDataNull) {
+                result.stockInfo = {
+                  assetType: null,
+                  description: null,
+                  exchange: null,
+                  industry: null,
+                  analystTargetPrice: null
+                }
+            } else {
+                let getFromRedis = await hgetAsync('company_info', symbol)
+                let moreInfo = JSON.parse(getFromRedis);
+                //console.log(moreInfo)
+                let stockInfo = {}
+                stockInfo.assetType = moreInfo.AssetType
+                stockInfo.description = moreInfo.Description;
+                stockInfo.exchange = moreInfo.Exchange;
+                stockInfo.industry = moreInfo.Industry;
+                stockInfo.analystTargetPrice = moreInfo.AnalystTargetPrice;
+                result.stockInfo = stockInfo;
+            }
+                
+           
           } else {
             let moreInfo = JSON.parse(desc);
             //console.log(moreInfo)
