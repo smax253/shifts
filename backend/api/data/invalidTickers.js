@@ -39,6 +39,7 @@ const invalidTickers = [
 	'WSB',
 	'WTF',
 	'WTH',
+	'WSJ',
 	'AQAA',
 	'APES',
 	'BACK',
@@ -65,6 +66,7 @@ const invalidTickers = [
 	'THE',
 	'BRK',
 	'WSJ'
+
 ];
 
 // export default invalidTickers;

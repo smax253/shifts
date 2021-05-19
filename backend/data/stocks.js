@@ -125,6 +125,10 @@ module.exports = {
 
         });
     
+
+          }
+        });
+      
       //name
       const API_Call3 =
         `https://www.alphavantage.co/query?function=OVERVIEW&symbol=` +
@@ -140,6 +144,7 @@ module.exports = {
           //Parsing Data
           newStock.name = "Name" in data ? data["Name"] : symbol;
         });
+
     
     
       const API_Call2 =
@@ -189,6 +194,7 @@ module.exports = {
         return;
       }
 
+
       // Add a new document in collection "users" with ID 'username'
       const res = await db.collection('stocks').doc(symbol).set(newStock);
       this.updateStockData(symbol);
@@ -198,11 +204,17 @@ module.exports = {
     }
   },
 
+
   async generateStocks(tickers) {
     //web scrapper do this part
     let presets = ["COIN", "MSFT", "AAPL", "DASH", "SNAP", "TSLA", "NFLX", "GOOG", "FB", "DIS"];
+    let all = await module.exports.getAllStocks();
+    presets.forEach((item, index) => {
+      if (all.includes(item)) {
+        presets.splice(index, index)
+      }
+    })
     let arr = [...presets, ...tickers];
-    
     console.log("Adding the following tickers to the firebase \'stocks\' collection:", arr);
 
     for (let i = 0; i < arr.length; i++) {
@@ -216,13 +228,16 @@ module.exports = {
   },
 
   async wipeStocks(allStocks) {
+    console.log("here in wipe stocks")
     if (!allStocks) {
       let all = await module.exports.getAllStocks();
       all.forEach((stock) => {
         allStocks.push(stock.symbol)
       })
     }
+    console.log(allStocks)
     for (let stock of allStocks) {
+      console.log(stock);
         db.collection('stocks').doc(stock).delete().then(() => {
           console.log('successfully deleted ' + stock)
           
@@ -337,9 +352,11 @@ module.exports = {
   },
 
   async updateMentions(tickerMentions) {
+    console.log("tickerMentions here")
+    console.log(tickerMentions)
     try {
       for (let { stock, timesCounted } of tickerMentions) {
-        const res = await db.collection('stockMentions').doc(stock).set(timesCounted);
+        const res = await db.collection('stockMentions').doc(stock).set({ "symbol": stock, "timesCounted": timesCounted });
       }
     } catch (e) {
       throw e
@@ -356,6 +373,7 @@ module.exports = {
         arr.push(item.data())
       })
       console.log(arr)
+
       let getRooms = await Promise.all(arr.map(async ({ symbol, timesCounted}) => {
         return await roomData.getRoom(symbol)
       }))

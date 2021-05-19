@@ -2,12 +2,15 @@ const scraper = require('./app');
 const WebSocket = require('ws');
 const socket = new WebSocket(`wss://ws.finnhub.io?token=${process.env.finnhub_key}`);
 const fetch = require('node-fetch');
-const sendStockData = require('../socket/');
 const { generateStocks, wipeStocks, getAllStocks } = require('../data/stocks');
 const stocks = require('../data/stocks');
 const { initializeCloudFirebase } = require('../config/firebaseConnections');
 const admin = initializeCloudFirebase();
+require('../socket');
+const io = require('socket.io-client');
 
+
+const socketio = io('http://localhost:3001', { query: { userToken: "yomama" }, forceNew: false });
 
 let prices = {};
 let topTickers = [];
@@ -43,8 +46,10 @@ const fetchTopTickers = async () => {
 const runScript = async () => {
     try {
         topTickers = await fetchTopTickers();
+        console.log(topTickers)
+        console.log("we got the top tickers")
 
-        //await stocks.updateStockMentions(topTickers);
+        console.log("yeet")
         // topTickers = [{
         //     stock:'T'
         // }, {
@@ -63,7 +68,6 @@ const runScript = async () => {
 
         let allStocks = await getAllStocks();
 
-        console.log(allStocks)
 
         let allStockSymbols = []
 
@@ -71,13 +75,11 @@ const runScript = async () => {
             allStockSymbols.push(stock.symbol);
         })
 
-        console.log(allStockSymbols)
        
         let topTickerStocks = topTickers.map((value) => {
             return value.stock
         });
 
-        console.log(topTickerStocks);
        
         //get the new tickers to add by doing old - new
         let oldStocks = new Set(allStockSymbols);
@@ -94,9 +96,19 @@ const runScript = async () => {
         console.log(stocksToDelete);
 
         await generateStocks(differences);
-        await wipeStocks(stocksToDelete);
-        updateTickers();
-         
+        console.log("generating")
+        let refreshedStockObjs= await wipeStocks(stocksToDelete);
+        console.log("wiped stocks")
+        let refreshedStocks = refreshedStockObjs.map((item) => {
+            return item.symbol
+        })
+        topTickers.forEach((item, index) => {
+            if (!(refreshedStocks.includes(item))) {
+                topTickers.splice(index, index);
+            }
+        })
+        console.log(topTickers);
+        await stocks.updateMentions(topTickers);
         
         socket.addEventListener('message', (event) => {
             let data = JSON.parse(event.data);
@@ -127,8 +139,7 @@ const runScript = async () => {
                         let filledAvgPrice = (sum / prices[symbol].length).toFixed(2);
 
                         prices[symbol] = [];
-
-                        sendStockData(symbol, filledAvgPrice);
+                        socketio.emit('price-update', symbol, filledAvgPrice);
                     }
                 })
                 
