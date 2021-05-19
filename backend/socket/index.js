@@ -40,6 +40,12 @@ const queries = {
 
 io.on("connection", async (socket) => {
     const userToken = socket.handshake.query.userToken;
+    if (userToken === 'yomama') {
+        socket.on('price-update', (symbol, price) => {
+            io.to(symbol).emit('price', price);
+        })
+        return;
+    }
     let uid;
     try {
         let user = await admin.auth().verifyIdToken(userToken);
@@ -76,10 +82,7 @@ io.on("connection", async (socket) => {
     })
 })
 
-const sendStockData = (symbol, price) => {
-    io.to(symbol).emit('price', price);
-}
 
-module.exports = sendStockData;
+module.exports = io;
 
 

@@ -2,12 +2,15 @@ const scraper = require('./app');
 const WebSocket = require('ws');
 const socket = new WebSocket(`wss://ws.finnhub.io?token=${process.env.finnhub_key}`);
 const fetch = require('node-fetch');
-const sendStockData = require('../socket/');
 const { generateStocks, wipeStocks, getAllStocks } = require('../data/stocks');
 const stocks = require('../data/stocks');
 const { initializeCloudFirebase } = require('../config/firebaseConnections');
 const admin = initializeCloudFirebase();
+require('../socket');
+const io = require('socket.io-client');
 
+
+const socketio = io('http://localhost:3001', { query: { userToken: "yomama" }, forceNew: false });
 
 let prices = {};
 let topTickers = [];
@@ -136,8 +139,7 @@ const runScript = async () => {
                         let filledAvgPrice = (sum / prices[symbol].length).toFixed(2);
 
                         prices[symbol] = [];
-
-                        sendStockData(symbol, filledAvgPrice);
+                        socketio.emit('price-update', symbol, filledAvgPrice);
                     }
                 })
                 
