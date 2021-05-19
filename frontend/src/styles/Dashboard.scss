@@ -7,6 +7,7 @@
 #top-stocks{
     height: 20%;
     background-color: #3C3B3B;
+     height: 20vh;
     color: white;
     margin: 16px;
     border-radius: 8px;
@@ -27,7 +28,7 @@
     }
 }
 .top-stock-price{
-    font-size: 48px;
+    font-size: 4vh;
 }
 
 .positive,.negative,.neutral{
@@ -42,4 +43,11 @@
     display: flex;
     justify-content: center;
     align-items: flex-start;
+}
+
+/* Small Screens <= 640px */
+@media only screen and (max-width: 640px) {
+  #top-stocks{
+    height: 40vh;
+  }
 }
