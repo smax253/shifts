@@ -125,9 +125,6 @@ module.exports = {
 
         });
     
-
-          }
-        });
       
       //name
       const API_Call3 =
