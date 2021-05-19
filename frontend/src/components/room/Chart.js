@@ -6,7 +6,6 @@ import Button from '@material-ui/core/Button';
 const Chart = ({data, setChartMode, chartMode}) => {
 
   // eslint-disable-next-line no-console
-  console.log('render', data);
   return (
     
     <div className="stock-chart">

@@ -48,7 +48,6 @@ const combineResults = (modifiedCountTickers) => {
 		modifiedCountTickers.splice(1, 1);
 		modifiedCountTickers[0] = firstArrayObj
 	}
-	//console.log(modifiedCountTickers)
 	return modifiedCountTickers;
 
 }

@@ -53,19 +53,16 @@ const initSocketIO = (httpServer, workerPassword) => {
         let uid;
         try {
             let user = await admin.auth().verifyIdToken(userToken);
-            //console.log(user);
             uid = user.uid;
         } catch (err) {
             return socket.disconnect(true);
         }
-    //    console.log('user token')
         const { data } = await client.query({ query: queries.GET_USERNAME, variables: { id: uid } });
         const username = data.getUserById.username;
         const symbol = socket.handshake.query.symbol;
         if (!symbol) return socket.disconnect(true);
         socket.join(symbol);
         const room = await rooms.addUserToRoom(username, symbol);
-        console.log(room);
         socket.on('message', async (message) => {
             await client.mutate({
                 mutation: queries.ADD_MESSAGE,
