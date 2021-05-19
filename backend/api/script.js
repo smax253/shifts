@@ -1,6 +1,7 @@
 const scraper = require('./app');
 const WebSocket = require('ws');
 const socket = new WebSocket(`wss://ws.finnhub.io?token=${process.env.finnhub_key}`);
+
 const fetch = require('node-fetch');
 const { generateStocks, wipeStocks, getAllStocks } = require('../data/stocks');
 const stocks = require('../data/stocks');
@@ -55,7 +56,7 @@ const runScript = async () => {
         //         stock:'AAPL'
         // }]
         // //topTickers.push({ stock: 'BINANCE:BTCUSDT', timesCounted: 0 }); // remove this as this is just test data
-
+        topTickers.push({ stock: 'AAL', timesCounted: 4 }, { stock: 'NVDA', timesCounted: 3 }, { stock: 'INTC', timesCounted: 2 });
         topTickers.forEach(({ stock }) => {
             prices[stock] = [];
         });
@@ -106,7 +107,6 @@ const runScript = async () => {
                 topTickers.splice(index, index);
             }
         })
-        console.log(topTickers);
         await stocks.updateMentions(topTickers);
  
         socket.addEventListener('message', (event) => {
@@ -149,7 +149,6 @@ const runScript = async () => {
         console.log(e);
     }
 }
-
 socket.addEventListener('open', async () => {
     runScript();
 
@@ -163,6 +162,7 @@ socket.addEventListener('open', async () => {
         runScript();
     }, 43200000); // change this to 24 hours
 });
+
 
 const updateTickers = () => {
     for (const ticker of topTickers) {

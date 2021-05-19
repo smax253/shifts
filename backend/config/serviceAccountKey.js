@@ -1,5 +1,4 @@
-
-module.exports = {
+const secrets = {
   "type": process.env.type,
   "project_id": process.env.project_id,
   "private_key_id": process.env.private_key_id,
@@ -11,3 +10,4 @@ module.exports = {
   "auth_provider_x509_cert_url": process.env.auth_provider_x509_cert_url,
   "client_x509_cert_url": process.env.client_x509_cert_url,
 }
+module.exports = secrets;

@@ -6,7 +6,7 @@ let socket;
 
 // eslint-disable-next-line no-unused-vars
 const useEffectSocket = ({ symbol, addMessage, setCurrentPrice, setUsersList, userToken }) => {
-  socket = io(process.env.REACT_BACKEND_URI || 'http://localhost:4000', { query: { symbol, userToken }, forceNew: false });
+  socket = io(process.env.REACT_APP_BACKEND_URI || 'http://localhost:4000', { query: { symbol, userToken }, forceNew: false });
   const cb = () => {
     socket.on('connect', () => {
       console.log('connection: ', socket.connected)

@@ -10,12 +10,16 @@ const { generate } = require("password-hash");
 
 const axios = require('axios');
 const redis = require('redis');
-
-const client = redis.createClient();
+let client;
+if (process.env.REDIS_URL) {
+  client = redis.createClient(process.env.REDIS_URL);
+}
+else client = redis.createClient();
 const bluebird = require('bluebird');
 
 bluebird.promisifyAll(redis.RedisClient.prototype);
 bluebird.promisifyAll(redis.Multi.prototype);
+
 
 module.exports = {
   async getAllStocks() {
@@ -63,7 +67,8 @@ module.exports = {
                   analystTargetPrice: null
                 }
             } else {
-                let getFromRedis = await hgetAsync('company_info', symbol)
+              console.log('getting');
+                let getFromRedis = await client.hgetAsync('company_info', symbol)
                 let moreInfo = JSON.parse(getFromRedis);
                 //console.log(moreInfo)
                 let stockInfo = {}
