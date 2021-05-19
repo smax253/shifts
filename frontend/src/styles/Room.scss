@@ -21,6 +21,13 @@
     //padding: 16px 0;
     .stock-chart-controls{
         display: flex;
+        button{
+            margin: 0px 4px;
+        }
+        button.active{
+            margin: -3px 4px;
+            border: 3px solid green;
+        }
     }
 }
 .stock-data-summary{

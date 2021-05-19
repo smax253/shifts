@@ -27,14 +27,14 @@ const Chart = ({data, setChartMode, chartMode}) => {
         :<div className="stock-chart">Not enough data.</div>
       }
       <div className="stock-chart-controls">
-        <Button variant="contained" active={chartMode==='5d'} onClick={() => setChartMode('5d')}>5d</Button>
-        <Button variant="contained" active={chartMode==='15d'} onClick={() => setChartMode('15d')}>15d</Button>
-        <Button variant="contained" active={chartMode==='1m'} onClick={() => setChartMode('1m')}>1m</Button>
-        <Button variant="contained" active={chartMode==='3m'} onClick={() => setChartMode('3m')}>3m</Button>
-        <Button variant="contained" active={chartMode==='6m'} onClick={() => setChartMode('6m')}>6m</Button>
-        <Button variant="contained" active={chartMode==='1y'} onClick={() => setChartMode('1y')}>1y</Button>
-        <Button variant="contained" active={chartMode==='3y'} onClick={() => setChartMode('3y')}>3y</Button>
-        <Button variant="contained" active={chartMode==='5y'} onClick={() => setChartMode('5y')}>5y</Button>
+        <Button variant="contained" className={chartMode==='5d' && 'active'} onClick={() => setChartMode('5d')}>5d</Button>
+        <Button variant="contained" className={chartMode==='15d' && 'active'} onClick={() => setChartMode('15d')}>15d</Button>
+        <Button variant="contained" className={chartMode==='1m' && 'active'} onClick={() => setChartMode('1m')}>1m</Button>
+        <Button variant="contained" className={chartMode==='3m' && 'active'} onClick={() => setChartMode('3m')}>3m</Button>
+        <Button variant="contained" className={chartMode==='6m' && 'active'} onClick={() => setChartMode('6m')}>6m</Button>
+        <Button variant="contained" className={chartMode==='1y' && 'active'} onClick={() => setChartMode('1y')}>1y</Button>
+        <Button variant="contained" className={chartMode==='3y' && 'active'} onClick={() => setChartMode('3y')}>3y</Button>
+        <Button variant="contained" className={chartMode==='5y' && 'active'} onClick={() => setChartMode('5y')}>5y</Button>
 
       </div>
     </div>
