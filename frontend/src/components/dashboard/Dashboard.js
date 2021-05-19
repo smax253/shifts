@@ -17,7 +17,7 @@ const StockItem = ({name, prices}) => {
 
 
   return (
-    <Grid xs={12} sm={4} className="top-stock-item-container">
+    <Grid item xs={12} sm={4} className="top-stock-item-container">
       <div className='top-stock-item'>
         {name}
         <div className="top-stock-price">
@@ -66,11 +66,12 @@ const Dashboard = () => {
   const allRoomsQuery = useQuery(queries.GET_ALL_ROOMS);
   const topMoversQuery = useQuery(queries.GET_TOP_MOVERS);
   const popularQuery = useQuery(queries.GET_POPULAR);
-
+  
   const loading = useMemo(() => allRoomsQuery.loading, [allRoomsQuery]);
   const [activeRooms, setActiveRooms] = useState(null);
   const [topMovers, setTopMovers] = useState(null);
   const [popular, setPopular] = useState(null);
+  console.log(popularQuery);
   useEffect(() => {
 
     if(allRoomsQuery.data &&  allRoomsQuery.data.rooms){

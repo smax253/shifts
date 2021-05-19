@@ -21,7 +21,7 @@ const PrivateRoute = ({children, ...rest}) => {
 
 PrivateRoute.propTypes = {
   children: PropTypes.node.isRequired,
-  isAuthenticated: PropTypes.bool.isRequired
+  isAuthenticated: PropTypes.bool
 }
 
 export default PrivateRoute;
