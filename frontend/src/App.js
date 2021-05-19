@@ -2,7 +2,6 @@ import React from 'react';
 import './styles/App.scss';
 import {BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import Home from './components/home_page/Home';
-import Profile from './components/profile/Profile';
 import PrivateRoute from './components/auth/PrivateRoute';
 import Login from './components/auth/Login';
 import NavBar from './components/shared/NavBar';
@@ -56,9 +55,6 @@ function App() {
                   <Route exact path="/">
                     <Home />
                   </Route>
-                  <PrivateRoute path="/profile/:id">
-                    <Profile/>
-                  </PrivateRoute>
                   <PrivateRoute path="/stock/:id">
                     <RoomWrapper/>
                   </PrivateRoute>

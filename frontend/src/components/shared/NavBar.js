@@ -2,7 +2,6 @@ import { useQuery } from '@apollo/client';
 import React, { useContext, useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { AuthContext } from '../../auth/AuthContext';
-import auth from '../../config/auth';
 import queries from '../../queries';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { withStyles } from '@material-ui/core/styles';
@@ -58,6 +57,7 @@ const StyledMenuItem = withStyles(() => ({
 
 const NavBar = () => {
   const classes = useStyles();
+  const [auth] = useContext(AuthContext);
   // eslint-disable-next-line no-unused-vars
   const [authUser, setAuthUser] = useContext(AuthContext);
   const history = useHistory();
@@ -131,7 +131,6 @@ const NavBar = () => {
   
   }, [allRoomsQuery])
 
-
   return (<nav>
     <div><Link className="myButton" to="/">Home</Link></div>
     {!!authUser && <div><Link className="myButton" to="/dashboard">Dashboard</Link></div>}
@@ -164,7 +163,7 @@ const NavBar = () => {
             onClick={handleClick}
             
           >
-                      Profile  <img src={pf}/>
+            {auth.username}  <img src={pf}/>
           </Button>
           <StyledMenu id="customized-menu" anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
             <StyledMenuItem>
