@@ -59,17 +59,17 @@ nav{
 }
 
 .positive{
-    color: green !important;
+    color: rgb(144, 255, 144) !important;
 }
 .negative{
-    color: red !important;
+    color: rgb(255, 130, 130) !important;
 }
 
 .myButton {
   margin-left: 20px;
   min-height: 40%;
   margin-right: 20px;
-	box-shadow: 0px 1px 0px 0px #f0f7fa;
+	box-shadow: 0px 1px 0px 0px #000000;
 	background:linear-gradient(to bottom, #33bdef 5%, #019ad2 100%);
 	background-color:#33bdef;
 	border-radius:6px;

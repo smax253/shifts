@@ -20,7 +20,7 @@ async function startApolloServer() {
 
     const httpServer = http.createServer(app);
     initSocketIO(httpServer, password, socketioport);
-    let scraperWorker = new Worker('./api/script.js', {workerData: {password, socketioport}});
+    // let scraperWorker = new Worker('./api/script.js', {workerData: {password, socketioport}});
 
     httpServer.listen(process.env.PORT || 4000);
     //await new Promise(resolve => app.listen({ port: process.env.PORT || 4000 }, resolve));

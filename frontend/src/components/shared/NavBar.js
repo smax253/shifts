@@ -147,7 +147,8 @@ const NavBar = () => {
           }}
           style={{ width: 300 }}
           disableClearable
-          renderInput={(params) => <TextField {...params} variant="outlined" />}
+          
+          renderInput={(params) => <TextField label="search for a stock..." {...params} variant="outlined" />}
         />
         <Link className="myButton" to={`/stock/${searchInput}`}>Search</Link>
       </form>
@@ -164,7 +165,7 @@ const NavBar = () => {
             onClick={handleClick}
             
           >
-            {auth.username}  <img src={pf}/>
+            {auth.username}  <img src={pf}  alt="pf"/>
           </Button>
           <StyledMenu id="customized-menu" anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
             <StyledMenuItem>
