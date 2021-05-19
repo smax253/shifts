@@ -9,6 +9,13 @@ const { database } = require("firebase-admin");
 const { generate } = require("password-hash");
 
 const axios = require('axios');
+const redis = require('redis');
+
+const client = redis.createClient();
+const bluebird = require('bluebird');
+
+bluebird.promisifyAll(redis.RedisClient.prototype);
+bluebird.promisifyAll(redis.Multi.prototype);
 
 module.exports = {
   async getAllStocks() {
@@ -25,6 +32,16 @@ module.exports = {
         if (!doc.exists) {
           console.log('No such stock!');
         } else {
+          const result = doc.data();
+          const desc = await client.hgetAsync('company_info', symbol);
+          if (desc === null ) {
+            const API_Call4 =
+              `https://www.alphavantage.co/query?function=OVERVIEW&symbol=` +
+              symbol +
+              `&apikey=` +
+              API_KEY;
+            
+          }
           return doc.data();
         }
         return null;
@@ -137,8 +154,16 @@ module.exports = {
 
       });
     
+    const API_Call4 =
+      `https://www.alphavantage.co/query?function=OVERVIEW&symbol=` +
+      symbol +
+      `&apikey=` +
+      API_KEY;
     
-    
+    const { data } = await axios.get(API_Call4);
+    if(Object.keys(data).length === 0) await client.hsetAsync('company_info', 'symbol', JSON.stringify(null));
+    else await client.hsetAsync('company_info', 'symbol', JSON.stringify(data));
+
     if (newStock.prices === []) {
       console.log("Did not update " + symbol)
       return;
