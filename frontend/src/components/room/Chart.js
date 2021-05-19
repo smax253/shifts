@@ -1,8 +1,9 @@
 import React from 'react';
 import {LineChart, CartesianGrid, Line, XAxis, YAxis, ResponsiveContainer, Tooltip} from 'recharts';
 import PropTypes from 'prop-types';
+import Button from '@material-ui/core/Button';
 
-const Chart = ({data, setChartMode}) => {
+const Chart = ({data, setChartMode, chartMode}) => {
 
   // eslint-disable-next-line no-console
   console.log('render', data);
@@ -26,14 +27,14 @@ const Chart = ({data, setChartMode}) => {
         :<div className="stock-chart">Not enough data.</div>
       }
       <div className="stock-chart-controls">
-        <button onClick={() => setChartMode('5d')}>5d</button>
-        <button onClick={() => setChartMode('15d')}>15d</button>
-        <button onClick={() => setChartMode('1m')}>1m</button>
-        <button onClick={() => setChartMode('3m')}>3m</button>
-        <button onClick={() => setChartMode('6m')}>6m</button>
-        <button onClick={() => setChartMode('1y')}>1y</button>
-        <button onClick={() => setChartMode('3y')}>3y</button>
-        <button onClick={() => setChartMode('5y')}>5y</button>
+        <Button variant="contained" active={chartMode==='5d'} onClick={() => setChartMode('5d')}>5d</Button>
+        <Button variant="contained" active={chartMode==='15d'} onClick={() => setChartMode('15d')}>15d</Button>
+        <Button variant="contained" active={chartMode==='1m'} onClick={() => setChartMode('1m')}>1m</Button>
+        <Button variant="contained" active={chartMode==='3m'} onClick={() => setChartMode('3m')}>3m</Button>
+        <Button variant="contained" active={chartMode==='6m'} onClick={() => setChartMode('6m')}>6m</Button>
+        <Button variant="contained" active={chartMode==='1y'} onClick={() => setChartMode('1y')}>1y</Button>
+        <Button variant="contained" active={chartMode==='3y'} onClick={() => setChartMode('3y')}>3y</Button>
+        <Button variant="contained" active={chartMode==='5y'} onClick={() => setChartMode('5y')}>5y</Button>
 
       </div>
     </div>
@@ -44,6 +45,7 @@ const Chart = ({data, setChartMode}) => {
 Chart.propTypes = {
   data: PropTypes.array.isRequired,
   setChartMode: PropTypes.func.isRequired,
+  chartMode: PropTypes.string.isRequired
 }
 
 export default Chart;

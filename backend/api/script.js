@@ -56,7 +56,7 @@ const runScript = async () => {
         //         stock:'AAPL'
         // }]
         // //topTickers.push({ stock: 'BINANCE:BTCUSDT', timesCounted: 0 }); // remove this as this is just test data
-        topTickers.push({ stock: 'AAL', timesCounted: 4 }, { stock: 'NVDA', timesCounted: 3 }, { stock: 'INTC', timesCounted: 2 });
+        //topTickers.push({ stock: 'AAL', timesCounted: 4 }, { stock: 'NVDA', timesCounted: 3 }, { stock: 'INTC', timesCounted: 2 });
         topTickers.forEach(({ stock }) => {
             prices[stock] = [];
         });

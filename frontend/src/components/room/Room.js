@@ -240,7 +240,7 @@ const Room = ({ id, messages, setMessages, price, userToken, users, setUsers }) 
         </Grid>
         <Grid item xs={12} sm={8}>
           {chartData
-            ? (<Chart data={chartData} setChartMode={setChartMode}/>)
+            ? (<Chart data={chartData} setChartMode={setChartMode} chartMode={chartMode}/>)
             : <div>Loading...</div>
           }
           
