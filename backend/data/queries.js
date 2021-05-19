@@ -87,7 +87,7 @@ const typeDefs = gql`
 
     updateIndexes: Indexes
 
-    clearStocks: [Stock]
+    clearStocks(tickerList: [String]): [Stock]
     generateStocks: [Stock]
     
     removeFromFavorites(userToken: String!, stockSymbol:String!): User
@@ -141,7 +141,7 @@ const resolvers = {
     },
 
     clearStocks: async (_, args) => {
-      return await stockData.wipeStocks();
+      return await stockData.wipeStocks(args.tickerList);
     },
     
     generateStocks: async (_, args) => {

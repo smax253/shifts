@@ -42,7 +42,7 @@ module.exports = {
           const result = doc.data();
           let desc = await client.hgetAsync('company_info', symbol);
           
-          if (desc === null) {
+          if (desc === "null") {
             const API_KEY = process.env.finnhub_key;
             const API_Call4 =
               `https://www.alphavantage.co/query?function=OVERVIEW&symbol=` +
@@ -50,12 +50,16 @@ module.exports = {
               `&apikey=` +
               API_KEY;
           
-            const { data } = await axios.get(API_Call4);
+              const { data } = await axios.get(API_Call4);
+              console.log(`This is the symbol ${symbol} ${data}`);
             let isDataNull = false;
             if (!data || Object.keys(data).length === 0) {
               await client.hsetAsync('company_info', symbol, JSON.stringify(null));
               isDataNull = true;
             } else {
+                if (data.Note) { // sus
+                    return null;
+                }
               await client.hsetAsync('company_info', symbol, JSON.stringify(data));
             }
 
@@ -103,6 +107,7 @@ module.exports = {
 
       const duplicateCheck = await db.collection('stocks').doc(symbol).get();
       if (duplicateCheck.exists) {
+        console.log(`${symbol} is already in the database!`)
         return await module.exports.getStock(symbol);
       }
       
@@ -239,32 +244,34 @@ module.exports = {
 
   async generateStocks(tickers) {
     //web scrapper do this part
-    let presets = ["COIN", "MSFT", "AAPL", "DASH", "SNAP", "TSLA", "NFLX", "GOOG", "FB", "DIS"];
-    let all = await module.exports.getAllStocks();
-    presets.forEach((item, index) => {
-      if (all.includes(item)) {
-        presets.splice(index, index)
-      }
-    })
-    let arr = [...presets, ...tickers];
-    console.log("Adding the following tickers to the firebase \'stocks\' collection:", arr);
+    
+    console.log("Adding the following tickers to the firebase \'stocks\' collection:", tickers);
 
-    for (let i = 0; i < arr.length; i++) {
+    for (let i = 0; i < tickers.length; i++) {
       const delay = ms => new Promise(res => setTimeout(res, ms));
-      await module.exports.addStock(arr[i]);
-      await roomData.addRoom(arr[i]);
-      await delay(60000);
+
+      const duplicateCheck = await db.collection('stocks').doc(tickers[i].stock).get();
+      if (duplicateCheck.exists) {
+        console.log(`${tickers[i].stock} is already in the database!`)
+        continue;
+      }
+
+        await module.exports.addStock(tickers[i].stock);
+        await roomData.addRoom(tickers[i].stock);
+        await module.exports.updateMentions([tickers[i]]);
+        await delay(60000);
     }
     console.log("Done!");
     return await module.exports.getAllStocks();
   },
 
-  async wipeStocks(allStocks) {
-    console.log("here in wipe stocks")
-    if (!allStocks) {
-      let all = await module.exports.getAllStocks();
-      all.forEach((stock) => {
-        allStocks.push(stock.symbol)
+  async wipeStocks(allStocks = []) {
+    console.log("here in wipe stocks", allStocks)
+    if (allStocks.length === 0) {
+        let all = await module.exports.getAllStocks();
+        console.log(all);
+        all.forEach((stock) => {
+            allStocks.push(stock.symbol)
       })
     }
     for (let stock of allStocks) {
@@ -395,10 +402,13 @@ module.exports = {
   async getTopMentions() {
     try {
       const allStockMentions = await db.collection('stockMentions').get();
+      
       let arr = [];
       allStockMentions.forEach((item) => {
         arr.push(item.data())
       })
+        
+        arr = arr.sort((a, b) => {return b.timesCounted - a.timesCounted});
 
       let getRooms = await Promise.all(arr.map(async ({ symbol, timesCounted}) => {
         return await roomData.getRoom(symbol)
@@ -414,7 +424,7 @@ module.exports = {
 
   async deleteStockFromStockMentions(stockSymbol) {
     try {
-      const res = await db.collection('stockMentions').delete(stockSymbol);
+      const res = await db.collection('stockMentions').doc(stockSymbol).delete();
       return 0; //success
     } catch (e) {
       throw e;

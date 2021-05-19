@@ -28,7 +28,7 @@ const unsubscribe = (symbol) => {
  * @returns array of top tickers from scraper
  */
 const fetchTopTickers = async () => {
-    let results = await scraper.scrapeReddit(["wallstreetbets", "stocks", "investing", "pennystocks"], 5);
+    let results = await scraper.scrapeReddit(["wallstreetbets", "stocks", "investing", "pennystocks"], 2);
     results = results[0];
     results = results.sort((a,b) => {
         return b.timesCounted - a.timesCounted;
@@ -50,13 +50,46 @@ const runScript = async () => {
         console.log("we got the top tickers")
 
         console.log("yeet")
-        // topTickers = [{
-        //     stock:'TSLA'
-        // }, {
-        //         stock:'AAPL'
-        // }]
-        // //topTickers.push({ stock: 'BINANCE:BTCUSDT', timesCounted: 0 }); // remove this as this is just test data
-        //topTickers.push({ stock: 'AAL', timesCounted: 4 }, { stock: 'NVDA', timesCounted: 3 }, { stock: 'INTC', timesCounted: 2 });
+
+        let presets = [
+            {
+                stock: 'MSFT',
+                timesCounted: 0
+            },
+            {
+                stock: 'AAPL',
+                timesCounted: 0
+            },
+            {
+                stock: 'SNAP',
+                timesCounted: 0
+            },
+            {
+                stock: 'TSLA',
+                timesCounted: 0
+            },
+            {
+                stock: 'NFLX',
+                timesCounted: 0
+            },
+            {
+                stock: 'GOOG',
+                timesCounted: 0
+            },
+            {
+                stock: 'FB',
+                timesCounted: 0
+            },
+        ];
+
+        let all = await getAllStocks();
+        presets.forEach(({ stock }, index) => {
+            if (all.includes(stock)) {
+                presets.splice(index, index)
+            }
+        });
+        topTickers = [...presets, ...topTickers];
+
         topTickers.forEach(({ stock }) => {
             prices[stock] = [];
         });
@@ -76,38 +109,35 @@ const runScript = async () => {
         })
 
        
-        let topTickerStocks = topTickers.map((value) => {
-            return value.stock
-        });
+        // let topTickerStocks = topTickers.map((value) => {
+        //     return value.stock
+        // });
 
        
         //get the new tickers to add by doing old - new
         let oldStocks = new Set(allStockSymbols);
-        let differences = new Set(topTickerStocks.filter(element => !oldStocks.has(element)))
+        let differences = new Set(topTickers.filter(({stock}) => !oldStocks.has(stock)))
         differences = [...differences];
 
-        console.log(differences) //tells us what new stocks there are
+        let topTickerStocks = topTickers.map((value) => {
+            return value.stock
+        });
+
+        console.log(differences) //tells us what new stocks there are)
 
         //get the old tickers to delete by doing new - old 
         let newStocks = new Set(topTickerStocks);
         let stocksToDelete = new Set(allStockSymbols.filter(element => !newStocks.has(element)))
-        stocksToDelete = [...stocksToDelete]
+        stocksToDelete = [...stocksToDelete];
 
         console.log(stocksToDelete);
 
         await generateStocks(differences);
         console.log("generating")
-        let refreshedStockObjs= await wipeStocks(stocksToDelete);
-        console.log("wiped stocks")
-        let refreshedStocks = refreshedStockObjs.map((item) => {
-            return item.symbol
-        })
-        topTickers.forEach((item, index) => {
-            if (!(refreshedStocks.includes(item))) {
-                topTickers.splice(index, index);
-            }
-        })
-        await stocks.updateMentions(topTickers);
+        if (stocksToDelete.length !== 0) {
+            let refreshedStockObjs= await wipeStocks(stocksToDelete);
+            console.log("wiped stocks" + refreshedStockObjs)
+        }
  
         socket.addEventListener('message', (event) => {
             let data = JSON.parse(event.data);
