@@ -46,10 +46,6 @@ const fetchTopTickers = async () => {
 const runScript = async () => {
     try {
         topTickers = await fetchTopTickers();
-        console.log(topTickers)
-        console.log("we got the top tickers")
-
-        console.log("yeet")
 
         let presets = [
             {
@@ -109,11 +105,6 @@ const runScript = async () => {
         })
 
        
-        // let topTickerStocks = topTickers.map((value) => {
-        //     return value.stock
-        // });
-
-       
         //get the new tickers to add by doing old - new
         let oldStocks = new Set(allStockSymbols);
         let differences = new Set(topTickers.filter(({stock}) => !oldStocks.has(stock)))
@@ -123,25 +114,20 @@ const runScript = async () => {
             return value.stock
         });
 
-        console.log(differences) //tells us what new stocks there are)
-
         //get the old tickers to delete by doing new - old 
         let newStocks = new Set(topTickerStocks);
         let stocksToDelete = new Set(allStockSymbols.filter(element => !newStocks.has(element)))
         stocksToDelete = [...stocksToDelete];
 
-        console.log(stocksToDelete);
-
         await generateStocks(differences);
-        console.log("generating")
+
         if (stocksToDelete.length !== 0) {
             let refreshedStockObjs= await wipeStocks(stocksToDelete);
-            console.log("wiped stocks" + refreshedStockObjs)
         }
  
         socket.addEventListener('message', (event) => {
             let data = JSON.parse(event.data);
-            //console.log('data', data);
+
             if (data.type === 'trade') {
                 let totalPrices = {};
 
@@ -164,7 +150,6 @@ const runScript = async () => {
                         prices[symbol].forEach((entry) => {
                             sum += entry.price;
                         });
-                        //console.log(sum, prices[symbol]);
                         let filledAvgPrice = (sum / prices[symbol].length).toFixed(2);
 
                         prices[symbol] = [];

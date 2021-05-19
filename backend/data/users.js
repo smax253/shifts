@@ -109,18 +109,14 @@ module.exports = {
   },
 
     async removeFromAllFavorites(stockSymbol) {
-        console.log("We are in remove from all favorites", stockSymbol);
     try {
         let allUsers = await module.exports.getAllUsers();
-        console.log(allUsers);
         for (let user of allUsers) {
-            console.log(user);
             if (user.favorites.includes(stockSymbol)) {
                 let newFavorites = user.favorites.filter((stock) => {
                 return stock !== stockSymbol
             })
             user.favorites = newFavorites;
-            console.log(user.favorites);
             await module.exports.updateUser(user);
         }
       }

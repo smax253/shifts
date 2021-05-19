@@ -36,7 +36,7 @@ module.exports = {
         const userRef = db.collection('stocks').doc(symbol);
       const doc = await userRef.get();
         if (!doc.exists) {
-          console.log('No such stock!');
+          console.log('No such stock!'+ symbol);
           return null;
         } else {
           const result = doc.data();
@@ -51,7 +51,7 @@ module.exports = {
               API_KEY;
           
               const { data } = await axios.get(API_Call4);
-              console.log(`This is the symbol ${symbol} ${data}`);
+
             let isDataNull = false;
             if (!data || Object.keys(data).length === 0) {
               await client.hsetAsync('company_info', symbol, JSON.stringify(null));
@@ -74,7 +74,7 @@ module.exports = {
             } else {
                 let getFromRedis = await client.hgetAsync('company_info', symbol)
                 let moreInfo = JSON.parse(getFromRedis);
-                //console.log(moreInfo)
+
                 let stockInfo = {}
                 stockInfo.assetType = moreInfo.AssetType
                 stockInfo.description = moreInfo.Description;
@@ -87,7 +87,7 @@ module.exports = {
            
           } else {
             let moreInfo = JSON.parse(desc);
-            //console.log(moreInfo)
+
             let stockInfo = {}
             stockInfo.assetType = moreInfo.AssetType
             stockInfo.description = moreInfo.Description;
@@ -266,10 +266,8 @@ module.exports = {
   },
 
   async wipeStocks(allStocks = []) {
-    console.log("here in wipe stocks", allStocks)
     if (allStocks.length === 0) {
         let all = await module.exports.getAllStocks();
-        console.log(all);
         all.forEach((stock) => {
             allStocks.push(stock.symbol)
       })
