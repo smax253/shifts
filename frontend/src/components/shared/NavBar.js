@@ -12,6 +12,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
 import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade';
+import pf from '../../img/pf.png';
 
 const useStyles = makeStyles((theme) => ({
   modal: {
@@ -132,12 +133,13 @@ const NavBar = () => {
 
 
   return (<nav>
-    <Link to="/">Home</Link>
-    {!!authUser && <Link to="/dashboard">Dashboard</Link>}
+    <Link className="myButton" to="/">Home</Link>
+    {!!authUser && <Link className="myButton" to="/dashboard">Dashboard</Link>}
 
     {
       !!authUser && <form onSubmit={navigateRoom}>
         <Autocomplete
+          className="SearchBar"
           id="combo-box-demo"
           options={symbols}
           onChange={(event, newInputValue) => {
@@ -147,21 +149,22 @@ const NavBar = () => {
           disableClearable
           renderInput={(params) => <TextField {...params} variant="outlined" />}
         />
-        <Link to={`/stock/${searchInput}`}>Search</Link>
+        <Link className="myButton" to={`/stock/${searchInput}`}>Search</Link>
       </form>
     }
 
     {
       authUser
         ? (<div>
-          <Button
+          <Button className="myButton2" 
             aria-controls="customized-menu"
             aria-haspopup="true"
             variant="contained"
             color="primary"
             onClick={handleClick}
+            
           >
-                      Profile
+                      Profile  <img src={pf}/>
           </Button>
           <StyledMenu id="customized-menu" anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
             <StyledMenuItem>
@@ -213,7 +216,7 @@ const NavBar = () => {
           </StyledMenu>
         </div>
         )
-        : <Link to="/login">Login</Link>
+        : <Link className="myButton" to="/login">Login</Link>
         
     }
   </nav>)

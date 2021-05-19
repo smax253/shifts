@@ -26,7 +26,8 @@
             font-size: 40px;
             color: black;
             text-decoration: none;
-            font-weight: 700;
+            font-size:1.4vw; 
+            overflow-x: scroll;
         }
         .activity{
             justify-content: space-around;
@@ -40,6 +41,7 @@
         }
         margin: 16px 32px;
         border: 5px solid blue;
+        overflow-x: scroll;
         border-radius: 5px;
         .change{
             font-size: 30px;

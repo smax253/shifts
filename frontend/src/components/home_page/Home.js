@@ -8,6 +8,7 @@ const Home = () => {
       <div id='title-container'>
         <div id="titles">
           <h1>shifts</h1>
+          <br/>
           <h2>Let&apos;s talk stocks</h2>
         </div>
         <img id="dashboard-image" src={dashboard} alt="Shifts Dashboard"/>

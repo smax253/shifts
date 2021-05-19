@@ -11,11 +11,11 @@ const { generate } = require("password-hash");
 const axios = require('axios');
 const redis = require('redis');
 
-const client = redis.createClient();
-const bluebird = require('bluebird');
+// const client = redis.createClient();
+// const bluebird = require('bluebird');
 
-bluebird.promisifyAll(redis.RedisClient.prototype);
-bluebird.promisifyAll(redis.Multi.prototype);
+// bluebird.promisifyAll(redis.RedisClient.prototype);
+// bluebird.promisifyAll(redis.Multi.prototype);
 
 module.exports = {
   async getAllStocks() {
