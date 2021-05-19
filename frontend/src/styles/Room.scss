@@ -49,10 +49,10 @@
         
     }
     padding: 16px 32px;
-    font-size: 24px;
+    font-size: 2vw;
     box-sizing: inherit;
     p{
-        font-size: 16px;
+        font-size: 1vw;
     }
 }
 .stock-desc{
@@ -80,7 +80,7 @@
     }
 }
 #company-name{
-    font-size: 48px;
+    font-size: 3vw;
     text-align: start;
 }
 #company-title{
@@ -88,11 +88,11 @@
     align-items: flex-end;
 }
 #price{
-    font-size: 32px;
+    font-size: 2vw;
 }
 .user-list{
     #user-list-label{
-        font-size: 40px;
+        font-size: 4vw;
         font-weight: 700;
         margin-top: 24px;
     }
@@ -184,10 +184,10 @@
 }
 
 span.price-value{
-    font-size: 28px;
+    font-size: 1.6vw;
 }
 span.price-change{
-    font-size: 20px;
+    font-size: 1.6vw;
 }
 #stock-room-list{
     height: 45vh;
