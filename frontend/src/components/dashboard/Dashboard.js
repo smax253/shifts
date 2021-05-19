@@ -11,9 +11,9 @@ const StockItem = ({name, prices}) => {
   const current = prices.find((item) => item.date === 'c').value;
   const prev = prices.find((item) => item.date === 'pc').value;
   const change = Math.round((current - prev)*100)/100;
-  const value = change > 0 ? '+' + change : '' + change;
+  const value = change > 0 ? '+' + change.toFixed(2) : '' + change.toFixed(2);
   const percent = Math.round((change / prev) * 10000) / 100;
-  const percentValue = percent > 0 ? '+' + percent : '' + percent;
+  const percentValue = percent > 0 ? '+' + percent.toFixed(2) : '' + percent.toFixed(2);
 
 
   return (
@@ -61,8 +61,6 @@ const TopStockTickers = () => {
 
 const Dashboard = () => {
 
-  // eslint-disable-next-line no-unused-vars
-  // eslint-disable-next-line no-unused-vars
   const allRoomsQuery = useQuery(queries.GET_ALL_ROOMS);
   const topMoversQuery = useQuery(queries.GET_TOP_MOVERS);
   const popularQuery = useQuery(queries.GET_POPULAR);
