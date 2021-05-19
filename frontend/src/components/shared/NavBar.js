@@ -87,7 +87,7 @@ const NavBar = () => {
     
   const forgotPassword = (event) => {
     event.preventDefault();
-    auth.sendPasswordResetEmail(email)
+    firebaseauth.sendPasswordResetEmail(email)
       .then(() => {
         console.log('check email')
       })
