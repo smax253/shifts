@@ -44,7 +44,7 @@ const StockDataSummary = ({name, symbol, data, daily, currentPrice, userToken, i
       </div>
     }
     value = price - value;
-    return <div className={value > 0 ? 'positive' : value < 0 ? 'negative' : 'neutral'}>
+    return <div className={value > 0 ? 'positive2' : value < 0 ? 'negative2' : 'neutral'}>
       <span className="price-value">{value > 0 ? '+' + (value.toFixed(2)) : value.toFixed(2)}</span>
       <span className="price-change">{calcPercentage(value)}</span>
     </div>

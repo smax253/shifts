@@ -1,7 +1,7 @@
 html, body, #root, .App{
   height: 100%;
   font-family: "Sen";
-  background-color: #7196F6;
+  background-color: #5d72b4;
   overflow-y: hidden;
   overflow-x: hidden;
   box-sizing: border-box;
@@ -18,7 +18,7 @@ html, body, #root, .App{
 
 .App-header {
   padding: 10px;
-  background-color: #4777BF;
+  background-color: #224477;
   min-height: 60px;
   display: flex;
   flex-direction: column;
@@ -59,19 +59,27 @@ nav{
 }
 
 .positive{
-    color: rgb(144, 255, 144) !important;
+    color: #008a00 !important;
+}
+
+.positive2 {
+  color: #4d9b4d !important;
 }
 .negative{
-    color: rgb(255, 130, 130) !important;
+    color: #e12f2f !important;
+}
+
+.negative2{
+    color: #ea5a5a !important;
 }
 
 .myButton {
   margin-left: 20px;
   min-height: 40%;
   margin-right: 20px;
-	box-shadow: 0px 1px 0px 0px #000000;
+
 	background:linear-gradient(to bottom, #33bdef 5%, #019ad2 100%);
-	background-color:#33bdef;
+	background-color:#0080a5;
 	border-radius:6px;
 	border:1px solid #057fd0;
 	display:inline-block;
@@ -83,7 +91,8 @@ nav{
 	padding:12px 24px;
 	text-decoration:none;
 	text-shadow:0px -1px 18px #5b6178;
-  box-shadow: 0px 3px 1px -2px rgba(0,0,0,0.2),0px 2px 2px 0px rgba(0,0,0,0.14),0px 1px 5px 0px rgba(0,0,0,0.12);
+	// text-shadow:0px -1px 18px #5b6178;
+  // box-shadow: 0px 3px 1px -2px rgba(0,0,0,0.2),0px 2px 2px 0px rgba(0,0,0,0.14),0px 1px 5px 0px rgba(0,0,0,0.12);
   // margin: 0;
   // position: absolute;
 }
@@ -105,7 +114,7 @@ nav{
   min-height: 90%;
   
   margin-right: 20px;
-	box-shadow: 0px 1px 0px 0px #f0f7fa;
+
 	background:linear-gradient(to bottom, #33bdef 5%, #019ad2 100%);
 	background-color:#33bdef;
 	border-radius:6px;
@@ -138,4 +147,8 @@ nav{
 .myButton2:active {
 	position:relative;
 	top:1px;
+}
+
+.hidden {
+  display: none;
 }

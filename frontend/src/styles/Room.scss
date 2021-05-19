@@ -32,12 +32,12 @@
 }
 .stock-data-summary{
     max-height: 40vh;
-    overflow-y: hidden;
+    overflow-y: scroll;
   overflow-x: hidden;
     display: flex;
     align-items: center;
     flex-direction: column;
-    background-color: #3B3B3B;
+    background-color: #242424;
     border-radius: 8px;
     margin: 0 16px;
     color: white;

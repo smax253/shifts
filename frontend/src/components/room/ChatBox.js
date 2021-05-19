@@ -36,7 +36,10 @@ const ChatBox = ({chatLog}) => {
         
       }
       }>
-        <input type="text" placeholder="Type something here..." value={messageText} onChange={(event) => setMessageText(event.target.value)}/>
+        <label htmlFor="chat-input" className="hidden">
+          Type something here...
+        </label>
+        <input id="chat-input" type="text" placeholder="Type something here..." value={messageText} onChange={(event) => setMessageText(event.target.value)}/>
         <button type="submit">Send</button>
       </form>
     </div>

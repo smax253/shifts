@@ -148,7 +148,7 @@ const NavBar = () => {
           style={{ width: 300 }}
           disableClearable
           
-          renderInput={(params) => <TextField label="search for a stock..." {...params} variant="outlined" />}
+          renderInput={(params) => <TextField {...params} variant="outlined" label="search for a stock..." />}
         />
         <Link className="myButton" to={`/stock/${searchInput}`}>Search</Link>
       </form>

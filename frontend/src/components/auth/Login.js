@@ -127,18 +127,18 @@ const Login = () => {
                 <Grid container spacing={0} alignItems="center" justify="center">
                   <Grid item xs={0}>
                     <form className={classes.root} onSubmit={register}>
-                      <Grid container spacing={4}>
+                      <Grid container spacing={4} >
                         <Grid item xs={12}>
-                          <TextField id="email-input" type="text" label="Email" variant="filled" onChange={(event) => setEmailInput(event.target.value)} value={ emailInput }/>
+                          <TextField id="" className="SearchBar"   type="text" label="Email" variant="filled" onChange={(event) => setEmailInput(event.target.value)} value={ emailInput }/>
                         </Grid>
                         <Grid item xs={12}>
-                          <TextField id="username-input" type="text" label="Username" variant="filled" onChange={(event) => setUsernameInput(event.target.value)} value={ usernameInput }/>
+                          <TextField id="username-input" className="SearchBar" type="text" label="Username" variant="filled" onChange={(event) => setUsernameInput(event.target.value)} value={ usernameInput }/>
                         </Grid>
                         <Grid item xs={12}>
-                          <TextField id="password-input" type="password" label="Password" variant="filled" onChange={(event) => setPasswordInput(event.target.value)} value={passwordInput}/>
+                          <TextField id="password-input" className="SearchBar" type="password" label="Password" variant="filled" onChange={(event) => setPasswordInput(event.target.value)} value={passwordInput}/>
                         </Grid>
                         <Grid item xs={12}>
-                          <TextField id="confirm-password-input" type="password" label="Confirm Password" variant="filled" onChange={(event) => setConfirmPasswordInput(event.target.value)} value={confirmPasswordInput} />
+                          <TextField id="confirm-password-input" className="SearchBar"  type="password" label="Confirm Password" variant="filled" onChange={(event) => setConfirmPasswordInput(event.target.value)} value={confirmPasswordInput} />
                         </Grid>
                         <Grid item xs={12}>
                           <Button variant="contained" type="submit">Register!</Button>
@@ -157,10 +157,10 @@ const Login = () => {
                     <form className={classes.root} onSubmit={login}>
                       <Grid container spacing={4}>
                         <Grid item xs={12}>
-                          <TextField id="email-input" type="text" label="Email" variant="filled" onChange={(event) => setEmailInput(event.target.value)} value={ emailInput }/>
+                          <TextField id="email-input" className="SearchBar" type="text" label="Email" variant="filled" onChange={(event) => setEmailInput(event.target.value)} value={ emailInput }/>
                         </Grid>
                         <Grid item xs={12}>
-                          <TextField id="password-input" label="Password" type="password" variant="filled" onChange={(event) => setPasswordInput(event.target.value)} />
+                          <TextField id="password-input" className="SearchBar" label="Password" type="password" variant="filled" onChange={(event) => setPasswordInput(event.target.value)} />
                         </Grid>
                         <Grid item xs={12}>
                           <Button variant="contained" type="submit">Login!</Button>
