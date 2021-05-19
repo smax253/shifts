@@ -11,6 +11,8 @@ const RoomWrapper = () => {
   const [messages, setMessages] = useState(null);
   const [userToken, setUserToken] = useState(null);
   const [price, setPrice] = useState(null);
+  const [users, setUsers] = useState(null);
+  const setUsersRef = useRef();
   const addMessageRef = useRef();
   const setPriceRef = useRef();
   
@@ -33,15 +35,26 @@ const RoomWrapper = () => {
   }, [price, setPrice])
 
   useEffect(() => {
+    setUsersRef.current = (users) => {
+      setUsers(users);
+    }
+  }, [users, setUsers])
+
+  useEffect(() => {
     if (userToken) { 
       return (socket.useEffectSocket({
         symbol: id.toUpperCase(),
         addMessage: addMessageRef,
         userToken,
-        setCurrentPrice: setPriceRef
+        setCurrentPrice: setPriceRef,
+        setUsersList: setUsersRef
       })());
     }
   }, [userToken, id])
+
+  
+
+ 
     
   return (
     userToken ?<Room
@@ -51,6 +64,8 @@ const RoomWrapper = () => {
       price={price}
       setPrice={setPrice}
       userToken={userToken}
+      users={users}
+      setUsers={setUsers}
     />
       :<div>Loading...</div>
   )

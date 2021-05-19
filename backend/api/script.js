@@ -6,11 +6,10 @@ const { generateStocks, wipeStocks, getAllStocks } = require('../data/stocks');
 const stocks = require('../data/stocks');
 const { initializeCloudFirebase } = require('../config/firebaseConnections');
 const admin = initializeCloudFirebase();
-require('../socket');
 const io = require('socket.io-client');
+const { workerData } = require('worker_threads');
 
-
-const socketio = io('http://localhost:3001', { query: { userToken: "yomama" }, forceNew: false });
+const socketio = io(`${process.env.backend_base_uri}:${workerData.socketioport}`, { query: { userToken: workerData.password }, forceNew: false });
 
 let prices = {};
 let topTickers = [];
@@ -45,16 +44,16 @@ const fetchTopTickers = async () => {
  */
 const runScript = async () => {
     try {
-        topTickers = await fetchTopTickers();
+        //topTickers = await fetchTopTickers();
         console.log(topTickers)
         console.log("we got the top tickers")
 
         console.log("yeet")
-        // topTickers = [{
-        //     stock:'T'
-        // }, {
-        //         stock:'AMC'
-        // }]
+        topTickers = [{
+            stock:'TSLA'
+        }, {
+                stock:'AAPL'
+        }]
         // //topTickers.push({ stock: 'BINANCE:BTCUSDT', timesCounted: 0 }); // remove this as this is just test data
 
         topTickers.forEach(({ stock }) => {
@@ -65,7 +64,7 @@ const runScript = async () => {
         topTickers.forEach(({stock}) => {
             socket.send(JSON.stringify({ 'type': 'subscribe', 'symbol': `${stock}` }));
         });
-
+/*
         let allStocks = await getAllStocks();
 
 
@@ -109,7 +108,7 @@ const runScript = async () => {
         })
         console.log(topTickers);
         await stocks.updateMentions(topTickers);
-        
+ */       
         socket.addEventListener('message', (event) => {
             let data = JSON.parse(event.data);
             //console.log('data', data);
@@ -139,6 +138,7 @@ const runScript = async () => {
                         let filledAvgPrice = (sum / prices[symbol].length).toFixed(2);
 
                         prices[symbol] = [];
+                        console.log('emitting price', symbol, filledAvgPrice)
                         socketio.emit('price-update', symbol, filledAvgPrice);
                     }
                 })

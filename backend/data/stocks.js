@@ -29,15 +29,16 @@ module.exports = {
   async getStock(symbol) {
         console.log("getting stocks : " + symbol)
         const userRef = db.collection('stocks').doc(symbol);
-        const doc = await userRef.get();
+      const doc = await userRef.get();
         if (!doc.exists) {
           console.log('No such stock!');
           return null;
         } else {
           const result = doc.data();
-          const desc = await client.hgetAsync('company_info', symbol);
+          let desc = await client.hgetAsync('company_info', symbol);
+          
           if (desc === null) {
-
+            const API_KEY = process.env.finnhub_key;
             const API_Call4 =
               `https://www.alphavantage.co/query?function=OVERVIEW&symbol=` +
               symbol +
@@ -86,7 +87,6 @@ module.exports = {
             stockInfo.analystTargetPrice = moreInfo.AnalystTargetPrice;
             result.stockInfo = stockInfo;
           }
-          console.log(result)
           return result;
         }
   },
@@ -262,9 +262,7 @@ module.exports = {
         allStocks.push(stock.symbol)
       })
     }
-    console.log(allStocks)
     for (let stock of allStocks) {
-      console.log(stock);
         db.collection('stocks').doc(stock).delete().then(() => {
           console.log('successfully deleted ' + stock)
           
@@ -379,8 +377,6 @@ module.exports = {
   },
 
   async updateMentions(tickerMentions) {
-    console.log("tickerMentions here")
-    console.log(tickerMentions)
     try {
       for (let { stock, timesCounted } of tickerMentions) {
         const res = await db.collection('stockMentions').doc(stock).set({ "symbol": stock, "timesCounted": timesCounted });
@@ -391,15 +387,12 @@ module.exports = {
   },
 
   async getTopMentions() {
-    console.log("here get")
     try {
-      console.log("made it here")
       const allStockMentions = await db.collection('stockMentions').get();
       let arr = [];
       allStockMentions.forEach((item) => {
         arr.push(item.data())
       })
-      console.log(arr)
 
       let getRooms = await Promise.all(arr.map(async ({ symbol, timesCounted}) => {
         return await roomData.getRoom(symbol)

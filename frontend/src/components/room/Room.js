@@ -71,7 +71,7 @@ const StockDataSummary = ({name, symbol, data, daily, currentPrice, userToken, i
     <div className="stock-data-summary">
       <div id="company-title">
         <div id="company-name">{name}</div>
-        <div>
+        <div id="favorite-container">
           <button onClick={toggleFavorite}>{favorite ? 'Unfavorite' : 'Favorite'}</button>
           {symbol}
         </div>
@@ -88,9 +88,10 @@ const StockDataSummary = ({name, symbol, data, daily, currentPrice, userToken, i
       <div><div>5 Years</div>{renderNumber(change['5y'])}</div>
       <div><div>Asset Type</div>{stockInfo.assetType ? stockInfo.assetType : 'N/A'}</div>
       <div><div>Analyst Target Price</div>{stockInfo.analystTargetPrice ? stockInfo.analystTargetPrice : 'N/A'}</div>
-      <div><div>Description</div>{stockInfo.description ? stockInfo.description : 'N/A'}</div>
       <div><div>Industry</div>{stockInfo.industry ? stockInfo.industry : 'N/A'}</div>
-      <div><div>Stock Exchange</div>{stockInfo.exchange ? stockInfo.exchange : 'N/A'}</div>    
+      <div><div>Stock Exchange</div>{stockInfo.exchange ? stockInfo.exchange : 'N/A'}</div>
+      <div className="stock-desc"><div>Description</div><p>{stockInfo.description ? stockInfo.description : 'N/A'}</p></div>
+      
     </div>
   );
 
@@ -108,12 +109,11 @@ StockDataSummary.propTypes = {
   stockInfo: PropTypes.object.isRequired
 }
 
-const Room = ({ id, messages, setMessages, price, userToken }) => {
+const Room = ({ id, messages, setMessages, price, userToken, users, setUsers }) => {
 
   const [chartMode, setChartMode] = React.useState('1m');
   //const [, setCurrentPrice] = React.useState(0);
   const [chartData, setChartData] = React.useState(undefined);
-  const [users, setUsers] = React.useState(undefined);
   const [isFavorite, setIsFavorite] = React.useState(false);
   // eslint-disable-next-line no-unused-vars
   const getStockQuery = useQuery(queries.GET_STOCK_DATA,
@@ -130,7 +130,7 @@ const Room = ({ id, messages, setMessages, price, userToken }) => {
       variables: {userToken}
     }
   )
-  const allStockInfo = useQuery(queries.GET_STOCK_INFO, { fetchPolicy: 'no-cache', variables: { symbol: id } });
+  const allStockInfo = useQuery(queries.GET_STOCK_INFO, { variables: { symbol: id } });
 //   if (allStockInfo && allStockInfo.data && allStockInfo.data.getStock) console.log('allStockInfo', allStockInfo.data.getStock.stockInfo);
     
   useEffect(() => {
@@ -246,7 +246,7 @@ const Room = ({ id, messages, setMessages, price, userToken }) => {
           
         </Grid>
       </Grid>
-      <Grid container className="room-half">
+      <Grid container className="room-half bottom-half">
         <Grid item xs={12} sm={5}>
           {activeRooms
             ? <RoomList id="stock-room-list" tickerList={activeRooms} title={'Other Rooms'} className={'chat-room-list'} />
@@ -279,6 +279,8 @@ Room.propTypes = {
   setMessages: PropTypes.func,
   price: PropTypes.number,
   setPrice: PropTypes.func,
+  users: PropTypes.number,
+  setUsers: PropTypes.func,
   userToken: PropTypes.string.isRequired,
 }
 

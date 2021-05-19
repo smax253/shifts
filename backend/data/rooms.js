@@ -83,7 +83,7 @@ module.exports = {
             let room = await module.exports.getRoom(stockSymbol);
             room.activeUsers.push(userName);
             room.activeUsers = Array.from(new Set(room.activeUsers));
-            await this.updateRoom(room, stockSymbol);
+            return await this.updateRoom(room, stockSymbol);
         } catch (e) {
             throw (e);
         }
@@ -98,7 +98,7 @@ module.exports = {
                     return users !== userName;
                 })
                 room.activeUsers = newRoom;
-                await this.updateRoom(room, stockSymbol);
+                return await this.updateRoom(room, stockSymbol);
             } else {
                 throw "That user is not in the room " + stockSymbol;
             }

@@ -133,8 +133,8 @@ const NavBar = () => {
 
 
   return (<nav>
-    <Link className="myButton" to="/">Home</Link>
-    {!!authUser && <Link className="myButton" to="/dashboard">Dashboard</Link>}
+    <div><Link className="myButton" to="/">Home</Link></div>
+    {!!authUser && <div><Link className="myButton" to="/dashboard">Dashboard</Link></div>}
 
     {
       !!authUser && <form onSubmit={navigateRoom}>

@@ -4,7 +4,6 @@ const passwordHash = require("password-hash");
 const firebaseConnections = require("../config/firebaseConnections");
 const db = firebaseConnections.initializeCloudFirebase();
 const admin = require('firebase-admin');
-const roomData = require('./rooms')
  
 module.exports = {
     /* gets all documents in users */
@@ -137,6 +136,7 @@ module.exports = {
   },
 
   async getUserFavorites(userToken) {
+    const roomData = require('./rooms')
     let user;
     try {
       user = await admin.auth().verifyIdToken(userToken);

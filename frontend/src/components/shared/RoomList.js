@@ -15,7 +15,6 @@ const RoomList = ({ title, tickerList, showPrices, className, id, sortActive }) 
   });
 
   const generateActiveLinks = useCallback((stockDataList)=>{
-    
     const sortedTickers = tickerList.map((item) => {
 
       return { ...item, active: item.activeUsers.length };
@@ -24,10 +23,15 @@ const RoomList = ({ title, tickerList, showPrices, className, id, sortActive }) 
     
     sortActive && sortedTickers.sort((a, b) => b.active - a.active);
     const links = sortedTickers.map((stock) => {
-      const stockData = stockDataList.find((item) => item.symbol === stock.stockSymbol);
+
+      const stockData = stockDataList.find((item) => item && item.symbol === stock.stockSymbol);
+      if (!stockData) {
+        console.log('missing data for ', stock)
+        return;
+      }
       const value = stock.active;
-      const current = stockData.daily.find((item) => item.date === 'c').value;
-      const prev = stockData.daily.find((item) => item.date === 'pc').value;
+      const current = stockData.daily.find((item) => item && item.date === 'c').value;
+      const prev = stockData.daily.find((item) => item && item.date === 'pc').value;
       const change = Math.round((current - prev)*100)/100;
       const changeString = change > 0 ? '+'+change : ''+change;
       const percent = Math.round((change / prev)*10000)/100;
