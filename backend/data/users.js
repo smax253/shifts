@@ -108,6 +108,24 @@ module.exports = {
     }
   },
 
+  async removeFromAllFavorites(stockSymbol) {
+    try {
+      let allUsers = await module.exports.getAllUsers();
+      for (let user of allUsers) {
+        if (user.favorites.includes(stockSymbol)) {
+          let newFavorites = user.favorites.filter((stock) => {
+             return stock !== stockSymbol
+          })
+          user.favorites = newFavorites;
+          await module.exports.updateUser(user);
+        }
+      }
+      return await module.exports.getAllUsers();
+    } catch (e) {
+      throw e;
+    }
+  },
+
   async removeFromFavorites(userToken, stockSymbol) {
     let user;
     try {

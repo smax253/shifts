@@ -3,6 +3,7 @@ const firebaseConnections = require("../config/firebaseConnections");
 const db = firebaseConnections.initializeCloudFirebase();
 
 const roomData = require("./rooms.js");
+const userData = require("./users.js")
 
 const fetch = require("node-fetch");
 const { database } = require("firebase-admin");
@@ -67,7 +68,6 @@ module.exports = {
                   analystTargetPrice: null
                 }
             } else {
-              console.log('getting');
                 let getFromRedis = await client.hgetAsync('company_info', symbol)
                 let moreInfo = JSON.parse(getFromRedis);
                 //console.log(moreInfo)
@@ -281,6 +281,7 @@ module.exports = {
     for (let i = 0; i < allStocks.length; i++) {
       await roomData.deleteRoom(allStocks[i]);
       await module.exports.deleteStockFromStockMentions(allStocks[i])
+      await userData.removeFromAllFavorites(allStocks[i])
     }
 
     return await module.exports.getAllStocks();
