@@ -52,7 +52,7 @@ module.exports = {
           
             const { data } = await axios.get(API_Call4);
             let isDataNull = false;
-            if (Object.keys(data).length === 0) {
+            if (!data || Object.keys(data).length === 0) {
               await client.hsetAsync('company_info', symbol, JSON.stringify(null));
               isDataNull = true;
             } else {
