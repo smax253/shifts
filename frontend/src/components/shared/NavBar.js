@@ -4,14 +4,95 @@ import { Link, useHistory } from 'react-router-dom';
 import { AuthContext } from '../../auth/AuthContext';
 import auth from '../../config/auth';
 import queries from '../../queries';
-import Autocomplete from '@material-ui/lab/Autocomplete'
-import { TextField } from '@material-ui/core';
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import { withStyles } from '@material-ui/core/styles';
+import { TextField, Menu, MenuItem, Button, ListItem, Grid } from '@material-ui/core';
+import ListItemText from '@material-ui/core/ListItemText';
+import { makeStyles } from '@material-ui/core/styles';
+import Modal from '@material-ui/core/Modal';
+import Backdrop from '@material-ui/core/Backdrop';
+import Fade from '@material-ui/core/Fade';
+
+const useStyles = makeStyles((theme) => ({
+  modal: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  paper: {
+    backgroundColor: theme.palette.background.paper,
+    border: '2px solid #000',
+    boxShadow: theme.shadows[5],
+    padding: theme.spacing(2, 4, 3),
+  },
+}));
+
+const StyledMenu = withStyles({
+  paper: {
+    border: '1px solid #d3d4d5',
+  },
+})((props) => (
+  <Menu
+    elevation={0}
+    getContentAnchorEl={null}
+    anchorOrigin={{
+      vertical: 'bottom',
+      horizontal: 'center',
+    }}
+    transformOrigin={{
+      vertical: 'top',
+      horizontal: 'center',
+    }}
+    {...props}
+  />
+));
+
+const StyledMenuItem = withStyles(() => ({
+  root: {
+    '& .MuiListItemIcon-root, & .MuiListItemText-primary': {
+      color: 'black',
+    },
+  },
+}))(MenuItem);
 
 const NavBar = () => {
-  
+  const classes = useStyles();
   // eslint-disable-next-line no-unused-vars
   const [authUser, setAuthUser] = useContext(AuthContext);
   const history = useHistory();
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [open, setOpen] = React.useState(false);
+  let email = '';
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+    
+  const handleModalOpen = () => {
+    setOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setOpen(false);
+  };
+    
+  const setEmailInput = (emailInput) => {
+    email = emailInput;
+  }
+    
+  const forgotPassword = (event) => {
+    event.preventDefault();
+    auth.sendPasswordResetEmail(email)
+      .then(() => {
+        console.log('check email')
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }
 
   const allRoomsQuery = useQuery(queries.GET_ALL_ROOMS);
 
@@ -69,17 +150,74 @@ const NavBar = () => {
         <Link to={`/stock/${searchInput}`}>Search</Link>
       </form>
     }
-    
-    {!!authUser && <Link to="/profile/123">My Profile</Link>}
 
     {
       authUser
-        ? <button onClick={logout}>Log out</button>
+        ? (<div>
+          <Button
+            aria-controls="customized-menu"
+            aria-haspopup="true"
+            variant="contained"
+            color="primary"
+            onClick={handleClick}
+          >
+                      Profile
+          </Button>
+          <StyledMenu id="customized-menu" anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
+            <StyledMenuItem>
+              <ListItem button onClick={() => {
+                handleClose();
+                logout();
+              }}>
+                <ListItemText primary="Logout" />
+              </ListItem>
+              
+            </StyledMenuItem>
+            <StyledMenuItem>
+              <ListItem button onClick={handleModalOpen}>
+                <ListItemText primary="Reset Password" />
+              </ListItem>
+              <Modal
+                aria-labelledby="transition-modal-title"
+                aria-describedby="transition-modal-description"
+                className={classes.modal}
+                open={open}
+                onClose={handleModalClose}
+                closeAfterTransition
+                BackdropComponent={Backdrop}
+                BackdropProps={{
+                  timeout: 500,
+                }}
+              >
+                <Fade in={open}>
+                  <div className={classes.paper}>
+                    <h2 id="transition-modal-title">Reset Password</h2>
+                    <Grid container spacing={0} alignItems="center" justify="center">
+                      <Grid item xs={0}>
+                        <form>
+                          <Grid container spacing={4}>
+                            <Grid item xs={12}>
+                              <TextField id="email-input" type="text" label="Enter your email" variant="filled" onChange={(event) => setEmailInput(event.target.value)} />
+                            </Grid>
+                            <Grid item xs={12}>
+                              <Button variant="contained" type="submit" onClick={(event) => forgotPassword(event)}>Reset!</Button>
+                            </Grid>
+                          </Grid>
+                        </form>
+                      </Grid>
+                    </Grid>
+                  </div>
+                </Fade>
+              </Modal>
+            </StyledMenuItem>
+          </StyledMenu>
+        </div>
+        )
         : <Link to="/login">Login</Link>
+        
     }
   </nav>)
 
 }
-
 
 export default NavBar
