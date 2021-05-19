@@ -39,6 +39,7 @@ const invalidTickers = [
 	'WSB',
 	'WTF',
 	'WTH',
+	'WSJ',
 	'AQAA',
 	'APES',
 	'BACK',

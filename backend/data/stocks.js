@@ -311,15 +311,14 @@ module.exports = {
   },
 
   async getTopMentions() {
-    console.log("here get")
     try {
-      console.log("made it here")
       const allStockMentions = await db.collection('stockMentions').get();
       let arr = [];
       allStockMentions.forEach((item) => {
         arr.push(item.data())
       })
-      console.log(arr)
+      arr.sort((a, b) => b.timesCounted - a.timesCounted);
+
       let getRooms = await Promise.all(arr.map(async ({ symbol, timesCounted}) => {
         return await roomData.getRoom(symbol)
       }))

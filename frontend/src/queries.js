@@ -62,6 +62,14 @@ const GET_TOP_MOVERS = gql`
     }
 `
 
+const GET_POPULAR = gql`
+    query{
+        getTopMentions{
+            stockSymbol
+            activeUsers
+        }
+    }
+`
 
 
 const GET_LOGGED_IN_USERS = gql`
@@ -172,8 +180,10 @@ const REMOVE_FAVORITE = gql`
 `
 
 
+
 export default {
   ADD_FAVORITE,
+  GET_POPULAR,
   REMOVE_FAVORITE,
   GET_FAVORITE_ROOMS,
   GET_INDEXES,
