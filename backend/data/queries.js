@@ -20,12 +20,21 @@ const typeDefs = gql`
     SP: Stock
   }
 
+  type StockInfo {
+    assetType: String
+    description: String
+    exchange: String
+    industry: String
+    analystTargetPrice: String
+  }
+
   type Stock {
     name: String
     symbol: String
     prices: [Price]
     chart: ChartData
     daily: [Price]
+    stockInfo: StockInfo
   }
 
   type ChartData{
