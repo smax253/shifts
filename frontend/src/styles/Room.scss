@@ -25,7 +25,8 @@
 }
 .stock-data-summary{
     max-height: 40vh;
-    overflow-y: scroll;
+    overflow-y: hidden;
+  overflow-x: hidden;
     display: flex;
     align-items: center;
     flex-direction: column;
@@ -127,7 +128,8 @@
         justify-content: center;
         align-items: center;
         font-size:1.4vw; 
-        overflow-x: scroll;
+        overflow-y: hidden;
+        overflow-x: hidden;
     }
 }
 .bottom-half{

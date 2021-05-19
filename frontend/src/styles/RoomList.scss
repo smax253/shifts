@@ -7,7 +7,8 @@
     border-radius: 5px;
     margin:32px;
     padding: 32px 0;
-    overflow-y: scroll;
+    overflow-y: hidden;
+  overflow-x: hidden;
     box-sizing: border-box;
     width: 90%;
 
@@ -27,7 +28,8 @@
             color: black;
             text-decoration: none;
             font-size:1.4vw; 
-            overflow-x: scroll;
+            overflow-y: hidden;
+  overflow-x: hidden;
         }
         .activity{
             justify-content: space-around;
@@ -41,7 +43,8 @@
         }
         margin: 16px 32px;
         border: 5px solid blue;
-        overflow-x: scroll;
+        overflow-y: hidden;
+  overflow-x: hidden;
         border-radius: 5px;
         .change{
             font-size: 30px;
