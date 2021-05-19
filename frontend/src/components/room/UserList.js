@@ -1,6 +1,6 @@
 import React, { useCallback, useContext } from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
+
 import { AuthContext } from '../../auth/AuthContext';
 
 const UserList = ({userList}) => {
@@ -16,11 +16,11 @@ const UserList = ({userList}) => {
 
       return (
         <li key={item}>
-          <Link to={`/profile/${item}`}>
-            <div className="user">
-              {item}
-            </div>
-          </Link>
+         
+          <div className="user">
+            {item}
+          </div>
+        
         </li>
       )
     

@@ -144,6 +144,7 @@
 }
 
 .chat-box{
+    
     box-sizing: border-box;
     height: 45vh;
     background-color: white;
@@ -155,6 +156,7 @@
     flex-direction: column;
     padding: 16px 16px;
     .message-list {
+        overflow-y: scroll;
         width: 100%;
     }
     .message{
