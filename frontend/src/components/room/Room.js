@@ -10,9 +10,12 @@ import { useApolloClient, useQuery } from '@apollo/client';
 import queries from '../../queries';
 
 const StockDataSummary = ({name, symbol, data, daily, currentPrice, userToken, isFavorite}) => {
-
   const [favorite, setFavorite] = useState(isFavorite);
   const client = useApolloClient();
+    
+  useEffect(() => {
+    setFavorite(isFavorite);
+  }, [isFavorite]);
 
   const change = {};
   data.forEach((item) => {
@@ -63,13 +66,12 @@ const StockDataSummary = ({name, symbol, data, daily, currentPrice, userToken, i
     setFavorite(!favorite);
     
   }, [favorite])
-
   return (
     <div className="stock-data-summary">
       <div id="company-title">
         <div id="company-name">{name}</div>
         <div>
-          <button onClick={toggleFavorite}>Favorite! {favorite.toString()}</button>
+          <button onClick={toggleFavorite}>{favorite ? 'Unfavorite' : 'Favorite'}</button>
           {symbol}
         </div>
       </div>
@@ -119,13 +121,14 @@ const Room = ({ id, messages, setMessages, price, userToken }) => {
   const allRoomsQuery = useQuery(queries.GET_ALL_ROOMS);
   const favoriteRooms = useQuery(queries.GET_FAVORITE_ROOMS,
     {
-      variables: userToken
+      variables: {userToken}
     }
   )
 
   useEffect(() => {
+    
     if (favoriteRooms.data && favoriteRooms.data.getUserFavorites) {
-      const exists = favoriteRooms.data.getUserFavorites.find(item => item.stockSymbol === id.toUpperCase()) > 0;
+      const exists = favoriteRooms.data.getUserFavorites.find(item => item.stockSymbol === id.toUpperCase()) ? true : false;
       setIsFavorite(exists);
     }
   }, [favoriteRooms.data])
@@ -209,7 +212,6 @@ const Room = ({ id, messages, setMessages, price, userToken }) => {
   // eslint-disable-next-line no-unused-vars
   const loading = useMemo(() => allRoomsQuery.loading || getStockQuery.loading, [allRoomsQuery, getStockQuery]);
 
-  
   return (
      
     (<Grid container className="full-height">
