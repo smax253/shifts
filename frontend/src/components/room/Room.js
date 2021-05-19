@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 import { Grid } from '@material-ui/core';
 import React, { useEffect, useMemo, useState } from 'react';
 import '../../styles/Room.scss'
@@ -9,7 +10,7 @@ import ChatBox from './ChatBox';
 import { useApolloClient, useQuery } from '@apollo/client';
 import queries from '../../queries';
 
-const StockDataSummary = ({name, symbol, data, daily, currentPrice, userToken, isFavorite}) => {
+const StockDataSummary = ({name, symbol, data, daily, currentPrice, userToken, isFavorite, stockInfo}) => {
   const [favorite, setFavorite] = useState(isFavorite);
   const client = useApolloClient();
     
@@ -85,7 +86,11 @@ const StockDataSummary = ({name, symbol, data, daily, currentPrice, userToken, i
       <div><div>6 Months</div>{renderNumber(change['6m'])}</div>
       <div><div>1 Year</div>{renderNumber(change['1y'])}</div>
       <div><div>5 Years</div>{renderNumber(change['5y'])}</div>
-
+      <div><div>Asset Type</div>{stockInfo.assetType ? stockInfo.assetType : 'N/A'}</div>
+      <div><div>Analyst Target Price</div>{stockInfo.analystTargetPrice ? stockInfo.analystTargetPrice : 'N/A'}</div>
+      <div><div>Description</div>{stockInfo.description ? stockInfo.description : 'N/A'}</div>
+      <div><div>Industry</div>{stockInfo.industry ? stockInfo.industry : 'N/A'}</div>
+      <div><div>Stock Exchange</div>{stockInfo.exchange ? stockInfo.exchange : 'N/A'}</div>    
     </div>
   );
 
@@ -99,7 +104,8 @@ StockDataSummary.propTypes = {
   daily: PropTypes.array.isRequired,
   currentPrice: PropTypes.number,
   isFavorite: PropTypes.bool,
-  userToken: PropTypes.string.isRequired
+  userToken: PropTypes.string.isRequired,
+  stockInfo: PropTypes.object.isRequired
 }
 
 const Room = ({ id, messages, setMessages, price, userToken }) => {
@@ -124,7 +130,9 @@ const Room = ({ id, messages, setMessages, price, userToken }) => {
       variables: {userToken}
     }
   )
-
+  const allStockInfo = useQuery(queries.GET_STOCK_INFO, { fetchPolicy: 'no-cache', variables: { symbol: id } });
+//   if (allStockInfo && allStockInfo.data && allStockInfo.data.getStock) console.log('allStockInfo', allStockInfo.data.getStock.stockInfo);
+    
   useEffect(() => {
     
     if (favoriteRooms.data && favoriteRooms.data.getUserFavorites) {
@@ -146,7 +154,7 @@ const Room = ({ id, messages, setMessages, price, userToken }) => {
       }).filter((item) => item.stockSymbol !== id.toUpperCase());
       active.sort((a, b) => a.active - b.active);
       setActiveRooms(active);
-    
+      
     }
   
   }, [allRoomsQuery, id])
@@ -210,13 +218,12 @@ const Room = ({ id, messages, setMessages, price, userToken }) => {
   }, [chartMode, getStockQuery.data])
   
   // eslint-disable-next-line no-unused-vars
-  const loading = useMemo(() => allRoomsQuery.loading || getStockQuery.loading, [allRoomsQuery, getStockQuery]);
-
+  const loading = useMemo(() => allRoomsQuery.loading || getStockQuery.loading || allStockInfo.loading, [allRoomsQuery, getStockQuery]);
   return (
      
     (<Grid container className="full-height">
       <Grid container className="room-half">
-        <Grid item xs={12} sm={4}>
+        <Grid item xs={12} sm={4} className="stockInformation">
           {getStockQuery.data && getStockQuery.data.getStock
             ? <StockDataSummary
               name={getStockQuery.data.getStock.name}
@@ -226,6 +233,7 @@ const Room = ({ id, messages, setMessages, price, userToken }) => {
               currentPrice={price}
               isFavorite={isFavorite}
               userToken={userToken}
+              stockInfo={allStockInfo.data.getStock.stockInfo}            
             />
             : <div>Loading...</div>
           }

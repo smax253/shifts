@@ -24,7 +24,8 @@
     }
 }
 .stock-data-summary{
-    height: 100%;
+    max-height: 40vh;
+    overflow-y: scroll;
     display: flex;
     justify-content: center;
     align-items: center;

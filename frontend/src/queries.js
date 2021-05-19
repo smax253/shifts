@@ -179,6 +179,21 @@ const REMOVE_FAVORITE = gql`
     }
 `
 
+const GET_STOCK_INFO = gql`
+    query($symbol: String!){
+        getStock(symbol: $symbol){
+            symbol
+        		stockInfo{
+              assetType
+              description
+              exchange
+              industry
+              analystTargetPrice
+            }
+        }
+    }
+`
+
 
 
 export default {
@@ -197,5 +212,6 @@ export default {
   REMOVE_USER,
   GET_LOGGED_IN_USERS,
   GET_TOP_MOVERS,
-  GET_ALL_ROOMS
+  GET_ALL_ROOMS,
+  GET_STOCK_INFO
 }
