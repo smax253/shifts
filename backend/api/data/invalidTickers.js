@@ -64,7 +64,9 @@ const invalidTickers = [
 	'YOLO',
 	'AT',
 	'THE',
-	'BRK'
+	'BRK',
+	'WSJ'
+
 ];
 
 // export default invalidTickers;

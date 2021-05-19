@@ -9,6 +9,13 @@ const { database } = require("firebase-admin");
 const { generate } = require("password-hash");
 
 const axios = require('axios');
+const redis = require('redis');
+
+const client = redis.createClient();
+const bluebird = require('bluebird');
+
+bluebird.promisifyAll(redis.RedisClient.prototype);
+bluebird.promisifyAll(redis.Multi.prototype);
 
 module.exports = {
   async getAllStocks() {
@@ -20,38 +27,67 @@ module.exports = {
       return arr;
   },
   async getStock(symbol) {
+        console.log("getting stocks : " + symbol)
         const userRef = db.collection('stocks').doc(symbol);
         const doc = await userRef.get();
         if (!doc.exists) {
           console.log('No such stock!');
+          return null;
         } else {
-          return doc.data();
+          const result = doc.data();
+          const desc = await client.hgetAsync('company_info', symbol);
+          if (desc === null ) {
+            result.stockInfo = {
+              assetType: null,
+              description: null,
+              exchange: null,
+              industry: null,
+              analystTargetPrice: null
+            }
+            
+          } else {
+            let moreInfo = JSON.parse(desc);
+            //console.log(moreInfo)
+            let stockInfo = {}
+            stockInfo.assetType = moreInfo.AssetType
+            stockInfo.description = moreInfo.Description;
+            stockInfo.exchange = moreInfo.Exchange;
+            stockInfo.industry = moreInfo.Industry;
+            stockInfo.analystTargetPrice = moreInfo.AnalystTargetPrice;
+            result.stockInfo = stockInfo;
+          }
+          console.log(result)
+          return result;
         }
-        return null;
   },
 
   async addStock(symbol) {
     try {
       //do alphavantage call here
       if (!symbol) throw "Stock symbol does not exist";
+
+      const duplicateCheck = await db.collection('stocks').doc(symbol).get();
+      if (duplicateCheck.exists) {
+        return await module.exports.getStock(symbol);
+      }
       
       const API_KEY = process.env.alphavantage_key;
 
-    const API_Call =
-      `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=` +
-      symbol +
-      `&apikey=` +
-      API_KEY;
+      const API_Call =
+        `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=` +
+        symbol +
+        `&apikey=` +
+        API_KEY;
     
-    let newStock = {
-      symbol: symbol,
-      name: "NA",
-      prices: [],
-      chart: {
-        days: [],
-        weeks: [],
-      },
-    };
+      let newStock = {
+        symbol: symbol,
+        name: "NA",
+        prices: [],
+        chart: {
+          days: [],
+          weeks: [],
+        },
+      };
 
 
       await fetch(API_Call)
@@ -84,6 +120,11 @@ module.exports = {
             if (counter == 180) {
               newStock.prices.push({ date: "6m", value: current });
             }
+            counter++;
+          }
+
+        });
+    
 
           }
         });
@@ -95,63 +136,74 @@ module.exports = {
         `&apikey=` +
         API_KEY;
 
-    await fetch(API_Call3)
-      .then(function (response) {
-        return response.json();
-      })
-      .then(async function (data) {
-        //Parsing Data
-        newStock.name = "Name" in data ? data["Name"] : symbol;
-      });
+      await fetch(API_Call3)
+        .then(function (response) {
+          return response.json();
+        })
+        .then(async function (data) {
+          //Parsing Data
+          newStock.name = "Name" in data ? data["Name"] : symbol;
+        });
+
     
     
-    const API_Call2 =
-      `https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY_ADJUSTED&symbol=` +
-      symbol +
-      `&apikey=` +
-      API_KEY;
+      const API_Call2 =
+        `https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY_ADJUSTED&symbol=` +
+        symbol +
+        `&apikey=` +
+        API_KEY;
 
-    await fetch(API_Call2)
-      .then(function (response) {
-        return response.json();
-      })
-      .then(async function (data) {
-        //Parsing Data
-        let counter = 0;
-        for (var key in data["Weekly Adjusted Time Series"]) {
-          let current = data["Weekly Adjusted Time Series"][key]["4. close"];
-          current = parseFloat(current);
-          newStock.chart.weeks.unshift({ date: key, value: current });
-          if (counter == 26) {
-            newStock.prices.push({ date: "6m", value: current });
-          }
-          if (counter == 52) {
-            newStock.prices.push({ date: "1y", value: current });
-          }
-          if (counter == 260) {
-            newStock.prices.push({ date: "5y", value: current });
-            break;
+      await fetch(API_Call2)
+        .then(function (response) {
+          return response.json();
+        })
+        .then(async function (data) {
+          //Parsing Data
+          let counter = 0;
+          for (var key in data["Weekly Adjusted Time Series"]) {
+            let current = data["Weekly Adjusted Time Series"][key]["4. close"];
+            current = parseFloat(current);
+            newStock.chart.weeks.unshift({ date: key, value: current });
+            if (counter == 26) {
+              newStock.prices.push({ date: "6m", value: current });
+            }
+            if (counter == 52) {
+              newStock.prices.push({ date: "1y", value: current });
+            }
+            if (counter == 260) {
+              newStock.prices.push({ date: "5y", value: current });
+              break;
+            }
+            counter++;
           }
 
-        }
-      });
-      
-      
-      
+        });
+    
+      const API_Call4 =
+        `https://www.alphavantage.co/query?function=OVERVIEW&symbol=` +
+        symbol +
+        `&apikey=` +
+        API_KEY;
+    
+      const { data } = await axios.get(API_Call4);
+      if (Object.keys(data).length === 0) await client.hsetAsync('company_info', symbol, JSON.stringify(null));
+      else await client.hsetAsync('company_info', symbol, JSON.stringify(data));
+
       if (newStock.prices === []) {
         console.log("Did not update " + symbol)
         return;
       }
 
+
       // Add a new document in collection "users" with ID 'username'
       const res = await db.collection('stocks').doc(symbol).set(newStock);
       this.updateStockData(symbol);
       return await this.getStock(symbol);
-  
     } catch (e) {
       throw e;
     }
- },
+  },
+
 
   async generateStocks(tickers) {
     //web scrapper do this part
@@ -198,6 +250,7 @@ module.exports = {
 
     for (let i = 0; i < allStocks.length; i++) {
       await roomData.deleteRoom(allStocks[i]);
+      await module.exports.deleteStockFromStockMentions(allStocks[i])
     }
 
     return await module.exports.getAllStocks();
@@ -311,13 +364,15 @@ module.exports = {
   },
 
   async getTopMentions() {
+    console.log("here get")
     try {
+      console.log("made it here")
       const allStockMentions = await db.collection('stockMentions').get();
       let arr = [];
       allStockMentions.forEach((item) => {
         arr.push(item.data())
       })
-      arr.sort((a, b) => b.timesCounted - a.timesCounted);
+      console.log(arr)
 
       let getRooms = await Promise.all(arr.map(async ({ symbol, timesCounted}) => {
         return await roomData.getRoom(symbol)
@@ -328,6 +383,15 @@ module.exports = {
 
     } catch (e) {
       throw e
+    }
+  },
+
+  async deleteStockFromStockMentions(stockSymbol) {
+    try {
+      const res = await db.collection('stockMentions').delete(stockSymbol);
+      return 0; //success
+    } catch (e) {
+      throw e;
     }
   }
 
