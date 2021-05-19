@@ -129,19 +129,21 @@ const Login = () => {
                     <form className={classes.root} onSubmit={register}>
                       <Grid container spacing={4}>
                         <Grid item xs={12}>
-                          <TextField id="email-input" type="text" label="Email" variant="filled" onChange={(event) => setEmailInput(event.target.value)} />
+                          <TextField id="email-input" type="text" label="Email" variant="filled" onChange={(event) => setEmailInput(event.target.value)} value={ emailInput }/>
                         </Grid>
                         <Grid item xs={12}>
-                          <TextField id="username-input" type="text" label="Username" variant="filled" onChange={(event) => setUsernameInput(event.target.value)} />
+                          <TextField id="username-input" type="text" label="Username" variant="filled" onChange={(event) => setUsernameInput(event.target.value)} value={ usernameInput }/>
                         </Grid>
                         <Grid item xs={12}>
-                          <TextField id="password-input" type="password" label="Password" variant="filled" onChange={(event) => setPasswordInput(event.target.value)} />
+                          <TextField id="password-input" type="password" label="Password" variant="filled" onChange={(event) => setPasswordInput(event.target.value)} value={passwordInput}/>
                         </Grid>
                         <Grid item xs={12}>
-                          <TextField id="confirm-password-input" type="password" label="Confirm Password" variant="filled" onChange={(event) => setConfirmPasswordInput(event.target.value)} />
+                          <TextField id="confirm-password-input" type="password" label="Confirm Password" variant="filled" onChange={(event) => setConfirmPasswordInput(event.target.value)} value={confirmPasswordInput} />
                         </Grid>
                         <Grid item xs={12}>
                           <Button variant="contained" type="submit">Register!</Button>
+                        </Grid><Grid item xs={12}>
+                          <Button variant="contained" onClick={ () => setIsRegistering(false)}>Login!</Button> 
                         </Grid>
                       </Grid>
                     </form> 
@@ -155,7 +157,7 @@ const Login = () => {
                     <form className={classes.root} onSubmit={login}>
                       <Grid container spacing={4}>
                         <Grid item xs={12}>
-                          <TextField id="email-input" label="Email" variant="filled" onChange={ (event) => setEmailInput(event.target.value)}/>
+                          <TextField id="email-input" type="text" label="Email" variant="filled" onChange={(event) => setEmailInput(event.target.value)} value={ emailInput }/>
                         </Grid>
                         <Grid item xs={12}>
                           <TextField id="password-input" label="Password" type="password" variant="filled" onChange={(event) => setPasswordInput(event.target.value)} />

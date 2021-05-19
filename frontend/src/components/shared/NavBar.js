@@ -12,6 +12,7 @@ import Modal from '@material-ui/core/Modal';
 import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade';
 import pf from '../../img/pf.png';
+import firebaseauth from '../../config/auth'
 
 const useStyles = makeStyles((theme) => ({
   modal: {
@@ -115,9 +116,9 @@ const NavBar = () => {
   }
 
   const logout = async()=>{
-
-    await auth.signOut();
+    await firebaseauth.signOut()
     setAuthUser(undefined);
+    history.push('/');
   
   }
 
