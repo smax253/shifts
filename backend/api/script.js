@@ -93,10 +93,19 @@ const runScript = async () => {
         console.log(stocksToDelete);
 
         await generateStocks(differences);
-        await wipeStocks(stocksToDelete);
-        console.log("here")
+        console.log("generating")
+        let refreshedStockObjs= await wipeStocks(stocksToDelete);
+        console.log("wiped stocks")
+        let refreshedStocks = refreshedStockObjs.map((item) => {
+            return item.symbol
+        })
+        topTickers.forEach((item, index) => {
+            if (!(refreshedStocks.includes(item))) {
+                topTickers.splice(index, index);
+            }
+        })
+        console.log(topTickers);
         await stocks.updateMentions(topTickers);
-         
         
         socket.addEventListener('message', (event) => {
             let data = JSON.parse(event.data);
