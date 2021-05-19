@@ -2,6 +2,7 @@ import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Tooltip } from '@material-ui/core';
 import socket from '../../socket/socket';
+import ScrollableFeed from 'react-scrollable-feed'
 
 const ChatBox = ({chatLog}) => {
   console.log('chat', chatLog);
@@ -21,7 +22,7 @@ const ChatBox = ({chatLog}) => {
 
     })
 
-    return <div className="message-list">{messageDivs}</div>
+    return <ScrollableFeed className="message-list">{messageDivs}</ScrollableFeed>
   
   }, [chatLog])
 

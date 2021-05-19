@@ -1,7 +1,7 @@
 */**/serviceAccountKey.json
 */**/package-lock.json
 *.DS_Store
-
+dump.rdb
 # Logs
 logs
 *.log
