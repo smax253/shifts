@@ -61,9 +61,9 @@ const TopStockTickers = () => {
 
 const Dashboard = () => {
 
-  const allRoomsQuery = useQuery(queries.GET_ALL_ROOMS);
-  const topMoversQuery = useQuery(queries.GET_TOP_MOVERS);
-  const popularQuery = useQuery(queries.GET_POPULAR);
+  const allRoomsQuery = useQuery(queries.GET_ALL_ROOMS, {fetchPolicy: 'no-cache'});
+  const topMoversQuery = useQuery(queries.GET_TOP_MOVERS, {fetchPolicy: 'no-cache'});
+  const popularQuery = useQuery(queries.GET_POPULAR, {fetchPolicy: 'no-cache'});
   
   const loading = useMemo(() => allRoomsQuery.loading, [allRoomsQuery]);
   const [activeRooms, setActiveRooms] = useState(null);

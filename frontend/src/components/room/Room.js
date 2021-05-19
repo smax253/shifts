@@ -27,7 +27,7 @@ const StockDataSummary = ({name, symbol, data, daily, currentPrice, userToken, i
   daily.forEach(item => {
     change[item.date] = item.value;
   })
-  const price = currentPrice || change.c;
+  const price = Number(currentPrice || change.c);
   
   const calcPercentage = (difference) => {
 
