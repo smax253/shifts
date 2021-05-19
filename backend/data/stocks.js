@@ -179,9 +179,9 @@ module.exports = {
         })
         .then(async function (data) {
           //Parsing Data
-          newStock.name = "Name" in data ? data["Name"] : symbol;
+          newStock.name = "Name" in data && data["Name"];
         });
-
+      if (!newStock.name) return null;
     
     
       const API_Call2 =

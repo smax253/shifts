@@ -80,7 +80,6 @@ const typeDefs = gql`
 
   type Mutation {
     addUser(username: String!, userID: ID!): User
-    addStock(symbol: String!, prices: [Int]): Stock
     updateStockData(symbol: String!): Stock
     addRoom(stockSymbol: String!): Room
     addMessage(stockSymbol: String!, author: String!, text: String): Room
@@ -88,7 +87,6 @@ const typeDefs = gql`
     updateIndexes: Indexes
 
     clearStocks(tickerList: [String]): [Stock]
-    generateStocks: [Stock]
     
     removeFromFavorites(userToken: String!, stockSymbol:String!): User
     addToFavorites(userToken: String!, stockSymbol: String!): User
@@ -127,9 +125,6 @@ const resolvers = {
     addUser: async (_, args) => {
       return await userData.addUser(args.username, args.userID);
     },
-    addStock: async (_, args) => {
-      return await stockData.addStock(args.symbol);
-    },
     updateStockData: async (_, args) => {
       return await stockData.updateStockData(args.symbol);
     },
@@ -142,10 +137,6 @@ const resolvers = {
 
     clearStocks: async (_, args) => {
       return await stockData.wipeStocks(args.tickerList);
-    },
-    
-    generateStocks: async (_, args) => {
-      return await stockData.generateStocks(args.topTickerSymbols = []);
     },
 
     updateIndexes: async () => {
