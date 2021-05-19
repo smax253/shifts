@@ -31,10 +31,11 @@ module.exports = {
   },
 
   async addStock(symbol) {
-    //do alphavantage call here
-    if (!symbol) throw "Stock symbol does not exist";
-    
-    const API_KEY = process.env.alphavantage_key;
+    try {
+      //do alphavantage call here
+      if (!symbol) throw "Stock symbol does not exist";
+      
+      const API_KEY = process.env.alphavantage_key;
 
     const API_Call =
       `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=` +
@@ -46,51 +47,53 @@ module.exports = {
       symbol: symbol,
       name: "NA",
       prices: [],
-      chart: [],
+      chart: {
+        days: [],
+        weeks: [],
+      },
     };
 
 
-    await fetch(API_Call)
-      .then(function (response) {
-        return response.json();
-      })
-      .then(async function (data) {
-        //Parsing Data
-        let counter = 0;
-        for (var key in data["Time Series (Daily)"]) {
-          let current = data["Time Series (Daily)"][key]["4. close"];
-          current = parseFloat(current);
+      await fetch(API_Call)
+        .then(function (response) {
+          return response.json();
+        })
+        .then(async function (data) {
+          //Parsing Data
+          let counter = 0;
+          for (var key in data["Time Series (Daily)"]) {
+            let current = data["Time Series (Daily)"][key]["4. close"];
+            current = parseFloat(current);
 
-          if (counter <= 30) {
-            newStock.chart.unshift({ date: key, value: current });
-          }
+            if (counter <= 30) {
+              newStock.chart.days.unshift({ date: key, value: current });
+            }
          
-          if (counter == 1) {
-            newStock.prices.push({ date: "1d", value: current });
-          }
-          if (counter == 7) {
-            newStock.prices.push({ date: "1w", value: current });
-          }
-          if (counter == 30) {
-            newStock.prices.push({ date: "1m", value: current });
-          }
-          if (counter == 90) {
-            newStock.prices.push({ date: "3m", value: current });
-          }
-          if (counter == 180) {
-            newStock.prices.push({ date: "6m", value: current });
-          }
-          counter++;
-        }
+            if (counter == 1) {
+              newStock.prices.push({ date: "1d", value: current });
+            }
+            if (counter == 7) {
+              newStock.prices.push({ date: "1w", value: current });
+            }
+            if (counter == 30) {
+              newStock.prices.push({ date: "1m", value: current });
+            }
+            if (counter == 90) {
+              newStock.prices.push({ date: "3m", value: current });
+            }
+            if (counter == 180) {
+              newStock.prices.push({ date: "6m", value: current });
+            }
 
-      });
-    
-    //name
-    const API_Call3 =
-      `https://www.alphavantage.co/query?function=OVERVIEW&symbol=` +
-      symbol +
-      `&apikey=` +
-      API_KEY;
+          }
+        });
+      
+      //name
+      const API_Call3 =
+        `https://www.alphavantage.co/query?function=OVERVIEW&symbol=` +
+        symbol +
+        `&apikey=` +
+        API_KEY;
 
     await fetch(API_Call3)
       .then(function (response) {
@@ -103,7 +106,7 @@ module.exports = {
     
     
     const API_Call2 =
-      `https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol=` +
+      `https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY_ADJUSTED&symbol=` +
       symbol +
       `&apikey=` +
       API_KEY;
@@ -115,42 +118,51 @@ module.exports = {
       .then(async function (data) {
         //Parsing Data
         let counter = 0;
-        for (var key in data["Monthly Adjusted Time Series"]) {
-          let current = data["Monthly Adjusted Time Series"][key]["4. close"];
+        for (var key in data["Weekly Adjusted Time Series"]) {
+          let current = data["Weekly Adjusted Time Series"][key]["4. close"];
           current = parseFloat(current);
-         
-          if (counter == 6) {
+          newStock.chart.weeks.unshift({ date: key, value: current });
+          if (counter == 26) {
             newStock.prices.push({ date: "6m", value: current });
           }
-          if (counter == 12) {
+          if (counter == 52) {
             newStock.prices.push({ date: "1y", value: current });
           }
-          if (counter == 60) {
+          if (counter == 260) {
             newStock.prices.push({ date: "5y", value: current });
+            break;
           }
-          counter++;
+
         }
-
       });
-    
-    
-    
-    if (newStock.prices === []) {
-      console.log("Did not update " + symbol)
-      return;
-    }
+      
+      
+      
+      if (newStock.prices === []) {
+        console.log("Did not update " + symbol)
+        return;
+      }
 
-    // Add a new document in collection "users" with ID 'username'
-    const res = await db.collection('stocks').doc(symbol).set(newStock);
-    this.updateStockData(symbol);
-    return await this.getStock(symbol);
-  },
+      // Add a new document in collection "users" with ID 'username'
+      const res = await db.collection('stocks').doc(symbol).set(newStock);
+      this.updateStockData(symbol);
+      return await this.getStock(symbol);
+  
+    } catch (e) {
+      throw e;
+    }
+ },
 
   async generateStocks(tickers) {
     //web scrapper do this part
     let presets = ["COIN", "MSFT", "AAPL", "DASH", "SNAP", "TSLA", "NFLX", "GOOG", "FB", "DIS"];
+    let all = await module.exports.getAllStocks();
+    presets.forEach((item, index) => {
+      if (all.includes(item)) {
+        presets.splice(index, index)
+      }
+    })
     let arr = [...presets, ...tickers];
-    
     console.log("Adding the following tickers to the firebase \'stocks\' collection:", arr);
 
     for (let i = 0; i < arr.length; i++) {
@@ -164,13 +176,16 @@ module.exports = {
   },
 
   async wipeStocks(allStocks) {
+    console.log("here in wipe stocks")
     if (!allStocks) {
       let all = await module.exports.getAllStocks();
       all.forEach((stock) => {
         allStocks.push(stock.symbol)
       })
     }
+    console.log(allStocks)
     for (let stock of allStocks) {
+      console.log(stock);
         db.collection('stocks').doc(stock).delete().then(() => {
           console.log('successfully deleted ' + stock)
           
@@ -282,15 +297,38 @@ module.exports = {
     }
     return indexes;
   },
-/*
+
   async updateMentions(tickerMentions) {
+    console.log("tickerMentions here")
+    console.log(tickerMentions)
     try {
       for (let { stock, timesCounted } of tickerMentions) {
-        const res = await db.collection('stockMentions').doc(stock).set(timesCounted);
+        const res = await db.collection('stockMentions').doc(stock).set({ "symbol": stock, "timesCounted": timesCounted });
       }
     } catch (e) {
       throw e
    } 
+  },
+
+  async getTopMentions() {
+    try {
+      const allStockMentions = await db.collection('stockMentions').get();
+      let arr = [];
+      allStockMentions.forEach((item) => {
+        arr.push(item.data())
+      })
+      arr.sort((a, b) => b.timesCounted - a.timesCounted);
+
+      let getRooms = await Promise.all(arr.map(async ({ symbol, timesCounted}) => {
+        return await roomData.getRoom(symbol)
+      }))
+      getRooms = getRooms.length > 10 ? getRooms.slice(0, 10) : getRooms;
+      return getRooms;
+      
+
+    } catch (e) {
+      throw e
+    }
   }
-  */
+
 }

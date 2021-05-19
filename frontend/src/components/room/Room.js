@@ -164,22 +164,44 @@ const Room = ({ id, messages, setMessages, price, userToken }) => {
     if (getStockQuery.data && getStockQuery.data.getStock) {
 
       const rawData = getStockQuery.data.getStock.chart;
+      let chartData = [];
       switch (chartMode) {
 
-      case '1m':
-        setChartData(rawData);
-        break;
+      
       case '5d':
-        setChartData(rawData.slice(Math.max(rawData.length - 5, 0)));
+        chartData = rawData.days.slice(Math.max(rawData.days.length - 5, 0))
         break;
       case '15d':
-        setChartData(rawData.slice(Math.max(rawData.length - 15, 0)));
+        chartData = rawData.days.slice(Math.max(rawData.days.length - 15, 0))
+        break;
+      case '1m':
+        chartData = rawData.days
+        break;
+      case '3m':
+        if (rawData.weeks.length < 5) break;
+        chartData = rawData.weeks.slice(Math.max(rawData.weeks.length - 13, 0))
+        break;
+      case '6m':
+        if (rawData.weeks.length < 13) break;
+        chartData = rawData.weeks.slice(Math.max(rawData.weeks.length - 26, 0))
+        break;
+      case '1y':
+        if (rawData.weeks.length < 26) break;
+        chartData = rawData.weeks.slice(Math.max(rawData.weeks.length - 52, 0))
+        break;
+      case '3y':
+        if (rawData.weeks.length < 52) break;
+        chartData = rawData.weeks.slice(Math.max(rawData.weeks.length - 156, 0))
+        break;
+      case '5y':
+        if (rawData.weeks.length < 156) break;
+        chartData = rawData.weeks
         break;
       default:
         break;
       
       }
-    
+      setChartData(chartData)
     }
   
   }, [chartMode, getStockQuery.data])

@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Grid } from '@material-ui/core';
 import RoomList from '../shared/RoomList';
-import fakeQueryData from '../../fakeQueryData';
 import '../../styles/Dashboard.scss';
 import PropTypes from 'prop-types';
 import { useQuery } from '@apollo/client';
@@ -63,15 +62,15 @@ const TopStockTickers = () => {
 const Dashboard = () => {
 
   // eslint-disable-next-line no-unused-vars
-  const popular = fakeQueryData.topMovers;
   // eslint-disable-next-line no-unused-vars
-  const myList = fakeQueryData.topMovers;
   const allRoomsQuery = useQuery(queries.GET_ALL_ROOMS);
   const topMoversQuery = useQuery(queries.GET_TOP_MOVERS);
+  const popularQuery = useQuery(queries.GET_POPULAR);
 
   const loading = useMemo(() => allRoomsQuery.loading, [allRoomsQuery]);
   const [activeRooms, setActiveRooms] = useState(null);
   const [topMovers, setTopMovers] = useState(null);
+  const [popular, setPopular] = useState(null);
   useEffect(() => {
 
     if(allRoomsQuery.data &&  allRoomsQuery.data.rooms){
@@ -95,6 +94,16 @@ const Dashboard = () => {
   
   }, [topMoversQuery])
 
+  useEffect(() => {
+
+    if(popularQuery.data &&  popularQuery.data.getTopMentions){
+      setPopular( popularQuery.data.getTopMentions );
+    }else {
+      setPopular(null);
+    }
+  
+  }, [popularQuery])
+
   return (
     loading ? <div>Loading...</div>
       : (
@@ -113,8 +122,8 @@ const Dashboard = () => {
               </Grid>
               <Grid item xs={12} sm={4} className='list-container'>
                 {
-                  activeRooms
-                    ? <RoomList title="Popular" showPrices tickerList={activeRooms} />
+                  popular
+                    ? <RoomList title="Popular" showPrices tickerList={popular} />
                     : <div>Loading...</div>
                 }
               </Grid>
