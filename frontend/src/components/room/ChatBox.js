@@ -5,7 +5,6 @@ import socket from '../../socket/socket';
 import ScrollableFeed from 'react-scrollable-feed'
 
 const ChatBox = ({chatLog}) => {
-  console.log('chat', chatLog);
   const [messageText, setMessageText] = useState('');
   const renderMessages = useCallback(()=>{
 

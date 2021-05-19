@@ -36,7 +36,6 @@ module.exports = {
         db.collection('rooms').doc(stockSymbol).delete().then(() => {
             console.log('successfully deleted room ' + stockSymbol)
         }).catch((error) => {
-            console.log('unable to delete room ' + stockSymbol);
             console.log(error)
         });
         return this.getAllRooms();
@@ -77,7 +76,6 @@ module.exports = {
     },
 
     async addUserToRoom(userName, stockSymbol) {
-        console.log(stockSymbol)
         try {
             let user = await userData.getUser(userName)
             let room = await module.exports.getRoom(stockSymbol);

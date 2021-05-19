@@ -12,7 +12,6 @@ if (!firebase.apps.length) {
 
 }
 const auth = firebase.auth();
-console.log(auth)
 
 export default auth;
 

@@ -26,7 +26,6 @@ const RoomList = ({ title, tickerList, showPrices, className, id, sortActive }) 
 
       const stockData = stockDataList.find((item) => item && item.symbol === stock.stockSymbol);
       if (!stockData) {
-        console.log('missing data for ', stock)
         return;
       }
       const value = stock.active;

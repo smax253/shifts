@@ -12,7 +12,6 @@ const useEffectSocket = ({ symbol, addMessage, setCurrentPrice, setUsersList, us
       console.log('connection: ', socket.connected)
     })
     socket.on('price', (price) => {
-      console.log('price', price);
       setCurrentPrice.current(price);
     
     })

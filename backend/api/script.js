@@ -10,7 +10,6 @@ const admin = initializeCloudFirebase();
 const io = require('socket.io-client');
 const { workerData } = require('worker_threads');
 const iouri = workerData.socketioport ? `${process.env.backend_base_uri}:${workerData.socketioport}`: process.env.backend_base_uri
-console.log('worker connecting socketio to ', iouri);
 const socketio = io(iouri, { query: { userToken: workerData.password }, forceNew: true });
 
 let prices = {};
@@ -154,7 +153,6 @@ const runScript = async () => {
                         let filledAvgPrice = (sum / prices[symbol].length).toFixed(2);
 
                         prices[symbol] = [];
-                        console.log('price update', symbol, filledAvgPrice)
                         socketio.emit('price-update', symbol, filledAvgPrice);
                     }
                 })
@@ -182,7 +180,6 @@ socket.addEventListener('open', async () => {
 
 
 const updateTickers = () => {
-    console.log('updating all stocks...')
     for (const ticker of topTickers) {
         stocks.updateStockData(ticker.stock);
     }

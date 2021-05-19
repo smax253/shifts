@@ -32,11 +32,9 @@ module.exports = {
       return arr;
   },
   async getStock(symbol) {
-        console.log("getting stocks : " + symbol)
         const userRef = db.collection('stocks').doc(symbol);
       const doc = await userRef.get();
         if (!doc.exists) {
-          console.log('No such stock!'+ symbol);
           return null;
         } else {
           const result = doc.data();
@@ -107,7 +105,6 @@ module.exports = {
 
       const duplicateCheck = await db.collection('stocks').doc(symbol).get();
       if (duplicateCheck.exists) {
-        console.log(`${symbol} is already in the database!`)
         return await module.exports.getStock(symbol);
       }
       
@@ -227,7 +224,6 @@ module.exports = {
       else await client.hsetAsync('company_info', symbol, JSON.stringify(data));
 
       if (newStock.prices === []) {
-        console.log("Did not update " + symbol)
         return;
       }
 
@@ -245,14 +241,12 @@ module.exports = {
   async generateStocks(tickers) {
     //web scrapper do this part
     
-    console.log("Adding the following tickers to the firebase \'stocks\' collection:", tickers);
 
     for (let i = 0; i < tickers.length; i++) {
       const delay = ms => new Promise(res => setTimeout(res, ms));
 
       const duplicateCheck = await db.collection('stocks').doc(tickers[i].stock).get();
       if (duplicateCheck.exists) {
-        console.log(`${tickers[i].stock} is already in the database!`)
         continue;
       }
 
@@ -261,7 +255,6 @@ module.exports = {
         await module.exports.updateMentions([tickers[i]]);
         await delay(60000);
     }
-    console.log("Done!");
     return await module.exports.getAllStocks();
   },
 
@@ -278,7 +271,6 @@ module.exports = {
           
             //await roomData.deleteRoom(stock.symbol);
         }).catch((error) => {
-          console.log('error deleting ' + stock)
           console.log(error)
         }) 
     }
@@ -326,7 +318,6 @@ module.exports = {
     const userRef = db.collection('stocks').doc(stockSymbol);
     const doc = await userRef.get();
     if (!doc.exists) {
-      console.log('No such stock!');
     } else {
       const stock = doc.data()
       const { data } = await axios.get(`https://finnhub.io/api/v1/quote?symbol=${stockSymbol}&token=${process.env.finnhub_key}`);

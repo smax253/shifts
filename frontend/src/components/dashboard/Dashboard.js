@@ -41,7 +41,6 @@ const TopStockTickers = () => {
 
   useEffect(() => {
     if (data && data.indexes) {
-      console.log('index', data);
       setStockData(data.indexes);
     }
   }, [data])
@@ -69,7 +68,6 @@ const Dashboard = () => {
   const [activeRooms, setActiveRooms] = useState(null);
   const [topMovers, setTopMovers] = useState(null);
   const [popular, setPopular] = useState(null);
-  console.log(popularQuery);
   useEffect(() => {
 
     if(allRoomsQuery.data &&  allRoomsQuery.data.rooms){
