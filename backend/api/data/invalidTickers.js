@@ -30,6 +30,7 @@ const invalidTickers = [
 	'IPO',
 	'IRL',
 	'LET',
+	'OTC',
 	'LIF',
 	'LOL',
 	'RIF',
