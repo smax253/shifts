@@ -18,6 +18,8 @@ APIs: Alphavantage Go, Finnhub
 
 We used Heroku to enable CI/CD, which can be accessed at this link: https://shifts-frontend-s2021.herokuapp.com/ 
 
+We have two Firebase databases - one for Heroku and one for any local instances. **We highly recommend you use Heroku to view the project since we have populated that specific Firebase database with dummy data for testing. The local instance Firebase database has no data in it. If you test shifts by making a local instance, please allow a few minutes for the application to scrape the online communities, query the APIs and populate Firebase.**
+
 If you'd like to spin up your own local instance: 
 
 1. Clone the repo
