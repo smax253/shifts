@@ -27,6 +27,8 @@ If you'd like to spin up your own local instance:
 3. Start Redis by typing in ```redis-server``` in a terminal 
 4. Once ```npm i``` finishes for both the backend folder and frontend folder, run ```npm start```in both folders to run the backend and the frontend respectively. 
 
+**Note**: You may get a "unable to resolve dependency tree" issue when doing ```npm i``` in the frontend folder. To fix this, please do ```npm install --legacy-peer-deps```
+
 The application should be running after these steps. We have also sent credentials to a Firebase database to you via email for the local instance and the Heroku instance if you'd like to monitor how the database changes during operations.
 
 ## Accounts (Heroku)
