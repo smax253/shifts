@@ -27,6 +27,21 @@ If you'd like to spin up your own local instance:
 
 The application should be running after these steps. We have also sent credentials to a Firebase database to you via email for the local instance and the Heroku instance if you'd like to monitor how the database changes during operations.
 
+# Accounts (Heroku)
+
+|        Email         |  Username  | Password |
+|----------------------|------------|----------|
+| ealtenx@gmail.com    | ealtenbu   | abcd1234 |
+| smax@gmail.com       | smax       | abc123   |
+| dkim@gmail.com       | dkim       | abc123   |
+| phill@stevens.edu    | phill      | abc123   |
+| graffix@gmail.com    | graffixnyc | abc123   |
+| borowski@gmail.com   | borowski   | abc123   |
+| ebonelli@gmail.com   | ebonelli   | abc123   |
+| DFV@gmail.com        | DFV        | abc123   |
+| hnizami1@stevens.edu | nizzy      | password |
+
+
 # Giving Credit 
 To scrape Reddit, we modified github user andrews1022's reddit stock scrapper. The original stock scraper can be found here: https://github.com/andrews1022/reddit-stock-scraper. It gets one subreddit's top X most mentioned stocks. We modified it so that it pulls from multiple subreddits and then normalizes each totalMentioned count so that one subreddit with a lot of subscribers does not overpower the rest of the subreddits. We'd like to thank andrews1022 for having the code be open-sourced and all credit goes to his original implementation. 
 
