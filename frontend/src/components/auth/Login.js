@@ -1,6 +1,5 @@
 import React from 'react';
-import { Redirect } from 'react-router';
-import PropTypes from 'prop-types';
+import { Redirect, useHistory } from 'react-router';
 import { AuthContext } from '../../auth/AuthContext';
 import email from 'email-validator';
 import auth from '../../config/auth';
@@ -37,6 +36,7 @@ const Login = () => {
   const [confirmPasswordInput, setConfirmPasswordInput] = React.useState('');
   const [addUser] = useMutation(queries.ADD_USER);
   const client = useApolloClient();
+  const history = useHistory();
 
   const login = async(event) => {
     
@@ -54,7 +54,7 @@ const Login = () => {
     try {
 
       const user = await auth.signInWithEmailAndPassword(emailInput, passwordInput);
-      setAuthUser(user);
+      setAuthUser(user.user);
 
       setRedirectToReferrer(true);
 
@@ -96,15 +96,16 @@ const Login = () => {
     }
 
     try {
-
       const user = await auth.createUserWithEmailAndPassword(emailInput, passwordInput);
       
-      addUser({ variables: { username: usernameInput, userID: user.user.uid } })
-      setAuthUser(user);
+      await addUser({ variables: { username: usernameInput, userID: user.user.uid } })
+      history.push('/');
+      // eslint-disable-next-line no-undef
+      window.location.reload();
+      setAuthUser(user.user);
       setRedirectToReferrer(true);
 
     } catch (e) {
-      
       alert.show('Oh no! We were not able to register you. Please try again with a valid email and password.', {
         title: 'Registration failed',
       });
@@ -179,8 +180,5 @@ const Login = () => {
   )
 }
 
-Login.propTypes = {
-  onLogin: PropTypes.func,
-}
 
 export default Login;

@@ -27,15 +27,7 @@ module.exports = {
         }
   },
     
-  async getUserById(userId) {
-        const userRef = db.collection('users').doc(userId);
-        const doc = await userRef.get();
-        if (!doc.exists) {
-          throw "User does not exist";
-        } else {
-          return doc.data();
-        } 
-  },
+  
     
   async updateUser(newuserData) {
     try {
@@ -46,7 +38,8 @@ module.exports = {
       }
     },
     
-    async getUserById(id) {
+  async getUserById(id) {
+      const snap = await db.collection('users').get()
       const userRef = db.collection('users');
       const snapshot = await userRef.where('userID', "==", id).get();
         if (snapshot.empty) {
@@ -169,7 +162,7 @@ module.exports = {
       }));
       return rooms;
     } catch (e) {
-      throw e;
+      return [];
     }
   }
 };

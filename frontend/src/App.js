@@ -23,17 +23,16 @@ const client = new ApolloClient({
 })
 
 function App() {
-
-  
   const [authUser, setAuthUser] = React.useState(undefined);
-  auth.onAuthStateChanged((user) => {
 
+  auth.onAuthStateChanged((user) => {
     if (user) {
       client.query({ query: queries.GET_USERNAME, variables: { userID: user.uid } }).then(({ data }) => {
+        
         const username = data.getUserById.username;
         user.username = username;
         setAuthUser(user);
-      })
+      }).catch((err)=>{console.error(err)})
       
     
     }
@@ -62,7 +61,7 @@ function App() {
                     <Dashboard/>
                   </PrivateRoute>
                   <Route path='/login'>
-                    <Login />
+                    <Login/>
                   </Route>
                 </Switch>
               </div>

@@ -39,8 +39,8 @@ module.exports = {
         } else {
           const result = doc.data();
           let desc = await client.hgetAsync('company_info', symbol);
-          
-          if (desc === "null") {
+          console.log(`desc ${symbol}`, desc);
+          if (desc === null) {
             const API_KEY = process.env.finnhub_key;
             const API_Call4 =
               `https://www.alphavantage.co/query?function=OVERVIEW&symbol=` +
@@ -48,42 +48,51 @@ module.exports = {
               `&apikey=` +
               API_KEY;
           
-              const { data } = await axios.get(API_Call4);
-
+            const { data } = await axios.get(API_Call4);
             let isDataNull = false;
             if (!data || Object.keys(data).length === 0) {
               await client.hsetAsync('company_info', symbol, JSON.stringify(null));
               isDataNull = true;
             } else {
-                if (data.Note) { // sus
-                    return null;
-                }
-              await client.hsetAsync('company_info', symbol, JSON.stringify(data));
+              if (data.Note) { // sus
+                isDataNull = true;
+              }
+              else await client.hsetAsync('company_info', symbol, JSON.stringify(data));
             }
 
             if (isDataNull) {
-                result.stockInfo = {
+              result.stockInfo = {
+                assetType: null,
+                description: null,
+                exchange: null,
+                industry: null,
+                analystTargetPrice: null
+              }
+            } else {
+              let getFromRedis = await client.hgetAsync('company_info', symbol)
+              let moreInfo = JSON.parse(getFromRedis);
+
+              let stockInfo = {}
+              stockInfo.assetType = moreInfo.AssetType
+              stockInfo.description = moreInfo.Description;
+              stockInfo.exchange = moreInfo.Exchange;
+              stockInfo.industry = moreInfo.Industry;
+              stockInfo.analystTargetPrice = moreInfo.AnalystTargetPrice;
+              result.stockInfo = stockInfo;
+            }
+                
+           
+          } else if (desc === 'null') {
+            result.stockInfo = {
                   assetType: null,
                   description: null,
                   exchange: null,
                   industry: null,
                   analystTargetPrice: null
                 }
-            } else {
-                let getFromRedis = await client.hgetAsync('company_info', symbol)
-                let moreInfo = JSON.parse(getFromRedis);
+          }
+            else{
 
-                let stockInfo = {}
-                stockInfo.assetType = moreInfo.AssetType
-                stockInfo.description = moreInfo.Description;
-                stockInfo.exchange = moreInfo.Exchange;
-                stockInfo.industry = moreInfo.Industry;
-                stockInfo.analystTargetPrice = moreInfo.AnalystTargetPrice;
-                result.stockInfo = stockInfo;
-            }
-                
-           
-          } else {
             let moreInfo = JSON.parse(desc);
 
             let stockInfo = {}
@@ -127,7 +136,7 @@ module.exports = {
       };
 
 
-      await fetch(API_Call)
+      const result = await fetch(API_Call)
         .then(function (response) {
           return response.json();
         })
@@ -159,9 +168,10 @@ module.exports = {
             }
             counter++;
           }
-
+          if (counter === 0) return false;
+          else return true;
         });
-    
+      if (!result) return false;
       
       //name
       const API_Call3 =
@@ -176,9 +186,8 @@ module.exports = {
         })
         .then(async function (data) {
           //Parsing Data
-          newStock.name = "Name" in data && data["Name"];
+          newStock.name = "Name" in data ? data["Name"] :symbol;
         });
-      if (!newStock.name) return null;
     
     
       const API_Call2 =
@@ -250,7 +259,11 @@ module.exports = {
         continue;
       }
 
-        await module.exports.addStock(tickers[i].stock);
+      const result = await module.exports.addStock(tickers[i].stock);
+      if (!result) {
+        delay(60000)
+        continue;
+      }
         await roomData.addRoom(tickers[i].stock);
         await module.exports.updateMentions([tickers[i]]);
         await delay(60000);
