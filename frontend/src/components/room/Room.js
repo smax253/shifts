@@ -131,7 +131,6 @@ const Room = ({ id, messages, setMessages, price, userToken, users, setUsers }) 
     }
   )
   const allStockInfo = useQuery(queries.GET_STOCK_INFO, { variables: { symbol: id } });
-//   if (allStockInfo && allStockInfo.data && allStockInfo.data.getStock) console.log('allStockInfo', allStockInfo.data.getStock.stockInfo);
     
   useEffect(() => {
     

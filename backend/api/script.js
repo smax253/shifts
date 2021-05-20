@@ -153,7 +153,6 @@ const runScript = async () => {
                         let filledAvgPrice = (sum / prices[symbol].length).toFixed(2);
 
                         prices[symbol] = [];
-                        console.log('price update', symbol, filledAvgPrice)
                         socketio.emit('price-update', symbol, filledAvgPrice);
                     }
                 })

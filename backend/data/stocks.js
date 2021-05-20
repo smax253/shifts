@@ -39,7 +39,6 @@ module.exports = {
         } else {
           const result = doc.data();
           let desc = await client.hgetAsync('company_info', symbol);
-          console.log(`desc ${symbol}`, desc);
           if (desc === null) {
             const API_KEY = process.env.finnhub_key;
             const API_Call4 =

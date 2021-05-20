@@ -45,7 +45,6 @@ const initSocketIO = (httpServer, workerPassword) => {
         
         if (userToken === workerPassword) {
             socket.on('price-update', (symbol, price) => {
-                console.log('socket emitting', symbol, price);
                 io.to(symbol).emit('price', price);
             })
             return;
